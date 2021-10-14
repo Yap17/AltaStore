@@ -14,22 +14,323 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
-  - name: Customer
-    description: Penanganan registrasi, login, informasi customer dan logout
+  - name: User
+    description: Auth and User Information
   - name: Admin
-    description: Penanganan registrasi, login, informasi admin dan logout
+    description: Auth and Admin Information
   - name: Product Category
-    description: ""
+    description: "Product Category CRUD"
   - name: Product
-    description: ""
+    description: "Product CRUD"
   - name: Purchase Receiving
-    description: ""
+    description: "Purchase Receiving CRUD"
   - name: Shopping Cart
     description: ""
   - name: Check Out
     description: ""
 
 paths:
+  /user/register: 
+    post: 
+      tags:
+        - User
+      summary: register user
+      operationId: register
+      parameters:
+        - in: query
+          name: object
+          description: User object that needs to be register
+          required: true
+          schema:
+            $ref: "#/components/schemas/UserRegister"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /user/login: 
+    post: 
+      tags:
+        - User
+      summary: login user
+      operationId: login
+      parameters:
+        - in: query
+          name: object
+          description: User Object that needs to be login
+          required: true
+          schema:
+            $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserIdToken"
+        "400":
+          description: bad input parameter
+  /user/logout/{id}: 
+    post: 
+      tags:
+        - User
+      summary: logout user
+      operationId: logout
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /user/{id}: 
+    get: 
+      tags:
+        - User
+      summary: get user profile
+      operationId: get user profile
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLogin"
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+          - User
+      summary: update user profile
+      operationId: update user profile
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: object
+          description: User object that needs to be update
+          required: true
+          schema:
+            $ref: "#/components/schemas/UserData"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+    delete:
+      tags:
+        - User
+      summary: delete user
+      operationId: delete user 
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /user/{id}/password: 
+    put:
+      tags:
+          - User
+      summary: change user password
+      operationId: change user password
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: object
+          description: User object that needs to be update
+          required: true
+          schema:
+            $ref: "#/components/schemas/UserChangePassword"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+
+  /admin/register: 
+    post: 
+      tags:
+        - Admin
+      summary: register Admin
+      operationId: register
+      parameters:
+        - in: query
+          name: object
+          description: Admin object that needs to be register
+          required: true
+          schema:
+            $ref: "#/components/schemas/AdminRegister"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /admin/login: 
+    post: 
+      tags:
+        - Admin
+      summary: login admin
+      operationId: login
+      parameters:
+        - in: query
+          name: object
+          description: Admin Object that needs to be login
+          required: true
+          schema:
+            $ref: "#/components/schemas/AdminLogin"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminIdToken"
+        "400":
+          description: bad input parameter
+  /admin/logout/{id}: 
+    post: 
+      tags:
+        - Admin
+      summary: logout Admin
+      operationId: logout
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /admin/{id}: 
+    get: 
+      tags:
+        - Admin
+      summary: get Admin profile
+      operationId: get Admin profile
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLogin"
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+          - Admin
+      summary: update Admin profile
+      operationId: update Admin profile
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: object
+          description: Admin object that needs to be update
+          required: true
+          schema:
+            $ref: "#/components/schemas/AdminData"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+    delete:
+      tags:
+        - Admin
+      summary: delete Admin
+      operationId: delete Admin 
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+  /admin/{id}/password: 
+    put:
+      tags:
+          - Admin
+      summary: change Admin password
+      operationId: change Admin password
+      parameters:
+        - in: path
+          name: id
+          description: Id to be passed as a path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: object
+          description: Admin object that needs to be update
+          required: true
+          schema:
+            $ref: "#/components/schemas/AdminChangePassword"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: bad input parameter
+
+
   /user/{id}/shoppingcart:
     get:
       tags:
@@ -94,6 +395,120 @@ paths:
         description: Inventory item to add
 components:
   schemas:
+    UserRegister:
+      type: object
+      properties:
+        email:
+          type: "string"
+        firstName:
+          type: "string"
+        lastname:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "Register User"
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "user Login"
+    UserIdToken:
+      type: object
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        token:
+          type: "string"
+      xml:
+        name: "User Id and Token"
+    UserData:
+      type: object
+      properties:
+        email:
+          type: "string"
+        firstName:
+          type: "string"
+        lastname:
+          type: "string"
+        handphone:
+          type: "string"
+        address:
+          type: "string"
+      xml:
+        name: "User Data"
+    UserChangePassword:
+      type: object
+      properties:
+        password:
+          type: "string"
+        oldpassword:
+          type: "string"
+      xml:
+        name: "Change User Password"
+    
+    AdminRegister:
+      type: object
+      properties:
+        email:
+          type: "string"
+        firstName:
+          type: "string"
+        lastname:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "Register Admin"
+    AdminLogin:
+      type: object
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      xml:
+        name: "Admin Login"
+    AdminIdToken:
+      type: object
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        token:
+          type: "string"
+      xml:
+        name: "Admin Id and Token"
+    AdminData:
+      type: object
+      properties:
+        email:
+          type: "string"
+        firstName:
+          type: "string"
+        lastname:
+          type: "string"
+        handphone:
+          type: "string"
+        address:
+          type: "string"
+      xml:
+        name: "Admin Data"
+    AdminChangePassword:
+      type: object
+      properties:
+        password:
+          type: "string"
+        oldpassword:
+          type: "string"
+      xml:
+        name: "Change Admin Password"
+
     InventoryItem:
       type: object
       required:
