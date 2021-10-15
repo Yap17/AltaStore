@@ -109,7 +109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserLogin"
+                $ref: "#/components/schemas/UserData"
         "400":
           description: bad input parameter
     put:
@@ -259,7 +259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AdminLogin"
+                $ref: "#/components/schemas/AdminData"
         "400":
           description: bad input parameter
     put:
