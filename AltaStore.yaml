@@ -1,8 +1,4 @@
 openapi: 3.0.0
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/dewidyabagus/AltaStore/1.0.0
 info:
   description: Back-End (RESTful API) Web Application Alta Store
   version: "1.0.0"
