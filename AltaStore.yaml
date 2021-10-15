@@ -30,8 +30,8 @@ tags:
     description: ""
 
 paths:
-  /user/register: 
-    post: 
+  /user/register:
+    post:
       tags:
         - User
       summary: register user
@@ -48,8 +48,8 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /user/login: 
-    post: 
+  /user/login:
+    post:
       tags:
         - User
       summary: login user
@@ -70,8 +70,8 @@ paths:
                 $ref: "#/components/schemas/UserIdToken"
         "400":
           description: bad input parameter
-  /user/logout/{id}: 
-    post: 
+  /user/logout/{id}:
+    post:
       tags:
         - User
       summary: logout user
@@ -89,8 +89,8 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /user/{id}: 
-    get: 
+  /user/{id}:
+    get:
       tags:
         - User
       summary: get user profile
@@ -114,7 +114,7 @@ paths:
           description: bad input parameter
     put:
       tags:
-          - User
+        - User
       summary: update user profile
       operationId: update user profile
       parameters:
@@ -140,7 +140,7 @@ paths:
       tags:
         - User
       summary: delete user
-      operationId: delete user 
+      operationId: delete user
       parameters:
         - in: path
           name: id
@@ -154,10 +154,10 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /user/{id}/password: 
+  /user/{id}/password:
     put:
       tags:
-          - User
+        - User
       summary: change user password
       operationId: change user password
       parameters:
@@ -180,8 +180,8 @@ paths:
         "400":
           description: bad input parameter
 
-  /admin/register: 
-    post: 
+  /admin/register:
+    post:
       tags:
         - Admin
       summary: register Admin
@@ -198,8 +198,8 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /admin/login: 
-    post: 
+  /admin/login:
+    post:
       tags:
         - Admin
       summary: login admin
@@ -220,8 +220,8 @@ paths:
                 $ref: "#/components/schemas/AdminIdToken"
         "400":
           description: bad input parameter
-  /admin/logout/{id}: 
-    post: 
+  /admin/logout/{id}:
+    post:
       tags:
         - Admin
       summary: logout Admin
@@ -239,8 +239,8 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /admin/{id}: 
-    get: 
+  /admin/{id}:
+    get:
       tags:
         - Admin
       summary: get Admin profile
@@ -264,7 +264,7 @@ paths:
           description: bad input parameter
     put:
       tags:
-          - Admin
+        - Admin
       summary: update Admin profile
       operationId: update Admin profile
       parameters:
@@ -290,7 +290,7 @@ paths:
       tags:
         - Admin
       summary: delete Admin
-      operationId: delete Admin 
+      operationId: delete Admin
       parameters:
         - in: path
           name: id
@@ -304,10 +304,10 @@ paths:
           description: "successful operation"
         "400":
           description: bad input parameter
-  /admin/{id}/password: 
+  /admin/{id}/password:
     put:
       tags:
-          - Admin
+        - Admin
       summary: change Admin password
       operationId: change Admin password
       parameters:
@@ -330,69 +330,150 @@ paths:
         "400":
           description: bad input parameter
 
-
   /user/{id}/shoppingcart:
     get:
       tags:
         - Shopping Cart
-      summary: searches inventory
-      operationId: searchInventory
+      summary: Take active shopping cart
+      operationId: shoppingCartByUserId
       description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
+        Take an active shopping cart by user id, return the shopping cart id 
+        if there is a shopping cart and return an empty when there is no active shopping cart.
       parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
+        - in: path
+          name: id
+          description: give the user id to take the active cart
+          required: true
           schema:
             type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
       responses:
         "200":
           description: search results matching criteria
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/InventoryItem"
-        "400":
-          description: bad input parameter
+                $ref: "#/components/schemas/ActiveShoppingCart"
+        "404":
+          description: when there is no active shopping cart
   /shoppingcart:
     post:
       tags:
         - Shopping Cart
-      summary: adds an inventory item
-      operationId: addInventory
-      description: Adds an item to the system
+      summary: Added new shopping cart
+      operationId: AddShoppingCart
+      description: |
+        Adding a new shopping cart when a customer doesn't have an active cart, 
+        one customer can only have one active shopping cart
       responses:
         "201":
-          description: item created
+          description: "shopping cart created"
         "400":
           description: "invalid input, object invalid"
         "409":
-          description: an existing item already exists
+          description: "shopping cart already exists"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InventoryItem"
-        description: Inventory item to add
+              $ref: "#/components/schemas/ShoppingCartId"
+        description: Shopping cart to add
+  /shoppingcart/{id}:
+    get:
+      tags:
+        - Shopping Cart
+      summary: Get detail item in active shopping cart
+      operationId: shoppingCartById
+      description: |
+        Retrieve item details in shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: give shopping cart id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingCartDetail"
+    post:
+      tags:
+        - Shopping Cart
+      summary: Adding a new product to the shopping cart
+      operationId: addProductCart
+      description: Adding a new product to the shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: "product created successfully"
+        "400":
+          description: "invalid input, object invalid"
+        "409":
+          description: "product already exists"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemToShoppingCart"
+    put:
+      tags:
+        - Shopping Cart
+      summary: Product updates on shopping cart
+      # operationId: updateProductCart
+      description: update product qty on shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: "product updated successfully"
+        "400":
+          description: "invalid input, object invalid"
+        "404":
+          description: "product not found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenewItemShoppingCart"
+    delete:
+      tags:
+        - Shopping Cart
+      summary: Delete product in shopping cart
+      description: Delete product in shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: "product deleted successfully"
+        "400":
+          description: "invalid input, object invalid"
+        "404":
+          description: "product not found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DelItemShoppingCart"
+
 components:
   schemas:
     UserRegister:
@@ -451,7 +532,7 @@ components:
           type: "string"
       xml:
         name: "Change User Password"
-    
+
     AdminRegister:
       type: object
       properties:
@@ -508,7 +589,76 @@ components:
           type: "string"
       xml:
         name: "Change Admin Password"
-
+    ShoppingCartDetail:
+      type: object
+      properties:
+        shoppingCode:
+          type: string
+          format: uuid
+        description:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "101010101"
+              name:
+                type: string
+                example: "Buku Tulis Model xyz"
+              categoryName:
+                type: string
+                example: "Buku Tulis"
+              unitName:
+                type: string
+                example: "Lusin"
+              price:
+                type: integer
+                example: 12000
+              qty:
+                type: integer
+                example: 1
+    ActiveShoppingCart:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    ShoppingCartId:
+      type: object
+      properties:
+        userid:
+          type: string
+          format: uuid
+    ItemToShoppingCart:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
+        price:
+          type: integer
+          example: 15000
+        qty:
+          type: integer
+          example: 1
+    RenewItemShoppingCart:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
+        qty:
+          type: integer
+          example: 1
+    DelItemShoppingCart:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
     InventoryItem:
       type: object
       required:
