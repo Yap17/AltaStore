@@ -27,8 +27,8 @@ tags:
     description: ""
 
 paths:
-  /user/register: 
-    post: 
+  /user/register:
+    post:
       tags:
         - User
       summary: Register new user
@@ -47,9 +47,9 @@ paths:
           description: Bad Input Parameter
         409:
           description: Email Already Registered
-      
-  /user/login: 
-    post: 
+
+  /user/login:
+    post:
       tags:
         - User
       summary: Login user
@@ -74,8 +74,8 @@ paths:
           description: Incorrect Email or Password
         404:
           description: User Not Found
-  /user/logout/{id}: 
-    post: 
+  /user/logout/{id}:
+    post:
       tags:
         - User
       summary: Logout user
@@ -99,8 +99,8 @@ paths:
           description: Unauthorized
         404:
           description: User Not Found
-  /user/{id}: 
-    get: 
+  /user/{id}:
+    get:
       tags:
         - User
       summary: Get user profile
@@ -128,7 +128,7 @@ paths:
           description: User Not Found
     put:
       tags:
-          - User
+        - User
       summary: Update user profile
       operationId: Update user profile
       parameters:
@@ -158,7 +158,7 @@ paths:
       tags:
         - User
       summary: Delete user
-      operationId: Delete user 
+      operationId: Delete user
       parameters:
         - in: query
           name: id
@@ -176,10 +176,10 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-  /user/{id}/password: 
+  /user/{id}/password:
     put:
       tags:
-          - User
+        - User
       summary: Change user password
       operationId: Change user password
       parameters:
@@ -206,8 +206,8 @@ paths:
         404:
           description: User Not Found
 
-  /admin/register: 
-    post: 
+  /admin/register:
+    post:
       tags:
         - Admin
       summary: Register Admin
@@ -224,8 +224,8 @@ paths:
           description: Register Successfully
         400:
           description: Bad Input Parameter
-  /admin/login: 
-    post: 
+  /admin/login:
+    post:
       tags:
         - Admin
       summary: Login admin
@@ -250,8 +250,8 @@ paths:
           description: Incorrect Email or Password
         404:
           description: User Not Found
-  /admin/logout/{id}: 
-    post: 
+  /admin/logout/{id}:
+    post:
       tags:
         - Admin
       summary: Logout Admin
@@ -273,8 +273,8 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-  /admin/{id}: 
-    get: 
+  /admin/{id}:
+    get:
       tags:
         - Admin
       summary: Get Admin profile
@@ -302,7 +302,7 @@ paths:
           description: User Not Found
     put:
       tags:
-          - Admin
+        - Admin
       summary: Update Admin profile
       operationId: Update Admin profile
       parameters:
@@ -332,7 +332,7 @@ paths:
       tags:
         - Admin
       summary: delete Admin
-      operationId: delete Admin 
+      operationId: delete Admin
       parameters:
         - in: query
           name: id
@@ -350,10 +350,10 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-  /admin/{id}/password: 
+  /admin/{id}/password:
     put:
       tags:
-          - Admin
+        - Admin
       summary: change Admin password
       operationId: change Admin password
       parameters:
@@ -379,11 +379,11 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-          
-  /productcategory: 
-    post: 
+
+  /productcategory:
+    post:
       tags:
-          - Product Category
+        - Product Category
       summary: Insert New Product Category
       operationId: Insert New Product Category
       parameters:
@@ -402,7 +402,7 @@ paths:
         - bearerAuth: []
     get:
       tags:
-          - Product Category
+        - Product Category
       summary: Get List of Product Category
       operationId: Get List of Product Category
       security:
@@ -414,16 +414,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProductCategoryView"
-  /productcategory/{id}: 
-    get: 
+  /productcategory/{id}:
+    get:
       tags:
-          - Product Category
+        - Product Category
       summary: Get Product Category
       operationId: Get Product Category
       parameters:
         - in: path
           name: id
-          description: Id to be passed as a path 
+          description: Id to be passed as a path
           required: true
           schema:
             type: string
@@ -439,24 +439,24 @@ paths:
                 $ref: "#/components/schemas/ProductCategoryView"
         400:
           description: Bad Input Parameter
-        404:    
+        404:
           description: Not Found
     put:
       tags:
-          - Product Category
+        - Product Category
       summary: Update Product Category
       operationId: Update Product Category
       parameters:
         - in: path
           name: id
-          description: Id to be passed as a path 
+          description: Id to be passed as a path
           required: true
           schema:
             type: string
             format: uuid
         - in: query
           name: name
-          description: name to be passed as a query 
+          description: name to be passed as a query
           required: true
           schema:
             type: string
@@ -467,13 +467,13 @@ paths:
           description: Successful Operation
         400:
           description: Bad Input Parameter
-        404:    
+        404:
           description: Not Found
     delete:
       tags:
         - Product Category
       summary: Delete Product Category
-      operationId: delete Product Category 
+      operationId: delete Product Category
       parameters:
         - in: path
           name: id
@@ -489,14 +489,14 @@ paths:
           description: Successful Operation
         400:
           description: Bad Input Parameter
-        404:    
+        404:
           description: Not Found
-  /product: 
-    post: 
+  /product:
+    post:
       tags:
-          - Product 
-      summary: Insert New Product 
-      operationId: Insert New Product 
+        - Product
+      summary: Insert New Product
+      operationId: Insert New Product
       parameters:
         - in: query
           name: object
@@ -510,12 +510,12 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter      
+          description: Bad Input Parameter
     get:
       tags:
-          - Product 
-      summary: Get Product By Parameters 
-      operationId: Get Product By parameters  
+        - Product
+      summary: Get Product By Parameters
+      operationId: Get Product By parameters
       parameters:
         - in: query
           name: id
@@ -559,12 +559,12 @@ paths:
                 $ref: "#/components/schemas/ProductView"
         400:
           description: Bad Input Parameter
-  /product/{id}: 
-    put: 
+  /product/{id}:
+    put:
       tags:
-          - Product 
-      summary: Update Product 
-      operationId: Update Product 
+        - Product
+      summary: Update Product
+      operationId: Update Product
       parameters:
         - in: query
           name: id
@@ -585,14 +585,14 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter      
-        404:    
+          description: Bad Input Parameter
+        404:
           description: Not Found
     delete:
       tags:
-        - Product 
-      summary: Delete Product 
-      operationId: delete Product 
+        - Product
+      summary: Delete Product
+      operationId: delete Product
       parameters:
         - in: path
           name: id
@@ -607,15 +607,15 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter      
-        404:    
+          description: Bad Input Parameter
+        404:
           description: Not Found
-  /purchasereceiving: 
-    post: 
+  /purchasereceiving:
+    post:
       tags:
-          - Purchase Receiving 
-      summary: Insert New Purchase Receiving  
-      operationId: Insert New Purchase Receiving 
+        - Purchase Receiving
+      summary: Insert New Purchase Receiving
+      operationId: Insert New Purchase Receiving
       parameters:
         - in: query
           name: object
@@ -629,17 +629,17 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter     
+          description: Bad Input Parameter
     get:
       tags:
-          - Purchase Receiving  
-      summary: Get Purchase Receiving By parameters 
-      operationId: Get Purchase Receiving By parameters  
+        - Purchase Receiving
+      summary: Get Purchase Receiving By parameters
+      operationId: Get Purchase Receiving By parameters
       parameters:
         - in: query
           name: id
           description: Id to be passed as a query
-          required: false       
+          required: false
           schema:
             type: string
             format: uuid
@@ -672,15 +672,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PurchaseReceivingView"
-        
+
         400:
-          description: Bad Input Parameter  
-  /purchasereceiving/{id}: 
-    put: 
+          description: Bad Input Parameter
+  /purchasereceiving/{id}:
+    put:
       tags:
-          - Purchase Receiving  
-      summary: Update Purchase Receiving  
-      operationId: Update Purchase Receiving  
+        - Purchase Receiving
+      summary: Update Purchase Receiving
+      operationId: Update Purchase Receiving
       parameters:
         - in: query
           name: object
@@ -694,14 +694,14 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter      
-        404:    
+          description: Bad Input Parameter
+        404:
           description: Not Found
     delete:
       tags:
-        - Purchase Receiving 
-      summary: Delete Purchase Receiving  
-      operationId: delete Purchase Receiving  
+        - Purchase Receiving
+      summary: Delete Purchase Receiving
+      operationId: delete Purchase Receiving
       parameters:
         - in: path
           name: id
@@ -716,79 +716,172 @@ paths:
         200:
           description: Successful Operation
         400:
-          description: Bad Input Parameter      
-        404:    
+          description: Bad Input Parameter
+        404:
           description: Not Found
-
 
   /user/{id}/shoppingcart:
     get:
       tags:
         - Shopping Cart
-      summary: searches inventory
-      operationId: searchInventory
+      summary: Take active shopping cart
+      operationId: shoppingCartByUserId
       description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
+        Take an active shopping cart by user id, return the shopping cart id 
+        if there is a shopping cart and return an empty when there is no active shopping cart.
       parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
+        - in: path
+          name: id
+          description: give the user id to take the active cart
+          required: true
           schema:
             type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
+      security:
+        - bearerAuth: []
       responses:
-        "200":
+        200:
           description: search results matching criteria
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/InventoryItem"
-        "400":
-          description: bad input parameter
+                $ref: "#/components/schemas/ActiveShoppingCart"
+        404:
+          description: when there is no active shopping cart
   /shoppingcart:
     post:
       tags:
         - Shopping Cart
-      summary: adds an inventory item
-      operationId: addInventory
-      description: Adds an item to the system
+      summary: Added shopping cart
+      operationId: AddShoppingCart
+      description: |
+        Adding a new shopping cart when a customer doesn't have an active cart, 
+        one customer can only have one active shopping cart
+      security:
+        - bearerAuth: []
       responses:
-        "201":
-          description: item created
-        "400":
+        201:
+          description: "shopping cart created"
+        400:
           description: "invalid input, object invalid"
-        "409":
-          description: an existing item already exists
+        409:
+          description: "shopping cart already exists"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InventoryItem"
-        description: Inventory item to add
+              $ref: "#/components/schemas/ShoppingCartId"
+        description: Shopping cart to add
+  /shoppingcart/{id}:
+    get:
+      tags:
+        - Shopping Cart
+      summary: Get detail item in active shopping cart
+      operationId: shoppingCartById
+      description: |
+        Retrieve item details in shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: give shopping cart id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingCartDetail"
+    post:
+      tags:
+        - Shopping Cart
+      summary: Adding a new product to the shopping cart
+      operationId: addProductCart
+      description: Adding a new product to the shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        201:
+          description: "product created successfully"
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "product already exists"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShoppingCartProductNew"
+    put:
+      tags:
+        - Shopping Cart
+      summary: Product updates on shopping cart
+      # operationId: updateProductCart
+      description: update product qty on shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        201:
+          description: "product updated successfully"
+        400:
+          description: "invalid input, object invalid"
+        404:
+          description: "product not found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShoppingCartProductUpdate"
+    delete:
+      tags:
+        - Shopping Cart
+      summary: Delete product in shopping cart
+      description: Delete product in shopping cart
+      parameters:
+        - in: path
+          name: id
+          description: provide pre-made shopping cart id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        202:
+          description: "product deleted successfully"
+        400:
+          description: "invalid input, object invalid"
+        404:
+          description: "product not found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShoppingCartProductDel"
+
 components:
   securitySchemes:
-      bearerAuth:            # arbitrary name for the security scheme
-        type: http
-        scheme: bearer
-        bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # optional, arbitrary value for documentation purposes
   schemas:
     UserRegister:
       type: object
@@ -827,8 +920,8 @@ components:
         token:
           type: string
           example: "eyJhbGciOiJIUZI1NiIsInR5CCI6IkpXVCJ9.eyJzdWIiOiIxMjMONTY
-              30DkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4i0nRydWV9.TJVA95
-              OrM7E2cBab3 ORMHrHDcEfxjoYZgeFONFhHgQ"
+            30DkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4i0nRydWV9.TJVA95
+            OrM7E2cBab3 ORMHrHDcEfxjoYZgeFONFhHgQ"
       xml:
         name: "User Id and Token"
     UserData:
@@ -862,7 +955,7 @@ components:
           example: Abcd125
       xml:
         name: "Change User Password"
-    
+
     AdminRegister:
       type: object
       properties:
@@ -900,8 +993,8 @@ components:
         token:
           type: string
           example: "eyJhbGciOiJIUZI1NiIsInR5CCI6IkpXVCJ9.eyJzdWIiOiIxMjMONTY
-              30DkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4i0nRydWV9.TJVA95
-              OrM7E2cBab3 ORMHrHDcEfxjoYZgeFONFhHgQ"
+            30DkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4i0nRydWV9.TJVA95
+            OrM7E2cBab3 ORMHrHDcEfxjoYZgeFONFhHgQ"
       xml:
         name: "Admin Id and Token"
     AdminData:
@@ -929,7 +1022,7 @@ components:
           example: Abcd125
       xml:
         name: "Change Admin Password"
-    
+
     ProductCategoryModel:
       type: object
       properties:
@@ -966,13 +1059,13 @@ components:
         price:
           type: number
           example: 10000
-        isactive: 
+        isactive:
           type: boolean
           example: 1
-        productcategoryid: 
+        productcategoryid:
           type: string
           format: uuid
-        unitname: 
+        unitname:
           type: string
           example: buah
         description:
@@ -987,18 +1080,18 @@ components:
         price:
           type: number
           example: 50
-        isactive: 
+        isactive:
           type: boolean
           example: 1
-        productcategoryid: 
+        productcategoryid:
           type: string
           format: uuid
-        unitname: 
+        unitname:
           type: string
           example: buah
         description:
           type: string
-          example: Minyak Tidak Berkualitas   
+          example: Minyak Tidak Berkualitas
     ProductView:
       type: array
       items:
@@ -1022,18 +1115,18 @@ components:
           price:
             type: number
             example: 50
-          isactive: 
+          isactive:
             type: boolean
             example: 1
-          productcategoryid: 
+          productcategoryid:
             type: string
             format: uuid
-          unitname: 
+          unitname:
             type: string
             example: buah
           description:
             type: string
-            example: Minyak Tidak Berkualitas   
+            example: Minyak Tidak Berkualitas
 
     PurchaseReceivingInsertDto:
       type: object
@@ -1047,10 +1140,10 @@ components:
         receivedby:
           type: string
           example: Bambang
-        description: 
+        description:
           type: string
           example: Pembelian Berhasil
-        details: 
+        details:
           type: array
           items:
             type: object
@@ -1073,10 +1166,10 @@ components:
         receivedby:
           type: string
           example: Bambang
-        description: 
+        description:
           type: string
-          example: Pembelian Berhasil 
-        details: 
+          example: Pembelian Berhasil
+        details:
           type: array
           items:
             type: object
@@ -1107,10 +1200,10 @@ components:
           receivedby:
             type: string
             example: Bambang
-          description: 
+          description:
             type: string
             example: Pembelian Berhasil
-          details: 
+          details:
             type: array
             items:
               type: object
@@ -1124,40 +1217,73 @@ components:
                 qty:
                   type: number
                   example: 50
-
-    InventoryItem:
+    ShoppingCartDetail:
       type: object
-      required:
-        - id
-        - name
-        - manufacturer
-        - releaseDate
+      properties:
+        shoppingCode:
+          type: string
+          format: uuid
+        description:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "101010101"
+              name:
+                type: string
+                example: "Buku Tulis Model xyz"
+              categoryName:
+                type: string
+                example: "Buku Tulis"
+              unitName:
+                type: string
+                example: "Lusin"
+              price:
+                type: integer
+                example: 12000
+              qty:
+                type: integer
+                example: 1
+    ActiveShoppingCart:
+      type: object
       properties:
         id:
           type: string
           format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        name:
-          type: string
-          example: Widget Adapter
-        releaseDate:
-          type: string
-          format: date-time
-          example: "2016-08-29T09:12:33.001Z"
-        manufacturer:
-          $ref: "#/components/schemas/Manufacturer"
-    Manufacturer:
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: ACME Corporation
-        homePage:
-          type: string
-          format: url
-          example: "https://www.acme-corp.com"
-        phone:
-          type: string
-          example: 408-867-5309
+    ShoppingCartId:
       type: object
+      properties:
+        userid:
+          type: string
+          format: uuid
+    ShoppingCartProductNew:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
+        price:
+          type: integer
+          example: 15000
+        qty:
+          type: integer
+          example: 1
+    ShoppingCartProductUpdate:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
+        qty:
+          type: integer
+          example: 1
+    ShoppingCartProductDel:
+      type: object
+      properties:
+        productId:
+          type: string
+          example: "101010101"
