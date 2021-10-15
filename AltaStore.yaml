@@ -22,9 +22,9 @@ tags:
   - name: Purchase Receiving
     description: Resource for insert, modifiying and getting Purchase Receivings
   - name: Shopping Cart
-    description: ""
+    description: Resource for insert, modifiying and getting Shopping Carts
   - name: Check Out
-    description: ""
+    description: Resource for insert, modifiying and getting Check Outs
 
 paths:
   /user/register:
@@ -876,6 +876,154 @@ paths:
             schema:
               $ref: "#/components/schemas/ShoppingCartProductDel"
 
+  /user/{id}/checkout:
+    get:
+      tags:
+        - Check Out
+      summary: Get Checkout
+      operationId: getShoppingCartById
+      parameters:
+        - in: path
+          name: id
+          description: user Id 
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutMasterView"
+        400:
+          description: Bad Input Parameter
+  /checkout:
+    post:
+      tags:
+        - Check Out
+      summary: Added Checkout
+      operationId: AddCheckout
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: shoppingcartid 
+          description: shopping Cart Id 
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        201:
+          description: "Checkout created"
+        400:
+          description: Bad Input Parameter
+  /checkout/{id}:
+    get:
+      tags:
+        - Check Out
+      summary: Get Detail Product - Checkout
+      operationId: detailcheckoutproduct
+      parameters:
+        - in: path
+          name: id
+          description: give checkoutid
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: successfully operation 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutProductView"
+        400:
+          description: Bad Input Parameter
+
+        404: 
+          description: Not Found
+  /checkout/{id}/payment:
+    put:
+      tags:
+        - Check Out
+      summary: Update Payment
+      operationId: updatepayment
+      parameters:
+        - in: path
+          name: id
+          description: give checkoutid
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          description: status payment
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: OrderId
+          description: payment id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: Error
+          description: error payment
+          required: false
+          schema:
+            type: string
+            
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: successfully operation 
+        400:
+          description: Bad Input Parameter
+        404: 
+          description: Not Found
+  /checkout/payment:
+    put:
+      tags:
+        - Check Out
+      summary: Get Payment Detail
+      operationId: getpaymentdetail
+      parameters:
+        - in: query
+          name: status
+          description: status
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: Id
+          description: checkout id
+          required: false
+          schema:
+            type: string
+            format: uuid
+            
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: successfully operation 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutPaymentView"
+        400:
+          description: Bad Input Parameter
+    
+
 components:
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
@@ -1222,7 +1370,7 @@ components:
       properties:
         shoppingCode:
           type: string
-          format: uuid
+          example: SC0001
         description:
           type: string
         details:
@@ -1232,7 +1380,7 @@ components:
             properties:
               id:
                 type: string
-                example: "101010101"
+                format: uuid
               name:
                 type: string
                 example: "Buku Tulis Model xyz"
@@ -1265,7 +1413,7 @@ components:
       properties:
         productId:
           type: string
-          example: "101010101"
+          format: uuid
         price:
           type: integer
           example: 15000
@@ -1277,7 +1425,7 @@ components:
       properties:
         productId:
           type: string
-          example: "101010101"
+          format: uuid
         qty:
           type: integer
           example: 1
@@ -1286,4 +1434,86 @@ components:
       properties:
         productId:
           type: string
-          example: "101010101"
+          format: uuid
+
+    CheckoutMasterView:
+      type: array
+      items: 
+        properties:
+          id:
+            type: string
+            format: uuid
+          code:
+            type: string
+            example: CH0001
+          description:
+            type: string
+            example: Tolong Packing dengan rapi
+          grandtotal: 
+            type: number
+            example: 10000000
+          status: 
+            type: string
+            enum: 
+              - Pending = 1
+              - Success = 2
+              - Canel = 3
+              - Failure = 4
+            example: 2
+    
+    CheckoutProductView:
+      type: object
+      properties:
+        productcode:
+          type: string
+          example: M00001
+        productname:
+          type: string
+          example: Aquala
+        productcategoryname:
+          type: string
+          example: Obat Tetes Mata
+        productunitname: 
+          type: string
+          example: buah
+        price: 
+          type: number
+          example: 10000000
+        qty:
+          type: number
+          example: 1
+
+    CheckoutPaymentView:
+      type: array
+      items: 
+        properties:
+          id:
+            type: string
+            format: uuid
+          code:
+            type: string
+            example: CH0001
+          description:
+            type: string
+            example: Tolong Packing dengan rapi
+          grandtotal: 
+            type: number
+            example: 10000000
+          status: 
+            type: string
+            enum: 
+              - Pending = 1
+              - Success = 2
+              - Canel = 3
+              - Failure = 4
+            example: 2
+          orderid:
+            type: string
+            example: adsfsd012321
+          url:
+            type: string
+            example: https://abc/success
+          error: 
+            type: string
+            
+
