@@ -47,16 +47,17 @@ func newUserTable(user user.User) *User {
 		user.DeletedAt,
 		user.DeletedBy,
 	}
-
 }
 
 func (col *User) ToUser() user.User {
 	var user user.User
 
 	user.ID = col.ID
+	user.Email = col.Email
 	user.FirstName = col.FirstName
 	user.LastName = col.LastName
-	user.Password = col.Password
+	user.HandPhone = col.HandPhone
+	user.Address = col.Address
 	user.CreatedAt = col.CreatedAt
 	user.CreatedBy = col.CreatedBy
 	user.UpdatedAt = col.UpdatedAt
@@ -89,18 +90,14 @@ func (repo *Repository) InsertUser(user user.User) error {
 func (repo *Repository) FindUserByEmailAndPassword(email string, password string) (*user.User, error) {
 
 	var userData User
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
 
-	err = repo.DB.Where("email = ?", email).First(&userData).Error
+	err := repo.DB.Where("email = ?", email).Where("deleted_by = ''").First(&userData).Error
 	if err != nil {
 		return nil, err
 	}
 
 	// Comparing the password with the hash
-	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(userData.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(userData.Password), []byte(password))
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +112,7 @@ func (repo *Repository) FindUserByID(id string) (*user.User, error) {
 
 	var userData User
 
-	err := repo.DB.First(&userData, id).Error
+	err := repo.DB.Where("id = ?", id).Where("deleted_by = ''").First(&userData).Error
 	if err != nil {
 		return nil, err
 	}
@@ -148,6 +145,7 @@ func (repo *Repository) UpdateUser(user user.User) error {
 		FirstName: userData.FirstName,
 		LastName:  userData.LastName,
 		Address:   userData.Address,
+		Password:  userData.Password,
 		HandPhone: userData.HandPhone,
 		UpdatedAt: userData.UpdatedAt,
 		UpdatedBy: userData.UpdatedBy,

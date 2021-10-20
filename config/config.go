@@ -8,14 +8,17 @@ import (
 )
 
 type ConfigApp struct {
-	AppHost    string `mapstructure:"app_host"`
-	AppPort    int    `mapstructure:"app_port"`
-	DbDriver   string `mapstructure:"db_driver"`
-	DbHost     string `mapstructure:"db_host"`
-	DbPort     int    `mapstructure:"db_port"`
-	DbUsername string `mapstructure:"db_username"`
-	DbPassword string `mapstructure:"db_password"`
-	DbName     string `mapstructure:"db_name"`
+	AppHost      string `mapstructure:"app_host"`
+	AppPort      int    `mapstructure:"app_port"`
+	DbDriver     string `mapstructure:"db_driver"`
+	DbHost       string `mapstructure:"db_host"`
+	DbPort       int    `mapstructure:"db_port"`
+	DbUsername   string `mapstructure:"db_username"`
+	DbPassword   string `mapstructure:"db_password"`
+	DbName       string `mapstructure:"db_name"`
+	JwtSecretKey string `mapstructure:"jwtsecretkey"`
+	RedisHost    string `mapstructure:"redis_host"`
+	RedisPort    int    `mapstructure:"redis_port"`
 }
 
 func GetConfig() *ConfigApp {
@@ -23,13 +26,16 @@ func GetConfig() *ConfigApp {
 	var defaConfig ConfigApp
 
 	defaConfig.AppHost = "localhost"
-	defaConfig.AppPort = 8000
+	defaConfig.AppPort = 9000
 	defaConfig.DbDriver = "pgsql"
 	defaConfig.DbHost = "localhost"
 	defaConfig.DbPort = 5432
 	defaConfig.DbUsername = "postgres"
-	defaConfig.DbPassword = ""
-	defaConfig.DbName = "postgres"
+	defaConfig.DbPassword = "alexanderyap"
+	defaConfig.DbName = "altastoredb"
+	defaConfig.JwtSecretKey = "AltaStore"
+	defaConfig.RedisHost = "localhost"
+	defaConfig.RedisPort = 9001
 
 	var (
 		err error

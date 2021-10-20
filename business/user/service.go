@@ -25,6 +25,11 @@ type UpdateUserSpec struct {
 	Address   string
 }
 
+type UpdateUserPasswordSpec struct {
+	NewPassword string `validate:"required"`
+	OldPassword string `validate:"required"`
+}
+
 //=============== The implementation of those interface put below =======================
 type service struct {
 	repository Repository
@@ -78,7 +83,7 @@ func (s *service) FindUserByID(id string) (*User, error) {
 }
 
 //UpdateUserPaasword if data not found or old password wrong will return error
-func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string, updatedBy string) error {
+func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string) error {
 
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
@@ -93,14 +98,16 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string,
 			return business.ErrPasswordMisMatch
 		}
 	}
-
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newpassword), bcrypt.DefaultCost)
+	if err != nil {
+		return business.ErrInvalidSpec
+	}
 	modifiedUser := user.ModifyUserPassword(
-		newpassword,
+		string(hashedPassword),
 		time.Now(),
-		updatedBy,
 	)
 
-	return s.repository.UpdateUser(modifiedUser)
+	return s.repository.UpdateUserPassword(modifiedUser)
 }
 
 //UpdateUser if data not found will return error
@@ -126,6 +133,25 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy
 
 	return s.repository.UpdateUser(modifiedUser)
 }
+
+// //UpdateUser if data not found will return error
+// func (s *service) UpdateUserToken(id string, token string) error {
+// 	user, err := s.repository.FindUserByID(id)
+// 	if err != nil {
+// 		return err
+// 	} else if user == nil {
+// 		return business.ErrNotFound
+// 	} else if user.DeletedBy != "" {
+// 		return business.ErrUserDeleted
+// 	}
+
+// 	modifiedUser := user.ModifyUserToken(
+// 		token,
+// 		time.Now(),
+// 	)
+
+// 	return s.repository.UpdateUser(modifiedUser)
+// }
 
 //Deleteuser if data not found will return error
 func (s *service) DeleteUser(id string, deletedBy string) error {

@@ -67,11 +67,31 @@ func (oldData *User) ModifyUser(
 	}
 }
 
+// //ModifyUserToken update existing UserData
+// func (oldData *User) ModifyUserToken(
+// 	newToken string,
+// 	updatedAt time.Time) User {
+
+// 	return User{
+// 		ID:        oldData.ID,
+// 		Email:     oldData.Email,
+// 		FirstName: oldData.FirstName,
+// 		LastName:  oldData.LastName,
+// 		Password:  oldData.Password,
+// 		HandPhone: oldData.HandPhone,
+// 		Address:   oldData.Address,
+// 		Token:     newToken,
+// 		CreatedAt: oldData.CreatedAt,
+// 		CreatedBy: oldData.CreatedBy,
+// 		UpdatedAt: updatedAt,
+// 		UpdatedBy: oldData.ID,
+// 	}
+// }
+
 //ModifyUserPassword update existing UserData
 func (oldData *User) ModifyUserPassword(
 	newPassword string,
-	updatedAt time.Time,
-	updater string) User {
+	updatedAt time.Time) User {
 
 	return User{
 		ID:        oldData.ID,
@@ -84,7 +104,7 @@ func (oldData *User) ModifyUserPassword(
 		CreatedAt: oldData.CreatedAt,
 		CreatedBy: oldData.CreatedBy,
 		UpdatedAt: updatedAt,
-		UpdatedBy: updater,
+		UpdatedBy: oldData.ID,
 	}
 }
 

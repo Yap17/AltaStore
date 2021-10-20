@@ -12,7 +12,10 @@ type Service interface {
 	FindUserByID(id string) (*User, error)
 
 	//UpdateUserPaasword if data not found or old password wrong will return error
-	UpdateUserPassword(id string, password, oldPassword string, updatedBy string) error
+	UpdateUserPassword(id string, password, oldPassword string) error
+
+	//UpdateUserToken if data not found  will return error
+	//UpdateUserToken(id string, token string) error
 
 	//UpdateUser if data not found will return error
 	UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy string) error
@@ -32,11 +35,11 @@ type Repository interface {
 	//FindUserByID If data not found will return nil without error
 	FindUserByID(id string) (*User, error)
 
-	//UpdateUserPassword if data not found or old password wrong will return error
-	UpdateUserPassword(user User) error
-
 	//UpdateUser if data not found will return error
 	UpdateUser(user User) error
+
+	//UpdateUser if data not found will return error
+	UpdateUserPassword(user User) error
 
 	//Deleteuser if data not found will return error
 	DeleteUser(user User) error
