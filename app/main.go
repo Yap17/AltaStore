@@ -3,9 +3,12 @@ package main
 import (
 	"AltaStore/api"
 	contrCategory "AltaStore/api/v1/category"
+	userController "AltaStore/api/v1/user"
 	busCategory "AltaStore/business/category"
+	userService "AltaStore/business/user"
 	"AltaStore/config"
 	repoCategory "AltaStore/modules/category"
+	userRepository "AltaStore/modules/user"
 	"fmt"
 
 	"github.com/labstack/echo/v4"
@@ -46,11 +49,20 @@ func main() {
 	// Initiate Controller Category
 	controllerCategory := contrCategory.NewController(categoryService)
 
+	//initiate user repository
+	user := userRepository.NewDBRepository(dbConnection)
+
+	//initiate user service
+	userService := userService.NewService(user)
+
+	//initiate user controller
+	userController := userController.NewController(userService)
+
 	// create echo http
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory)
+	api.RegisterPath(e, controllerCategory, userController)
 
 	// Run server
 	func() {
