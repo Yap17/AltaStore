@@ -5,15 +5,15 @@ import (
 	"time"
 )
 
-type GetCategoryResponse struct {
+type OneCategory struct {
 	ID        string    `json:"id"`
 	Code      string    `json:"code"`
 	Name      string    `json:"name"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewGetCategoryResponse(category category.Category) *GetCategoryResponse {
-	var res GetCategoryResponse
+func GetOneCategory(category category.Category) *OneCategory {
+	var res OneCategory
 
 	res.ID = category.ID
 	res.Code = category.Code
