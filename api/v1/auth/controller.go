@@ -28,12 +28,12 @@ func (controller *Controller) Login(c echo.Context) error {
 	loginRequest := new(request.LoginRequest)
 
 	if err := c.Bind(loginRequest); err != nil {
-		return c.JSON(common.NewBadRequestResponse())
+		return c.JSON(common.BadRequestResponse())
 	}
 
 	token, err := controller.service.Login(loginRequest.Email, loginRequest.Password)
 	if err != nil {
-		return c.JSON(common.NewErrorBusinessResponse(err))
+		return c.JSON(common.BadRequestResponse())
 	}
 
 	response := response.NewLoginResponse(token)
@@ -46,5 +46,5 @@ func (controller *Controller) Login(c echo.Context) error {
 
 	c.SetCookie(cookie)
 
-	return c.JSON(common.NewSuccessResponse(response))
+	return c.JSON(common.SuccessResponseWithData(response))
 }

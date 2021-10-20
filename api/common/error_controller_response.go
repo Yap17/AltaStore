@@ -2,34 +2,20 @@ package common
 
 import "net/http"
 
-type errorControllerResponseCode string
-
 const (
-	ErrBadRequest errorControllerResponseCode = "bad_request"
-	ErrForbidden  errorControllerResponseCode = "forbidden"
+	BadRequestCode responseCode = "400"
+	ForbiddenCode  responseCode = "403"
+	NotFoundCode   responseCode = "404"
 )
 
-//ControllerResponse default payload response
-type ControllerResponse struct {
-	Code    errorControllerResponseCode `json:"code"`
-	Message string                      `json:"message"`
-	Data    interface{}                 `json:"data"`
+func BadRequestResponse() (int, ControllerResponse) {
+	return http.StatusBadRequest, ControllerResponse{BadRequestCode, "Bad Request", map[string]interface{}{}}
 }
 
-//NewBadRequestResponse bad request format response
-func NewBadRequestResponse() (int, ControllerResponse) {
-	return http.StatusBadRequest, ControllerResponse{
-		ErrBadRequest,
-		"Bad request",
-		map[string]interface{}{},
-	}
+func ForbiddenResponse() (int, ControllerResponse) {
+	return http.StatusForbidden, ControllerResponse{ForbiddenCode, "Forbidden", map[string]interface{}{}}
 }
 
-//NewForbiddenResponse default for Forbidden error response
-func NewForbiddenResponse() (int, ControllerResponse) {
-	return http.StatusForbidden, ControllerResponse{
-		ErrForbidden,
-		"Forbidden",
-		map[string]interface{}{},
-	}
+func NotFoundResponse() (int, ControllerResponse) {
+	return http.StatusNotFound, ControllerResponse{NotFoundCode, "Not Found", map[string]interface{}{}}
 }

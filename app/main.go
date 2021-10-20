@@ -9,7 +9,6 @@ import (
 	busCategory "AltaStore/business/category"
 	userService "AltaStore/business/user"
 	"AltaStore/config"
-	authRepository "AltaStore/modules/auth"
 	repoCategory "AltaStore/modules/category"
 	"AltaStore/modules/migration"
 	userRepository "AltaStore/modules/user"
@@ -39,20 +38,21 @@ func newDatabaseConnection(cfg *config.ConfigApp) *gorm.DB {
 }
 
 func newRedisConnection(cfg *config.ConfigApp) *redis.Client {
-	stringConnection := fmt.Sprintf(
-		"%s:%d",
-		cfg.RedisHost, cfg.RedisPort,
-	)
-	client := redis.NewClient(&redis.Options{
-		Addr:     stringConnection, // redis port
-		Password: "",               // no password set
-		DB:       0,                // use default DB
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		panic(err)
-	}
-	return client
+	// stringConnection := fmt.Sprintf(
+	// 	"%s:%d",
+	// 	cfg.RedisHost, cfg.RedisPort,
+	// )
+	// client := redis.NewClient(&redis.Options{
+	// 	Addr:     stringConnection, // redis port
+	// 	Password: "",               // no password set
+	// 	DB:       0,                // use default DB
+	// })
+	// _, err := client.Ping().Result()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// return client
+	return nil
 }
 
 func main() {
@@ -63,7 +63,8 @@ func main() {
 	dbConnection := newDatabaseConnection(config)
 
 	// open redis connection
-	redisConnection := newRedisConnection(config)
+	//redisConnection := newRedisConnection(config)
+	_ = newRedisConnection(config)
 
 	// Initiate Respository Category
 	categoryRepo := repoCategory.NewRepository(dbConnection)
@@ -84,7 +85,7 @@ func main() {
 	userController := userController.NewController(userService)
 
 	// Initiate Respository Category
-	_ = authRepository.NewRepository(redisConnection)
+	//_ = authRepository.NewRepository(redisConnection)
 
 	//initiate auth service
 	authService := authService.NewService(userService)

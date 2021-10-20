@@ -20,6 +20,10 @@ func RegisterPath(e *echo.Echo,
 	cat := e.Group("v1/categories")
 	//cat.Use(middleware.JWTMiddleware())
 	cat.GET("", category.GetAllCategory)
+	cat.GET("/:id", category.FindCategoryById)
+	cat.POST("", category.InsertCategory)
+	cat.PUT("/:id", category.UpdateCategory)
+	cat.DELETE("/:id", category.DeleteCategory)
 
 	user := e.Group("v1/users")
 	//userV1.GET("/:id", userController.FindUserByID)
@@ -31,4 +35,5 @@ func RegisterPath(e *echo.Echo,
 
 	auth := e.Group("v1/users/login")
 	auth.POST("", authController.Login)
+
 }
