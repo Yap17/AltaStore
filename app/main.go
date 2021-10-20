@@ -2,12 +2,20 @@ package main
 
 import (
 	"AltaStore/api"
+	authController "AltaStore/api/v1/auth"
 	contrCategory "AltaStore/api/v1/category"
+	userController "AltaStore/api/v1/user"
+	authService "AltaStore/business/auth"
 	busCategory "AltaStore/business/category"
+	userService "AltaStore/business/user"
 	"AltaStore/config"
+	authRepository "AltaStore/modules/auth"
 	repoCategory "AltaStore/modules/category"
+	"AltaStore/modules/migration"
+	userRepository "AltaStore/modules/user"
 	"fmt"
 
+	"github.com/go-redis/redis/v7"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"gorm.io/driver/postgres"
@@ -25,9 +33,26 @@ func newDatabaseConnection(cfg *config.ConfigApp) *gorm.DB {
 		panic(err)
 	}
 
-	// migration.TableMigration(db)
+	migration.TableMigration(db)
 
 	return db
+}
+
+func newRedisConnection(cfg *config.ConfigApp) *redis.Client {
+	stringConnection := fmt.Sprintf(
+		"%s:%d",
+		cfg.RedisHost, cfg.RedisPort,
+	)
+	client := redis.NewClient(&redis.Options{
+		Addr:     stringConnection, // redis port
+		Password: "",               // no password set
+		DB:       0,                // use default DB
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+	return client
 }
 
 func main() {
@@ -36,6 +61,9 @@ func main() {
 
 	// open database server base session
 	dbConnection := newDatabaseConnection(config)
+
+	// open redis connection
+	redisConnection := newRedisConnection(config)
 
 	// Initiate Respository Category
 	categoryRepo := repoCategory.NewRepository(dbConnection)
@@ -46,11 +74,29 @@ func main() {
 	// Initiate Controller Category
 	controllerCategory := contrCategory.NewController(categoryService)
 
+	//initiate user repository
+	user := userRepository.NewDBRepository(dbConnection)
+
+	//initiate user service
+	userService := userService.NewService(user)
+
+	//initiate user controller
+	userController := userController.NewController(userService)
+
+	// Initiate Respository Category
+	_ = authRepository.NewRepository(redisConnection)
+
+	//initiate auth service
+	authService := authService.NewService(userService)
+
+	//initiate auth controller
+	authController := authController.NewController(authService)
+
 	// create echo http
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory)
+	api.RegisterPath(e, controllerCategory, userController, authController)
 
 	// Run server
 	func() {
