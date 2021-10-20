@@ -376,7 +376,7 @@ paths:
         404:
           description: User Not Found
 
-  /productcategory:
+  /categories:
     post:
       tags:
         - Product Category
@@ -410,7 +410,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProductCategoryView"
-  /productcategory/{id}:
+  /categories/{id}:
     get:
       tags:
         - Product Category
@@ -881,7 +881,7 @@ paths:
       parameters:
         - in: path
           name: id
-          description: user Id 
+          description: user Id
           required: true
           schema:
             type: string
@@ -906,8 +906,8 @@ paths:
         - bearerAuth: []
       parameters:
         - in: query
-          name: shoppingcartid 
-          description: shopping Cart Id 
+          name: shoppingcartid
+          description: shopping Cart Id
           required: true
           schema:
             type: string
@@ -934,7 +934,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: successfully operation 
+          description: successfully operation
           content:
             application/json:
               schema:
@@ -942,7 +942,7 @@ paths:
         400:
           description: Bad Input Parameter
 
-        404: 
+        404:
           description: Not Found
   /checkout/{id}/payment:
     put:
@@ -976,15 +976,15 @@ paths:
           required: false
           schema:
             type: string
-            
+
       security:
         - bearerAuth: []
       responses:
         200:
-          description: successfully operation 
+          description: successfully operation
         400:
           description: Bad Input Parameter
-        404: 
+        404:
           description: Not Found
   /checkout/payment:
     put:
@@ -1006,19 +1006,18 @@ paths:
           schema:
             type: string
             format: uuid
-            
+
       security:
         - bearerAuth: []
       responses:
         200:
-          description: successfully operation 
+          description: successfully operation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CheckoutPaymentView"
         400:
           description: Bad Input Parameter
-    
 
 components:
   securitySchemes:
@@ -1170,6 +1169,9 @@ components:
     ProductCategoryModel:
       type: object
       properties:
+        userid:
+          type: string
+          format: uuid
         code:
           type: string
           example: PC0001
@@ -1434,7 +1436,7 @@ components:
 
     CheckoutMasterView:
       type: array
-      items: 
+      items:
         properties:
           id:
             type: string
@@ -1445,18 +1447,18 @@ components:
           description:
             type: string
             example: Tolong Packing dengan rapi
-          grandtotal: 
+          grandtotal:
             type: number
             example: 10000000
-          status: 
+          status:
             type: string
-            enum: 
+            enum:
               - Pending = 1
               - Success = 2
               - Canel = 3
               - Failure = 4
             example: 2
-    
+
     CheckoutProductView:
       type: object
       properties:
@@ -1469,10 +1471,10 @@ components:
         productcategoryname:
           type: string
           example: Obat Tetes Mata
-        productunitname: 
+        productunitname:
           type: string
           example: buah
-        price: 
+        price:
           type: number
           example: 10000000
         qty:
@@ -1481,7 +1483,7 @@ components:
 
     CheckoutPaymentView:
       type: array
-      items: 
+      items:
         properties:
           id:
             type: string
@@ -1492,12 +1494,12 @@ components:
           description:
             type: string
             example: Tolong Packing dengan rapi
-          grandtotal: 
+          grandtotal:
             type: number
             example: 10000000
-          status: 
+          status:
             type: string
-            enum: 
+            enum:
               - Pending = 1
               - Success = 2
               - Canel = 3
@@ -1509,7 +1511,5 @@ components:
           url:
             type: string
             example: https://abc/success
-          error: 
+          error:
             type: string
-            
-
