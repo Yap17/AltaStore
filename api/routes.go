@@ -13,4 +13,8 @@ func RegisterPath(e *echo.Echo, category *category.Controller) {
 
 	cat := e.Group("v1/categories")
 	cat.GET("", category.GetAllCategory)
+	cat.GET("/:id", category.FindCategoryById)
+	cat.POST("", category.InsertCategory)
+	cat.PUT("/:id", category.UpdateCategory)
+	cat.DELETE("/:id", category.DeleteCategory)
 }
