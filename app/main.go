@@ -16,6 +16,7 @@ import (
 	cateRepository "AltaStore/modules/category"
 	"AltaStore/modules/migration"
 	shopRepository "AltaStore/modules/shopping"
+	shopDetailRepository "AltaStore/modules/shoppingdetail"
 	userRepository "AltaStore/modules/user"
 
 	"fmt"
@@ -101,9 +102,10 @@ func main() {
 
 	// initiate shopping repository
 	shopRepo := shopRepository.NewRepository(dbConnection)
+	shopDetailRepo := shopDetailRepository.NewRepository(dbConnection)
 
 	// initiate shopping service
-	shopServc := shopService.NewService(shopRepo)
+	shopServc := shopService.NewService(shopRepo, shopDetailRepo)
 
 	// initiate shopping controller
 	shopHandler := shopController.NewController(shopServc)

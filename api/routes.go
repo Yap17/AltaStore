@@ -40,5 +40,10 @@ func RegisterPath(e *echo.Echo,
 
 	// Routing shoping
 	e.GET("/v1/users/:id/shoppingcart", shopping.GetShoppingCartByUserId)
-
+	shopCart := e.Group("/v1/shoppingcart")
+	shopCart.POST("", shopping.NewShoppingCart)
+	shopCart.GET("/:id", shopping.GetShopCartDetailById)
+	shopCart.POST("/:id", shopping.NewItemInShopCart)
+	shopCart.PUT("/:id", shopping.ModifyItemInShopCart)
+	shopCart.DELETE("/:id/items/:productid", shopping.DeleteItemInShopCart)
 }

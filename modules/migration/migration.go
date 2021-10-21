@@ -3,6 +3,7 @@ package migration
 import (
 	"AltaStore/modules/category"
 	"AltaStore/modules/shopping"
+	"AltaStore/modules/shoppingdetail"
 	"AltaStore/modules/user"
 
 	"gorm.io/gorm"
@@ -13,6 +14,6 @@ func TableMigration(db *gorm.DB) {
 		&category.ProductCategory{},
 		&user.User{},
 		&shopping.ShoppingCart{},
-		&shopping.ShoppingCartDetail{},
+		&shoppingdetail.ShoppingCartDetail{},
 	)
 }
