@@ -1,4 +1,4 @@
-package auth
+package userauth
 
 type TokenDetails struct {
 	AccessToken string

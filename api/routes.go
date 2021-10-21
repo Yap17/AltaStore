@@ -1,10 +1,12 @@
 package api
 
 import (
-	"AltaStore/api/v1/auth"
+	"AltaStore/api/v1/admin"
+	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
 	"AltaStore/api/v1/product"
 	"AltaStore/api/v1/user"
+	"AltaStore/api/v1/userauth"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -12,12 +14,15 @@ import (
 func RegisterPath(e *echo.Echo,
 	category *category.Controller,
 	userController *user.Controller,
-	authController *auth.Controller,
+	adminController *admin.Controller,
+	userAuthController *userauth.Controller,
+	adminAuthController *adminauth.Controller,
 	productController *product.Controller,
 ) {
 	if category == nil ||
 		userController == nil ||
-		authController == nil ||
+		userAuthController == nil ||
+		adminAuthController == nil ||
 		productController == nil {
 		panic("Invalid parameter")
 	}
@@ -31,15 +36,24 @@ func RegisterPath(e *echo.Echo,
 	cat.DELETE("/:id", category.DeleteCategory)
 
 	user := e.Group("v1/users")
-	//userV1.GET("/:id", userController.FindUserByID)
 	user.POST("", userController.InsertUser)
 	user.PUT("/:id", userController.UpdateUser)
 	user.DELETE("/:id", userController.DeleteUser)
 	user.GET("/:id", userController.FindUserByID)
 	user.PUT("/:id/password", userController.UpdateUserPassword)
 
-	auth := e.Group("v1/users/login")
-	auth.POST("", authController.Login)
+	authUser := e.Group("v1/users/login")
+	authUser.POST("", userAuthController.UserLogin)
+
+	admin := e.Group("v1/admins")
+	admin.POST("", adminController.InsertAdmin)
+	admin.PUT("/:id", adminController.UpdateAdmin)
+	admin.DELETE("/:id", adminController.DeleteAdmin)
+	admin.GET("/:id", adminController.FindAdminByID)
+	admin.PUT("/:id/password", adminController.UpdateAdminPassword)
+
+	authAdmin := e.Group("v1/admins/login")
+	authAdmin.POST("", adminAuthController.AdminLogin)
 
 	product := e.Group("v1/products")
 	//product.Use(middleware.JWTMiddleware())

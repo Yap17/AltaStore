@@ -2,15 +2,20 @@ package main
 
 import (
 	"AltaStore/api"
-	authController "AltaStore/api/v1/auth"
+	adminController "AltaStore/api/v1/admin"
+	adminAuthController "AltaStore/api/v1/adminauth"
 	contrCategory "AltaStore/api/v1/category"
 	productController "AltaStore/api/v1/product"
 	userController "AltaStore/api/v1/user"
-	authService "AltaStore/business/auth"
+	userAuthController "AltaStore/api/v1/userauth"
+	adminService "AltaStore/business/admin"
+	adminAuthService "AltaStore/business/adminauth"
 	busCategory "AltaStore/business/category"
 	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
+	userAuthService "AltaStore/business/userauth"
 	"AltaStore/config"
+	adminRepository "AltaStore/modules/admin"
 	repoCategory "AltaStore/modules/category"
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
@@ -90,11 +95,26 @@ func main() {
 	// Initiate Respository Category
 	//_ = authRepository.NewRepository(redisConnection)
 
+	//initiate admin repository
+	admin := adminRepository.NewDBRepository(dbConnection)
+
+	//initiate admin service
+	adminService := adminService.NewService(admin)
+
+	//initiate admin controller
+	adminController := adminController.NewController(adminService)
+
 	//initiate auth service
-	authService := authService.NewService(userService)
+	userAuthService := userAuthService.NewService(userService)
 
 	//initiate auth controller
-	authController := authController.NewController(authService)
+	userAuthController := userAuthController.NewController(userAuthService)
+
+	//initiate auth service
+	adminAuthService := adminAuthService.NewService(adminService)
+
+	//initiate auth controller
+	adminAuthController := adminAuthController.NewController(adminAuthService)
 
 	// Initiate Respository Product
 	product := productRepository.NewRepository(dbConnection)
@@ -108,7 +128,14 @@ func main() {
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory, userController, authController, productController)
+	api.RegisterPath(e,
+		controllerCategory,
+		userController,
+		adminController,
+		userAuthController,
+		adminAuthController,
+		productController,
+	)
 
 	// Run server
 	func() {

@@ -32,7 +32,7 @@ func (controller *Controller) InsertUser(c echo.Context) error {
 
 	user := *insertUserRequest.ToUpsertUserSpec()
 
-	err := controller.service.InsertUser(user, "creator")
+	err := controller.service.InsertUser(user)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -65,7 +65,7 @@ func (controller *Controller) UpdateUser(c echo.Context) error {
 	}
 	user := *updateUserRequest.ToUpsertUserSpec()
 
-	err := controller.service.UpdateUser(id.String(), user, "modifier")
+	err := controller.service.UpdateUser(id.String(), user)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -96,7 +96,7 @@ func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 func (controller *Controller) DeleteUser(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	err := controller.service.DeleteUser(id.String(), "deleter")
+	err := controller.service.DeleteUser(id.String())
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
