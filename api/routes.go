@@ -1,6 +1,7 @@
 package api
 
 import (
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/admin"
 	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
@@ -27,36 +28,38 @@ func RegisterPath(e *echo.Echo,
 		panic("Invalid parameter")
 	}
 
+	regis := e.Group("v1/register")
+	regis.POST("", userController.InsertUser)
+	regis.POST("/admin", adminController.InsertAdmin)
+
+	login := e.Group("v1/login")
+	login.POST("", userAuthController.UserLogin)
+	login.POST("/admin", adminAuthController.AdminLogin)
+
+	user := e.Group("v1/users")
+	user.Use(middleware.JWTMiddleware())
+	user.PUT("/:id", userController.UpdateUser)
+	user.DELETE("/:id", userController.DeleteUser)
+	user.GET("/:id", userController.FindUserByID)
+	user.PUT("/:id/password", userController.UpdateUserPassword)
+
+	admin := e.Group("v1/admins")
+	user.Use(middleware.JWTMiddleware())
+	admin.PUT("/:id", adminController.UpdateAdmin)
+	admin.DELETE("/:id", adminController.DeleteAdmin)
+	admin.GET("/:id", adminController.FindAdminByID)
+	admin.PUT("/:id/password", adminController.UpdateAdminPassword)
+
 	cat := e.Group("v1/categories")
-	//cat.Use(middleware.JWTMiddleware())
+	cat.Use(middleware.JWTMiddleware())
 	cat.GET("", category.GetAllCategory)
 	cat.GET("/:id", category.FindCategoryById)
 	cat.POST("", category.InsertCategory)
 	cat.PUT("/:id", category.UpdateCategory)
 	cat.DELETE("/:id", category.DeleteCategory)
 
-	user := e.Group("v1/users")
-	user.POST("", userController.InsertUser)
-	user.PUT("/:id", userController.UpdateUser)
-	user.DELETE("/:id", userController.DeleteUser)
-	user.GET("/:id", userController.FindUserByID)
-	user.PUT("/:id/password", userController.UpdateUserPassword)
-
-	authUser := e.Group("v1/users/login")
-	authUser.POST("", userAuthController.UserLogin)
-
-	admin := e.Group("v1/admins")
-	admin.POST("", adminController.InsertAdmin)
-	admin.PUT("/:id", adminController.UpdateAdmin)
-	admin.DELETE("/:id", adminController.DeleteAdmin)
-	admin.GET("/:id", adminController.FindAdminByID)
-	admin.PUT("/:id/password", adminController.UpdateAdminPassword)
-
-	authAdmin := e.Group("v1/admins/login")
-	authAdmin.POST("", adminAuthController.AdminLogin)
-
 	product := e.Group("v1/products")
-	//product.Use(middleware.JWTMiddleware())
+	product.Use(middleware.JWTMiddleware())
 	product.GET("", productController.GetAllProduct)
 	//product.GET("/:id", productController.FindProductById)
 	product.POST("", productController.InsertProduct)
