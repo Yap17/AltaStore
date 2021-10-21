@@ -4,13 +4,16 @@ import (
 	"AltaStore/api"
 	authController "AltaStore/api/v1/auth"
 	contrCategory "AltaStore/api/v1/category"
+	productController "AltaStore/api/v1/product"
 	userController "AltaStore/api/v1/user"
 	authService "AltaStore/business/auth"
 	busCategory "AltaStore/business/category"
+	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
 	"AltaStore/config"
 	repoCategory "AltaStore/modules/category"
 	"AltaStore/modules/migration"
+	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
 	"fmt"
 
@@ -93,11 +96,19 @@ func main() {
 	//initiate auth controller
 	authController := authController.NewController(authService)
 
+	// Initiate Respository Product
+	product := productRepository.NewRepository(dbConnection)
+
+	// Initiate Service Product
+	ProductService := productService.NewService(product)
+
+	// Initiate Controller Product
+	productController := productController.NewController(ProductService)
 	// create echo http
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory, userController, authController)
+	api.RegisterPath(e, controllerCategory, userController, authController, productController)
 
 	// Run server
 	func() {

@@ -3,6 +3,7 @@ package api
 import (
 	"AltaStore/api/v1/auth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/product"
 	"AltaStore/api/v1/user"
 
 	echo "github.com/labstack/echo/v4"
@@ -12,8 +13,12 @@ func RegisterPath(e *echo.Echo,
 	category *category.Controller,
 	userController *user.Controller,
 	authController *auth.Controller,
+	productController *product.Controller,
 ) {
-	if category == nil || userController == nil {
+	if category == nil ||
+		userController == nil ||
+		authController == nil ||
+		productController == nil {
 		panic("Invalid parameter")
 	}
 
@@ -35,5 +40,13 @@ func RegisterPath(e *echo.Echo,
 
 	auth := e.Group("v1/users/login")
 	auth.POST("", authController.Login)
+
+	product := e.Group("v1/products")
+	//product.Use(middleware.JWTMiddleware())
+	product.GET("", productController.GetAllProduct)
+	//product.GET("/:id", productController.FindProductById)
+	product.POST("", productController.InsertProduct)
+	product.PUT("/:id", productController.UpdateProduct)
+	product.DELETE("/:id", productController.DeleteProduct)
 
 }

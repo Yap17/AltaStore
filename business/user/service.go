@@ -91,7 +91,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 	} else if user == nil {
 		return business.ErrNotFound
 	} else if user.DeletedBy != "" {
-		return business.ErrUserDeleted
+		return business.ErrDeleted
 	} else {
 		_, err := s.repository.FindUserByEmailAndPassword(user.Email, oldPassword)
 		if err != nil {
@@ -118,7 +118,7 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy
 	} else if user == nil {
 		return business.ErrNotFound
 	} else if user.DeletedBy != "" {
-		return business.ErrUserDeleted
+		return business.ErrDeleted
 	}
 
 	modifiedUser := user.ModifyUser(
