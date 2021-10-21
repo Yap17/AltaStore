@@ -1,3 +1,0 @@
-package business
-
-var ()

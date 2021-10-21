@@ -3,6 +3,7 @@ package api
 import (
 	"AltaStore/api/v1/auth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/shopping"
 	"AltaStore/api/v1/user"
 
 	echo "github.com/labstack/echo/v4"
@@ -12,6 +13,7 @@ func RegisterPath(e *echo.Echo,
 	category *category.Controller,
 	userController *user.Controller,
 	authController *auth.Controller,
+	shopping *shopping.Controller,
 ) {
 	if category == nil || userController == nil {
 		panic("Invalid parameter")
@@ -36,4 +38,12 @@ func RegisterPath(e *echo.Echo,
 	auth := e.Group("v1/users/login")
 	auth.POST("", authController.Login)
 
+	// Routing shoping
+	e.GET("/v1/users/:id/shoppingcart", shopping.GetShoppingCartByUserId)
+	shopCart := e.Group("/v1/shoppingcart")
+	shopCart.POST("", shopping.NewShoppingCart)
+	shopCart.GET("/:id", shopping.GetShopCartDetailById)
+	shopCart.POST("/:id", shopping.NewItemInShopCart)
+	shopCart.PUT("/:id", shopping.ModifyItemInShopCart)
+	shopCart.DELETE("/:id/items/:productid", shopping.DeleteItemInShopCart)
 }

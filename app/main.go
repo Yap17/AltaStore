@@ -3,15 +3,22 @@ package main
 import (
 	"AltaStore/api"
 	authController "AltaStore/api/v1/auth"
-	contrCategory "AltaStore/api/v1/category"
+	cateController "AltaStore/api/v1/category"
+	shopController "AltaStore/api/v1/shopping"
 	userController "AltaStore/api/v1/user"
+
 	authService "AltaStore/business/auth"
-	busCategory "AltaStore/business/category"
+	cateService "AltaStore/business/category"
+	shopService "AltaStore/business/shopping"
 	userService "AltaStore/business/user"
+
 	"AltaStore/config"
-	repoCategory "AltaStore/modules/category"
+	cateRepository "AltaStore/modules/category"
 	"AltaStore/modules/migration"
+	shopRepository "AltaStore/modules/shopping"
+	shopDetailRepository "AltaStore/modules/shoppingdetail"
 	userRepository "AltaStore/modules/user"
+
 	"fmt"
 
 	"github.com/go-redis/redis/v7"
@@ -67,13 +74,13 @@ func main() {
 	_ = newRedisConnection(config)
 
 	// Initiate Respository Category
-	categoryRepo := repoCategory.NewRepository(dbConnection)
+	categoryRepo := cateRepository.NewRepository(dbConnection)
 
 	// Initiate Service Category
-	categoryService := busCategory.NewService(categoryRepo)
+	categoryService := cateService.NewService(categoryRepo)
 
 	// Initiate Controller Category
-	controllerCategory := contrCategory.NewController(categoryService)
+	controllerCategory := cateController.NewController(categoryService)
 
 	//initiate user repository
 	user := userRepository.NewDBRepository(dbConnection)
@@ -93,11 +100,21 @@ func main() {
 	//initiate auth controller
 	authController := authController.NewController(authService)
 
+	// initiate shopping repository
+	shopRepo := shopRepository.NewRepository(dbConnection)
+	shopDetailRepo := shopDetailRepository.NewRepository(dbConnection)
+
+	// initiate shopping service
+	shopServc := shopService.NewService(shopRepo, shopDetailRepo)
+
+	// initiate shopping controller
+	shopHandler := shopController.NewController(shopServc)
+
 	// create echo http
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory, userController, authController)
+	api.RegisterPath(e, controllerCategory, userController, authController, shopHandler)
 
 	// Run server
 	func() {
