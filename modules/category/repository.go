@@ -12,7 +12,7 @@ type Repository struct {
 }
 
 type ProductCategory struct {
-	ID        string    `gorm:"id;type:uuid;primaryKey;default:uuid_generate_v4()"`
+	ID        string    `gorm:"id;type:uuid;primaryKey"`
 	Code      string    `gorm:"code;type:varchar(50);unique"`
 	Name      string    `gorm:"name;type:varchar(100)"`
 	CreatedAt time.Time `gorm:"created_at"`
