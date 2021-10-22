@@ -20,6 +20,11 @@ import (
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
+
+	shopController "AltaStore/api/v1/shopping"
+	shopService "AltaStore/business/shopping"
+	shopRepository "AltaStore/modules/shopping"
+	shopDetailRepository "AltaStore/modules/shoppingdetail"
 	"fmt"
 
 	"github.com/go-redis/redis/v7"
@@ -124,6 +129,16 @@ func main() {
 
 	// Initiate Controller Product
 	productController := productController.NewController(ProductService)
+
+	// initiate shopping repository
+	shopRepo := shopRepository.NewRepository(dbConnection)
+	shopDetailRepo := shopDetailRepository.NewRepository(dbConnection)
+
+	// initiate shopping service
+	shopServc := shopService.NewService(shopRepo, shopDetailRepo)
+
+	// initiate shopping controller
+	shopHandler := shopController.NewController(shopServc)
 	// create echo http
 	e := echo.New()
 
@@ -135,6 +150,7 @@ func main() {
 		userAuthController,
 		adminAuthController,
 		productController,
+		shopHandler,
 	)
 
 	// Run server
