@@ -20,9 +20,9 @@ func NewController(service purchasereceiving.Service) *Controller {
 
 func (c *Controller) InsertPurchaseReceiving(ctx echo.Context) error {
 	var err error
-	userId := ctx.QueryParam("userid")
+	adminid := ctx.QueryParam("adminid")
 
-	if _, err := uuid.Parse(userId); err != nil {
+	if _, err := uuid.Parse(adminid); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
@@ -32,7 +32,7 @@ func (c *Controller) InsertPurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), userId); err != nil {
+	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), adminid); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -47,9 +47,9 @@ func (c *Controller) UpdatePurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	userId := ctx.QueryParam("userid")
+	adminid := ctx.QueryParam("adminid")
 
-	if _, err := uuid.Parse(userId); err != nil {
+	if _, err := uuid.Parse(adminid); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
@@ -58,7 +58,7 @@ func (c *Controller) UpdatePurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), userId); err != nil {
+	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), adminid); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -69,16 +69,16 @@ func (c *Controller) DeletePurchaseReceiving(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	userid := ctx.QueryParam("userid")
+	adminid := ctx.QueryParam("adminid")
 
 	if _, err = uuid.Parse(id); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
-	if _, err = uuid.Parse(userid); err != nil {
+	if _, err = uuid.Parse(adminid); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	if err = c.service.DeletePurchaseReceiving(id, userid); err != nil {
+	if err = c.service.DeletePurchaseReceiving(id, adminid); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -93,14 +93,14 @@ func (c *Controller) GetAllPurchaseReceiving(ctx echo.Context) error {
 		}
 	}
 
-	userId := ctx.QueryParam("userid")
+	adminid := ctx.QueryParam("adminid")
 
-	if _, err := uuid.Parse(userId); err != nil {
+	if _, err := uuid.Parse(adminid); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	code := ctx.QueryParam("code")
-	data, err := c.service.GetAllPurchaseReceivingByParameter(code, userId)
+	data, err := c.service.GetAllPurchaseReceivingByParameter(code, adminid)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -118,12 +118,12 @@ func (c *Controller) FindPurchaseReceivingById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-	userId := ctx.QueryParam("userid")
+	adminid := ctx.QueryParam("adminid")
 
-	if _, err := uuid.Parse(userId); err != nil {
+	if _, err := uuid.Parse(adminid); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-	data, err := c.service.GetPurchaseReceivingById(id, userId)
+	data, err := c.service.GetPurchaseReceivingById(id, adminid)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}

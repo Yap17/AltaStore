@@ -84,15 +84,6 @@ func main() {
 	//redisConnection := newRedisConnection(config)
 	_ = newRedisConnection(config)
 
-	// Initiate Respository Category
-	categoryRepo := repoCategory.NewRepository(dbConnection)
-
-	// Initiate Service Category
-	categoryService := busCategory.NewService(categoryRepo)
-
-	// Initiate Controller Category
-	controllerCategory := contrCategory.NewController(categoryService)
-
 	//initiate user repository
 	user := userRepository.NewDBRepository(dbConnection)
 
@@ -126,11 +117,20 @@ func main() {
 	//initiate auth controller
 	adminAuthController := adminAuthController.NewController(adminAuthService)
 
+	// Initiate Respository Category
+	categoryRepo := repoCategory.NewRepository(dbConnection)
+
+	// Initiate Service Category
+	categoryService := busCategory.NewService(adminService, categoryRepo)
+
+	// Initiate Controller Category
+	controllerCategory := contrCategory.NewController(categoryService)
+
 	// Initiate Respository Product
 	product := productRepository.NewRepository(dbConnection)
 
 	// Initiate Service Product
-	ProductService := productService.NewService(product)
+	ProductService := productService.NewService(adminService, product)
 
 	// Initiate Controller Product
 	productController := productController.NewController(ProductService)

@@ -3,7 +3,7 @@ package request
 import "AltaStore/business/product"
 
 type UpdateProductRequest struct {
-	UserId            string `json:"userid"`
+	AdminId           string `json:"adminid"`
 	Name              string `json:"name"`
 	Price             int64  `json:"price"`
 	IsActive          bool   `json:"isactive"`
@@ -15,7 +15,7 @@ type UpdateProductRequest struct {
 func (u *UpdateProductRequest) ToProductSpec() *product.UpdateProductSpec {
 	var spec product.UpdateProductSpec
 
-	spec.UserId = u.UserId
+	spec.AdminId = u.AdminId
 	spec.Name = u.Name
 	spec.Price = u.Price
 	spec.IsActive = u.IsActive
