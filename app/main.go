@@ -2,23 +2,29 @@ package main
 
 import (
 	"AltaStore/api"
-	authController "AltaStore/api/v1/auth"
-	cateController "AltaStore/api/v1/category"
-	shopController "AltaStore/api/v1/shopping"
+	adminController "AltaStore/api/v1/admin"
+	adminAuthController "AltaStore/api/v1/adminauth"
+	contrCategory "AltaStore/api/v1/category"
+	productController "AltaStore/api/v1/product"
 	userController "AltaStore/api/v1/user"
-
-	authService "AltaStore/business/auth"
-	cateService "AltaStore/business/category"
-	shopService "AltaStore/business/shopping"
+	userAuthController "AltaStore/api/v1/userauth"
+	adminService "AltaStore/business/admin"
+	adminAuthService "AltaStore/business/adminauth"
+	busCategory "AltaStore/business/category"
+	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
-
+	userAuthService "AltaStore/business/userauth"
 	"AltaStore/config"
-	cateRepository "AltaStore/modules/category"
+	adminRepository "AltaStore/modules/admin"
+	repoCategory "AltaStore/modules/category"
 	"AltaStore/modules/migration"
-	shopRepository "AltaStore/modules/shopping"
-	shopDetailRepository "AltaStore/modules/shoppingdetail"
+	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
 
+	shopController "AltaStore/api/v1/shopping"
+	shopService "AltaStore/business/shopping"
+	shopRepository "AltaStore/modules/shopping"
+	shopDetailRepository "AltaStore/modules/shoppingdetail"
 	"fmt"
 
 	"github.com/go-redis/redis/v7"
@@ -74,13 +80,13 @@ func main() {
 	_ = newRedisConnection(config)
 
 	// Initiate Respository Category
-	categoryRepo := cateRepository.NewRepository(dbConnection)
+	categoryRepo := repoCategory.NewRepository(dbConnection)
 
 	// Initiate Service Category
-	categoryService := cateService.NewService(categoryRepo)
+	categoryService := busCategory.NewService(categoryRepo)
 
 	// Initiate Controller Category
-	controllerCategory := cateController.NewController(categoryService)
+	controllerCategory := contrCategory.NewController(categoryService)
 
 	//initiate user repository
 	user := userRepository.NewDBRepository(dbConnection)
@@ -94,11 +100,35 @@ func main() {
 	// Initiate Respository Category
 	//_ = authRepository.NewRepository(redisConnection)
 
+	//initiate admin repository
+	admin := adminRepository.NewDBRepository(dbConnection)
+
+	//initiate admin service
+	adminService := adminService.NewService(admin)
+
+	//initiate admin controller
+	adminController := adminController.NewController(adminService)
+
 	//initiate auth service
-	authService := authService.NewService(userService)
+	userAuthService := userAuthService.NewService(userService)
 
 	//initiate auth controller
-	authController := authController.NewController(authService)
+	userAuthController := userAuthController.NewController(userAuthService)
+
+	//initiate auth service
+	adminAuthService := adminAuthService.NewService(adminService)
+
+	//initiate auth controller
+	adminAuthController := adminAuthController.NewController(adminAuthService)
+
+	// Initiate Respository Product
+	product := productRepository.NewRepository(dbConnection)
+
+	// Initiate Service Product
+	ProductService := productService.NewService(product)
+
+	// Initiate Controller Product
+	productController := productController.NewController(ProductService)
 
 	// initiate shopping repository
 	shopRepo := shopRepository.NewRepository(dbConnection)
@@ -109,12 +139,19 @@ func main() {
 
 	// initiate shopping controller
 	shopHandler := shopController.NewController(shopServc)
-
 	// create echo http
 	e := echo.New()
 
 	// Register API Path and Controller
-	api.RegisterPath(e, controllerCategory, userController, authController, shopHandler)
+	api.RegisterPath(e,
+		controllerCategory,
+		userController,
+		adminController,
+		userAuthController,
+		adminAuthController,
+		productController,
+		shopHandler,
+	)
 
 	// Run server
 	func() {

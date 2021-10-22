@@ -43,7 +43,7 @@ func NewService(repository Repository) Service {
 }
 
 //InsertUser Create new user and store into database
-func (s *service) InsertUser(insertUserSpec InsertUserSpec, createdBy string) error {
+func (s *service) InsertUser(insertUserSpec InsertUserSpec) error {
 	err := validator.GetValidator().Struct(insertUserSpec)
 	if err != nil {
 		return business.ErrInvalidSpec
@@ -91,7 +91,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 	} else if user == nil {
 		return business.ErrNotFound
 	} else if user.DeletedBy != "" {
-		return business.ErrUserDeleted
+		return business.ErrDeleted
 	} else {
 		_, err := s.repository.FindUserByEmailAndPassword(user.Email, oldPassword)
 		if err != nil {
@@ -111,15 +111,17 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 }
 
 //UpdateUser if data not found will return error
-func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy string) error {
+func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error {
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
 		return err
 	} else if user == nil {
 		return business.ErrNotFound
 	} else if user.DeletedBy != "" {
-		return business.ErrUserDeleted
+		return business.ErrDeleted
 	}
+
+	var uuid string = user.ID
 
 	modifiedUser := user.ModifyUser(
 		updateUserSpec.Email,
@@ -128,7 +130,7 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy
 		updateUserSpec.HandPhone,
 		updateUserSpec.Address,
 		time.Now(),
-		updatedBy,
+		uuid,
 	)
 
 	return s.repository.UpdateUser(modifiedUser)
@@ -154,7 +156,7 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy
 // }
 
 //Deleteuser if data not found will return error
-func (s *service) DeleteUser(id string, deletedBy string) error {
+func (s *service) DeleteUser(id string) error {
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
 		return err
@@ -162,9 +164,11 @@ func (s *service) DeleteUser(id string, deletedBy string) error {
 		return business.ErrNotFound
 	}
 
+	var uuid string = user.ID
+
 	deleteUser := user.DeleteUser(
 		time.Now(),
-		deletedBy,
+		uuid,
 	)
 
 	return s.repository.DeleteUser(deleteUser)
