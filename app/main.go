@@ -25,6 +25,11 @@ import (
 	shopService "AltaStore/business/shopping"
 	shopRepository "AltaStore/modules/shopping"
 	shopDetailRepository "AltaStore/modules/shoppingdetail"
+
+	purchaseController "AltaStore/api/v1/purchasereceiving"
+	purchaseService "AltaStore/business/purchasereceiving"
+	purchaseRepository "AltaStore/modules/purchasereceiving"
+	purchaseDetailRepository "AltaStore/modules/purchasereceivingdetail"
 	"fmt"
 
 	"github.com/go-redis/redis/v7"
@@ -134,11 +139,21 @@ func main() {
 	shopRepo := shopRepository.NewRepository(dbConnection)
 	shopDetailRepo := shopDetailRepository.NewRepository(dbConnection)
 
-	// initiate shopping service
+	// initiate urchase Receiving service
 	shopServc := shopService.NewService(shopRepo, shopDetailRepo)
 
 	// initiate shopping controller
 	shopHandler := shopController.NewController(shopServc)
+
+	// initiate Purchase Receiving repository
+	purchase := purchaseRepository.NewRepository(dbConnection)
+	purchaseDetail := purchaseDetailRepository.NewRepository(dbConnection)
+
+	// initiate Purchase Receiving service
+	purchaseService := purchaseService.NewService(adminService, purchase, purchaseDetail)
+
+	// initiate Purchase Receiving controller
+	purchaseController := purchaseController.NewController(purchaseService)
 	// create echo http
 	e := echo.New()
 
@@ -151,6 +166,7 @@ func main() {
 		adminAuthController,
 		productController,
 		shopHandler,
+		purchaseController,
 	)
 
 	// Run server
