@@ -17,7 +17,7 @@ var (
 
 	ErrPasswordMisMatch = errors.New("Wrong Password")
 
-	ErrUserDeleted = errors.New("User Deleted")
+	ErrDeleted = errors.New("Object Deleted")
 
 	ErrLoginFailed = errors.New("Login Failed")
 )

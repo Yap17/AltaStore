@@ -3,7 +3,7 @@ package user
 //Service outgoing port for user
 type Service interface {
 	//InsertUser Insert new User into storage
-	InsertUser(insertUserSpec InsertUserSpec, createdBy string) error
+	InsertUser(insertUserSpec InsertUserSpec) error
 
 	//FindUserByUsernameAndPassword If data not found will return nil
 	FindUserByEmailAndPassword(email string, password string) (*User, error)
@@ -18,10 +18,10 @@ type Service interface {
 	//UpdateUserToken(id string, token string) error
 
 	//UpdateUser if data not found will return error
-	UpdateUser(id string, updateUserSpec UpdateUserSpec, updatedBy string) error
+	UpdateUser(id string, updateUserSpec UpdateUserSpec) error
 
 	//Deleteuser if data not found will return error
-	DeleteUser(id string, deletedBy string) error
+	DeleteUser(id string) error
 }
 
 //Repository ingoing port for user

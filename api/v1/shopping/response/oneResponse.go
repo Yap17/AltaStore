@@ -1,8 +1,6 @@
 package response
 
-import (
-	"AltaStore/business/shopping"
-)
+import "AltaStore/business/shopping"
 
 func GetOneResponse(data *shopping.ShoppCart) *ShoppData {
 	return &ShoppData{

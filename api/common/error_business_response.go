@@ -8,7 +8,7 @@ import (
 const (
 	errInternalServerError responseCode = "500"
 	errNotFound            responseCode = "404"
-	// errHasBeenModified     responseCode = "400"
+	errHasBeenModified     responseCode = "400"
 	// errInvalidSpec         responseCode = ""
 )
 
@@ -25,6 +25,8 @@ func errorMapping(err error) (int, ControllerResponse) {
 	case business.ErrNotFound:
 		return newNotFoundResponse()
 
+	case business.ErrHasBeenModified:
+		return newHasBeenModifiedResponse()
 	}
 }
 
@@ -38,7 +40,7 @@ func newNotFoundResponse() (int, ControllerResponse) {
 		ControllerResponse{errNotFound, "Data Not Found", map[string]interface{}{}}
 }
 
-// func newHasBeenModifiedResponse() (int, ControllerResponse) {
-// 	return http.StatusBadRequest,
-// 		ControllerResponse{errHasBeenModified, "Data Has Been Modified", map[string]interface{}{}}
-// }
+func newHasBeenModifiedResponse() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errHasBeenModified, "Data Has Been Modified", map[string]interface{}{}}
+}
