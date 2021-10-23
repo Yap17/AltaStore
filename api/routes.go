@@ -31,6 +31,9 @@ func RegisterPath(e *echo.Echo,
 		panic("Invalid parameter")
 	}
 
+	// Add logger
+	e.Use(middleware.MiddlewareLogger)
+
 	regis := e.Group("v1/register")
 	regis.POST("", userController.InsertUser)
 	regis.POST("/admin", adminController.InsertAdmin)
