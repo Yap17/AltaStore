@@ -5,6 +5,7 @@ import (
 	"AltaStore/api/v1/admin"
 	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/checkoutpayment"
 	"AltaStore/api/v1/product"
 	"AltaStore/api/v1/purchasereceiving"
 	"AltaStore/api/v1/shopping"
@@ -23,6 +24,7 @@ func RegisterPath(e *echo.Echo,
 	productController *product.Controller,
 	shopping *shopping.Controller,
 	purchaseController *purchasereceiving.Controller,
+	paymentController *checkoutpayment.Controller,
 ) {
 	if category == nil ||
 		userController == nil ||
@@ -30,7 +32,8 @@ func RegisterPath(e *echo.Echo,
 		adminAuthController == nil ||
 		productController == nil ||
 		shopping == nil ||
-		purchaseController == nil {
+		purchaseController == nil ||
+		paymentController == nil {
 		panic("Invalid parameter")
 	}
 
@@ -92,4 +95,10 @@ func RegisterPath(e *echo.Echo,
 	purchRec.PUT("/:id", purchaseController.UpdatePurchaseReceiving)
 	purchRec.DELETE("/:id", purchaseController.DeletePurchaseReceiving)
 
+	payment := e.Group("/v1/payments")
+	purchRec.Use(middleware.JWTMiddleware())
+	payment.POST("", paymentController.Call)
+
+	paymentCallback := e.Group("/v1/payments/notif")
+	paymentCallback.GET("", paymentController.InsertPayment)
 }

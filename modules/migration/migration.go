@@ -1,6 +1,7 @@
 package migration
 
 import (
+	"AltaStore/business/checkoutpayment"
 	"AltaStore/modules/admin"
 	"AltaStore/modules/category"
 	"AltaStore/modules/product"
@@ -23,5 +24,6 @@ func TableMigration(db *gorm.DB) {
 		&shoppingdetail.ShoppingCartDetail{},
 		&purchasereceiving.PurchaseReceiving{},
 		&purchasereceivingdetail.PurchaseReceivingDetail{},
+		&checkoutpayment.CheckoutPayment{},
 	)
 }

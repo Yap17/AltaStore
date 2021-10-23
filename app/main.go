@@ -30,6 +30,10 @@ import (
 	purchaseService "AltaStore/business/purchasereceiving"
 	purchaseRepository "AltaStore/modules/purchasereceiving"
 	purchaseDetailRepository "AltaStore/modules/purchasereceivingdetail"
+
+	paymentController "AltaStore/api/v1/checkoutpayment"
+	paymentService "AltaStore/business/checkoutpayment"
+	paymentRepository "AltaStore/modules/checkoutpayment"
 	"fmt"
 
 	"github.com/go-redis/redis/v7"
@@ -154,6 +158,16 @@ func main() {
 
 	// initiate Purchase Receiving controller
 	purchaseController := purchaseController.NewController(purchaseService)
+
+	// initiate CheckOut Payment repository
+	payment := paymentRepository.NewRepository(dbConnection)
+
+	// initiate CheckOut Payment service
+	paymentService := paymentService.NewService(userService, payment)
+
+	// initiate CheckOut Payment controller
+	paymentController := paymentController.NewController(paymentService)
+
 	// create echo http
 	e := echo.New()
 
@@ -167,6 +181,7 @@ func main() {
 		productController,
 		shopHandler,
 		purchaseController,
+		paymentController,
 	)
 
 	// Run server
