@@ -16,7 +16,7 @@ type Repository struct {
 
 type Admin struct {
 	ID        string    `gorm:"type:uuid;primary_key"`
-	Email     string    `gorm:"email;index:idx_email,unique;type:varchar(50)"`
+	Email     string    `gorm:"email;index:unique;type:varchar(50)"`
 	FirstName string    `gorm:"firstname;type:varchar(50)"`
 	LastName  string    `gorm:"lastname;type:varchar(50)"`
 	Password  string    `gorm:"password;type:varchar(100)"`
