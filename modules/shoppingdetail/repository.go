@@ -23,13 +23,19 @@ type ShoppingCartDetail struct {
 	DeletedAt      time.Time `gorm:"deleted_at;type:timestamp"`
 }
 
-func (s *ShoppingCartDetail) toDetailItem() *shopping.ItemInCart {
+type ShopCartDetailItemWithProductName struct {
+	ShoppingCartDetail
+	ProductName string `gorm:"name"`
+}
+
+func (s *ShopCartDetailItemWithProductName) toDetailItem() *shopping.ItemInCart {
 	return &shopping.ItemInCart{
-		ID:        s.ID,
-		ProductId: s.ProductId,
-		Price:     s.Price,
-		Qty:       s.Qty,
-		UpdatedAt: s.UpdatedAt,
+		ID:          s.ID,
+		ProductId:   s.ProductId,
+		ProductName: s.ProductName,
+		Price:       s.Price,
+		Qty:         s.Qty,
+		UpdatedAt:   s.UpdatedAt,
 	}
 }
 
@@ -55,10 +61,12 @@ func modifyItemInCart(item *shopping.UpdateItemInCartSpec) *ShoppingCartDetail {
 }
 
 func (r *Repository) GetShopCartDetailById(id string) (*[]shopping.ItemInCart, error) {
-	var shopCartDetail []ShoppingCartDetail
+	var shopCartDetail []ShopCartDetailItemWithProductName
 	var itemInCart []shopping.ItemInCart
 
-	err := r.DB.Where("shopping_cart_id = ?", id).Order("created_at asc").Find(&shopCartDetail).Error
+	// err := r.DB.Model(&ShoppingCartDetail{}).Select("shopping_cart_details.*, t1.name").Joins("inner join products t1 on trim(cast(t1.id as varchar)) = trim(product_id)").Scan(&shopCartDetail).Error
+	// err := r.DB.Where("shopping_cart_id = ?", id).Order("created_at asc").Find(&shopCartDetail).Error
+	err := r.DB.Raw("select t1.*, t2.name product_name from shopping_cart_details t1 inner join products t2 on cast(t2.id as varchar) = t1.product_id where t1.shopping_cart_id = ?", id).Scan(&shopCartDetail).Error
 	if err != nil {
 		return nil, err
 	}
