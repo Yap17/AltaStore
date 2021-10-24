@@ -2,12 +2,13 @@ package product
 
 import (
 	"AltaStore/business"
+	"AltaStore/business/admin"
 	"AltaStore/util/validator"
 	"time"
 )
 
 type InsertProductSpec struct {
-	UserId            string `validate:"required"`
+	AdminId           string `validate:"required"`
 	Code              string `validate:"required"`
 	Name              string `validate:"required"`
 	Price             int64  `validate:"required"`
@@ -18,7 +19,7 @@ type InsertProductSpec struct {
 }
 
 type UpdateProductSpec struct {
-	UserId            string `validate:"required"`
+	AdminId           string `validate:"required"`
 	Name              string `validate:"required"`
 	Price             int64  `validate:"required"`
 	IsActive          bool   `validate:"required"`
@@ -28,11 +29,12 @@ type UpdateProductSpec struct {
 }
 
 type service struct {
-	repository Repository
+	adminService admin.Service
+	repository   Repository
 }
 
-func NewService(repository Repository) Service {
-	return &service{repository}
+func NewService(adminService admin.Service, repository Repository) Service {
+	return &service{adminService, repository}
 }
 
 func (s *service) GetAllProduct() (*[]Product, error) {
@@ -52,6 +54,11 @@ func (s *service) InsertProduct(product *InsertProductSpec) error {
 	if err != nil {
 		return business.ErrInvalidSpec
 	}
+	admin, err := s.adminService.FindAdminByID(product.AdminId)
+	if err != nil {
+		return business.ErrNotHavePermission
+	}
+
 	data := NewProduct(
 		product.Code,
 		product.Name,
@@ -60,7 +67,7 @@ func (s *service) InsertProduct(product *InsertProductSpec) error {
 		product.ProductCategoryId,
 		product.UnitName,
 		product.Description,
-		product.UserId,
+		admin.ID,
 		time.Now(),
 	)
 	return s.repository.InsertProduct(data)
@@ -79,6 +86,10 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
 	if err != nil {
 		return business.ErrInvalidSpec
 	}
+	admin, err := s.adminService.FindAdminByID(updateProduct.AdminId)
+	if err != nil {
+		return business.ErrNotHavePermission
+	}
 	modifiedproduct := product.ModifyProduct(
 		updateProduct.Name,
 		updateProduct.Price,
@@ -86,13 +97,13 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
 		updateProduct.ProductCategoryId,
 		updateProduct.UnitName,
 		updateProduct.Description,
-		updateProduct.UserId,
+		admin.ID,
 		time.Now())
 
 	return s.repository.UpdateProduct(modifiedproduct)
 }
 
-func (s *service) DeleteProduct(id string, userid string) error {
+func (s *service) DeleteProduct(id string, adminId string) error {
 	product, err := s.repository.FindProductById(id)
 	if err != nil {
 		return err
@@ -101,10 +112,13 @@ func (s *service) DeleteProduct(id string, userid string) error {
 	} else if product.DeletedBy != "" {
 		return business.ErrDeleted
 	}
-
+	admin, err := s.adminService.FindAdminByID(adminId)
+	if err != nil {
+		return business.ErrNotHavePermission
+	}
 	deleteProduct := product.DeleteProduct(
 		time.Now(),
-		userid,
+		admin.ID,
 	)
 	return s.repository.DeleteProduct(deleteProduct)
 }

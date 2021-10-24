@@ -17,7 +17,7 @@ type Service interface {
 	UpdateProduct(id string, Product *UpdateProductSpec) error
 
 	//DeleteProduct if data not found will return error
-	DeleteProduct(id string, userid string) error
+	DeleteProduct(id string, adminId string) error
 }
 
 type Repository interface {

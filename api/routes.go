@@ -5,7 +5,9 @@ import (
 	"AltaStore/api/v1/admin"
 	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/checkoutpayment"
 	"AltaStore/api/v1/product"
+	"AltaStore/api/v1/purchasereceiving"
 	"AltaStore/api/v1/shopping"
 	"AltaStore/api/v1/user"
 	"AltaStore/api/v1/userauth"
@@ -21,13 +23,17 @@ func RegisterPath(e *echo.Echo,
 	adminAuthController *adminauth.Controller,
 	productController *product.Controller,
 	shopping *shopping.Controller,
+	purchaseController *purchasereceiving.Controller,
+	paymentController *checkoutpayment.Controller,
 ) {
 	if category == nil ||
 		userController == nil ||
 		userAuthController == nil ||
 		adminAuthController == nil ||
 		productController == nil ||
-		shopping == nil {
+		shopping == nil ||
+		purchaseController == nil ||
+		paymentController == nil {
 		panic("Invalid parameter")
 	}
 
@@ -84,4 +90,18 @@ func RegisterPath(e *echo.Echo,
 	user.PUT("/:id/password", userController.UpdateUserPassword)
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
+	purchRec := e.Group("/v1/purchasereceivings")
+	purchRec.Use(middleware.JWTMiddleware())
+	purchRec.POST("", purchaseController.InsertPurchaseReceiving)
+	purchRec.GET("", purchaseController.GetAllPurchaseReceiving)
+	purchRec.GET("/:id", purchaseController.FindPurchaseReceivingById)
+	purchRec.PUT("/:id", purchaseController.UpdatePurchaseReceiving)
+	purchRec.DELETE("/:id", purchaseController.DeletePurchaseReceiving)
+
+	payment := e.Group("/v1/payments")
+	purchRec.Use(middleware.JWTMiddleware())
+	payment.POST("", paymentController.Call)
+
+	paymentCallback := e.Group("/v1/payments/notif")
+	paymentCallback.GET("", paymentController.InsertPayment)
 }

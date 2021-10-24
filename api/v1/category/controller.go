@@ -88,16 +88,16 @@ func (c *Controller) DeleteCategory(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	userid := ctx.QueryParam("userid")
+	adminId := ctx.QueryParam("adminId")
 
 	if _, err = uuid.Parse(id); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
-	if _, err = uuid.Parse(userid); err != nil {
+	if _, err = uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	if err = c.service.DeleteCategory(id, userid); err != nil {
+	if err = c.service.DeleteCategory(id, adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
