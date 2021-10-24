@@ -5,7 +5,7 @@ import (
 )
 
 type InsertProductRequest struct {
-	UserId            string `json:"userid"`
+	AdminId           string `json:"adminid"`
 	Code              string `json:"code"`
 	Name              string `json:"name"`
 	Price             int64  `json:"price"`
@@ -18,7 +18,7 @@ type InsertProductRequest struct {
 func (i *InsertProductRequest) ToProductSpec() *product.InsertProductSpec {
 	var spec product.InsertProductSpec
 
-	spec.UserId = i.UserId
+	spec.AdminId = i.AdminId
 	spec.Code = i.Code
 	spec.Name = i.Name
 	spec.Price = i.Price

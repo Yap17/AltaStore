@@ -41,6 +41,15 @@ import (
 	shopService "AltaStore/business/shopping"
 	shopRepository "AltaStore/modules/shopping"
 	shopDetailRepository "AltaStore/modules/shoppingdetail"
+
+	purchaseController "AltaStore/api/v1/purchasereceiving"
+	purchaseService "AltaStore/business/purchasereceiving"
+	purchaseRepository "AltaStore/modules/purchasereceiving"
+	purchaseDetailRepository "AltaStore/modules/purchasereceivingdetail"
+
+	paymentController "AltaStore/api/v1/checkoutpayment"
+	paymentService "AltaStore/business/checkoutpayment"
+	paymentRepository "AltaStore/modules/checkoutpayment"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
@@ -130,15 +139,6 @@ func main() {
 	//redisConnection := newRedisConnection(config)
 	_ = newRedisConnection(config)
 
-	// Initiate Respository Category
-	categoryRepo := cateRepository.NewRepository(dbConnection)
-
-	// Initiate Service Category
-	categoryService := cateService.NewService(categoryRepo)
-
-	// Initiate Controller Category
-	controllerCategory := cateController.NewController(categoryService)
-
 	//initiate user repository
 	user := userRepository.NewDBRepository(dbConnection)
 
@@ -172,11 +172,20 @@ func main() {
 	//initiate auth controller
 	adminAuthController := adminAuthController.NewController(adminAuthService)
 
+	// Initiate Respository Category
+	categoryRepo := cateRepository.NewRepository(dbConnection)
+
+	// Initiate Service Category
+	categoryService := cateService.NewService(adminService, categoryRepo)
+
+	// Initiate Controller Category
+	controllerCategory := cateController.NewController(categoryService)
+
 	// Initiate Respository Product
 	product := productRepository.NewRepository(dbConnection)
 
 	// Initiate Service Product
-	ProductService := productService.NewService(product)
+	ProductService := productService.NewService(adminService, product)
 
 	// Initiate Controller Product
 	productController := productController.NewController(ProductService)
@@ -185,7 +194,7 @@ func main() {
 	shopRepo := shopRepository.NewRepository(dbConnection)
 	shopDetailRepo := shopDetailRepository.NewRepository(dbConnection)
 
-	// initiate shopping service
+	// initiate urchase Receiving service
 	shopServc := shopService.NewService(shopRepo, shopDetailRepo)
 
 	// initiate shopping controller
@@ -200,6 +209,25 @@ func main() {
 	// initiate checkout controller shopingcart
 	c_outController := checkoutController.NewController(c_outServc)
 
+	// initiate Purchase Receiving repository
+	purchase := purchaseRepository.NewRepository(dbConnection)
+	purchaseDetail := purchaseDetailRepository.NewRepository(dbConnection)
+
+	// initiate Purchase Receiving service
+	purchaseService := purchaseService.NewService(adminService, purchase, purchaseDetail)
+
+	// initiate Purchase Receiving controller
+	purchaseController := purchaseController.NewController(purchaseService)
+
+	// initiate CheckOut Payment repository
+	payment := paymentRepository.NewRepository(dbConnection)
+
+	// initiate CheckOut Payment service
+	paymentService := paymentService.NewService(userService, payment)
+
+	// initiate CheckOut Payment controller
+	paymentController := paymentController.NewController(paymentService)
+
 	// create echo http
 	e := echo.New()
 
@@ -213,6 +241,8 @@ func main() {
 		productController,
 		shopHandler,
 		c_outController,
+		purchaseController,
+		paymentController,
 	)
 
 	lock := make(chan error)

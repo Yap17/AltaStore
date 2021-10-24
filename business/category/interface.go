@@ -14,7 +14,7 @@ type Service interface {
 	UpdateCategory(id string, category *CategorySpec) error
 
 	// Menghapus produk kategori
-	DeleteCategory(id string, userid string) error
+	DeleteCategory(id string, adminId string) error
 }
 
 type Repository interface {
@@ -31,5 +31,5 @@ type Repository interface {
 	UpdateCategory(id string, category Category) error
 
 	// Menghapus produk kategori
-	DeleteCategory(id string, userid string) error
+	DeleteCategory(id string, adminId string) error
 }

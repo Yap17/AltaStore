@@ -99,7 +99,7 @@ func (c *Controller) DeleteProduct(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	userid := ctx.QueryParam("userid")
+	userid := ctx.QueryParam("adminid")
 
 	if _, err = uuid.Parse(id); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))

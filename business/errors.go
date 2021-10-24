@@ -15,9 +15,11 @@ var (
 
 	ErrInvalidSpec = errors.New("Given_Spec_Is_Not_Valid")
 
-	ErrPasswordMisMatch = errors.New("Wrong Password")
+	ErrPasswordMisMatch = errors.New("Wrong_Password")
 
-	ErrDeleted = errors.New("Object Deleted")
+	ErrDeleted = errors.New("Object_Deleted")
 
-	ErrLoginFailed = errors.New("Login Failed")
+	ErrLoginFailed = errors.New("Login_Failed")
+
+	ErrNotHavePermission = errors.New("Not_Have_Permission")
 )
