@@ -1,16 +1,49 @@
 package checkout
 
+import (
+	"AltaStore/business/checkoutpayment"
+
+	snap "github.com/midtrans/midtrans-go/snap"
+)
+
 type service struct {
-	repository         Repository
-	repoShoppingDetail RepoShoppingDetail
+	checkoutpaymentService checkoutpayment.Service
+	repository             Repository
+	repoShoppingDetail     RepoShoppingDetail
 }
 
-func NewService(repository Repository, repoShoppingDetail RepoShoppingDetail) Service {
-	return &service{repository, repoShoppingDetail}
+func NewService(
+	checkoutpaymentService checkoutpayment.Service,
+	repository Repository,
+	repoShoppingDetail RepoShoppingDetail,
+
+) Service {
+	return &service{
+		checkoutpaymentService,
+		repository,
+		repoShoppingDetail,
+	}
 }
 
-func (s *service) NewCheckoutShoppingCart(checkout *Checkout) error {
-	return s.repository.NewCheckoutShoppingCart(checkout.toCheckout())
+func (s *service) NewCheckoutShoppingCart(checkout *Checkout) (*snap.Response, error) {
+	var newCheckout = checkout.toCheckout()
+	dets, err := s.repoShoppingDetail.GetShopCartDetailById(newCheckout.ShoppingCardId)
+	if err != nil {
+		return nil, err
+	}
+	err = s.repository.NewCheckoutShoppingCart(newCheckout)
+	if err != nil {
+		return nil, err
+	}
+	var sum int64 = 0
+	for _, val := range *dets {
+		sum += int64(val.Qty)
+	}
+
+	return s.checkoutpaymentService.GenerateSnapPayment(
+		newCheckout.CreatedBy,
+		newCheckout.ID,
+		sum)
 }
 
 func (s *service) GetAllCheckout() (*[]Checkout, error) {

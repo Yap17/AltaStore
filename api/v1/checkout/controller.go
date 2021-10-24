@@ -27,12 +27,12 @@ func (c *Controller) NewCheckoutShoppingCart(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	err = c.service.NewCheckoutShoppingCart(checkoutShopCart.ToBusinessCheckout())
+	snap, err := c.service.NewCheckoutShoppingCart(checkoutShopCart.ToBusinessCheckout())
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	return ctx.JSON(common.SuccessResponseWithoutData())
+	return ctx.JSON(common.SuccessResponseWithData(snap))
 }
 
 func (c *Controller) GetAllCheckout(ctx echo.Context) error {
