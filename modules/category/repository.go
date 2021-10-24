@@ -98,7 +98,7 @@ func (r *Repository) UpdateCategory(id string, cat category.Category) error {
 	}
 
 	err = r.DB.Model(&category).Updates(
-		ProductCategory{Code: cat.Code, Name: cat.Name, UpdatedAt: cat.UpdatedAt, UpdatedBy: cat.UpdatedBy},
+		ProductCategory{Name: cat.Name, UpdatedAt: cat.UpdatedAt, UpdatedBy: cat.UpdatedBy},
 	).Error
 	if err != nil {
 		return err
