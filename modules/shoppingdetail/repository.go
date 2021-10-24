@@ -1,9 +1,8 @@
 package shoppingdetail
 
 import (
+	"AltaStore/modules/product"
 	"time"
-
-	"AltaStore/business/shopping"
 
 	"gorm.io/gorm"
 )
@@ -13,27 +12,40 @@ type Repository struct {
 }
 
 type ShoppingCartDetail struct {
-	ID             string    `gorm:"id;type:uuid;primaryKey"`
-	ShoppingCartId string    `gorm:"shopping_cart_id;type:varchar(50)"`
-	ProductId      string    `gorm:"product_id;type:varchar(50)"`
-	Price          int       `gorm:"price;type:integer"`
-	Qty            int       `gorm:"qty;type:integer"`
-	CreatedAt      time.Time `gorm:"created_at;type:timestamp"`
-	UpdatedAt      time.Time `gorm:"updated_at;type:timestamp"`
-	DeletedAt      time.Time `gorm:"deleted_at;type:timestamp"`
+	ID             string          `gorm:"id;type:uuid;primaryKey"`
+	ShoppingCartId string          `gorm:"shopping_cart_id;type:uuid;index:shopping_detail_uniq"`
+	ProductId      string          `gorm:"product_id;type:uuid;index:shopping_detail_uniq"`
+	Product        product.Product `gorm:"foreignKey:ProductId"`
+	Price          int             `gorm:"price;type:integer"`
+	Qty            int             `gorm:"qty;type:integer"`
+	CreatedAt      time.Time       `gorm:"created_at;type:timestamp"`
+	UpdatedAt      time.Time       `gorm:"updated_at;type:timestamp"`
+	DeletedAt      time.Time       `gorm:"deleted_at;type:timestamp"`
 }
 
-func (s *ShoppingCartDetail) toDetailItem() *shopping.ItemInCart {
-	return &shopping.ItemInCart{
-		ID:        s.ID,
-		ProductId: s.ProductId,
-		Price:     s.Price,
-		Qty:       s.Qty,
-		UpdatedAt: s.UpdatedAt,
-	}
+type ShopCartDetailItemWithProductName struct {
+	ShoppingCartDetail
+	ProductName string `gorm:"name"`
 }
 
-func createItemInCart(cartId string, item *shopping.InsertItemInCartSpec) *ShoppingCartDetail {
+type InsertItemInCartSpec struct {
+	ID        string
+	ProductId string
+	Price     int
+	Qty       int
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type UpdateItemInCartSpec struct {
+	ID        string
+	ProductId string
+	Price     int
+	Qty       int
+	UpdatedAt time.Time
+}
+
+func createItemInCart(cartId string, item *InsertItemInCartSpec) *ShoppingCartDetail {
 	return &ShoppingCartDetail{
 		ID:             item.ID,
 		ShoppingCartId: cartId,
@@ -45,7 +57,7 @@ func createItemInCart(cartId string, item *shopping.InsertItemInCartSpec) *Shopp
 	}
 }
 
-func modifyItemInCart(item *shopping.UpdateItemInCartSpec) *ShoppingCartDetail {
+func modifyItemInCart(item *UpdateItemInCartSpec) *ShoppingCartDetail {
 	return &ShoppingCartDetail{
 		ProductId: item.ProductId,
 		Price:     item.Price,
@@ -54,23 +66,18 @@ func modifyItemInCart(item *shopping.UpdateItemInCartSpec) *ShoppingCartDetail {
 	}
 }
 
-func (r *Repository) GetShopCartDetailById(id string) (*[]shopping.ItemInCart, error) {
-	var shopCartDetail []ShoppingCartDetail
-	var itemInCart []shopping.ItemInCart
+func (r *Repository) GetShopCartDetailById(id string) (*[]ShopCartDetailItemWithProductName, error) {
+	var shopCartDetail []ShopCartDetailItemWithProductName
 
-	err := r.DB.Where("shopping_cart_id = ?", id).Order("created_at asc").Find(&shopCartDetail).Error
+	err := r.DB.Raw("select t1.*, t2.name product_name from shopping_cart_details t1 inner join products t2 on t2.id = t1.product_id where t1.shopping_cart_id = ?", id).Scan(&shopCartDetail).Error
 	if err != nil {
 		return nil, err
 	}
 
-	for _, val := range shopCartDetail {
-		itemInCart = append(itemInCart, *val.toDetailItem())
-	}
-
-	return &itemInCart, nil
+	return &shopCartDetail, nil
 }
 
-func (r *Repository) NewItemInShopCart(cartId string, item *shopping.InsertItemInCartSpec) error {
+func (r *Repository) NewItemInShopCart(cartId string, item *InsertItemInCartSpec) error {
 	err := r.DB.Create(createItemInCart(cartId, item)).Error
 
 	if err != nil {
@@ -80,7 +87,7 @@ func (r *Repository) NewItemInShopCart(cartId string, item *shopping.InsertItemI
 	return nil
 }
 
-func (r *Repository) ModifyItemInShopCart(cartId string, item *shopping.UpdateItemInCartSpec) error {
+func (r *Repository) ModifyItemInShopCart(cartId string, item *UpdateItemInCartSpec) error {
 	var itemInCart ShoppingCartDetail
 
 	err := r.DB.Where("shopping_cart_id = ? and id = ?", cartId, item.ID).Find(&itemInCart).Error

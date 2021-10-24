@@ -4,6 +4,7 @@ import (
 	"AltaStore/business/checkoutpayment"
 	"AltaStore/modules/admin"
 	"AltaStore/modules/category"
+	"AltaStore/modules/checkout"
 	"AltaStore/modules/product"
 	"AltaStore/modules/purchasereceiving"
 
@@ -17,11 +18,12 @@ import (
 
 func TableMigration(db *gorm.DB) {
 	db.AutoMigrate(&category.ProductCategory{},
+		&shopping.ShoppingCart{},
 		&user.User{},
 		&product.Product{},
 		&admin.Admin{},
-		&shopping.ShoppingCart{},
 		&shoppingdetail.ShoppingCartDetail{},
+		&checkout.Checkout{},
 		&purchasereceiving.PurchaseReceiving{},
 		&purchasereceivingdetail.PurchaseReceivingDetail{},
 		&checkoutpayment.CheckoutPayment{},

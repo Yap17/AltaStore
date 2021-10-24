@@ -2,6 +2,7 @@ package shopping
 
 import (
 	"AltaStore/api/v1/shopping/request"
+	"AltaStore/modules/shoppingdetail"
 	"time"
 )
 
@@ -37,13 +38,13 @@ type Repository interface {
 }
 
 type RepositoryCartDetail interface {
-	GetShopCartDetailById(id string) (*[]ItemInCart, error)
+	GetShopCartDetailById(id string) (*[]shoppingdetail.ShopCartDetailItemWithProductName, error)
 
 	// Menambahkan item produk pada shopping cart
-	NewItemInShopCart(cartId string, item *InsertItemInCartSpec) error
+	NewItemInShopCart(cartId string, item *shoppingdetail.InsertItemInCartSpec) error
 
 	// Merubah item produk pada shopping cart
-	ModifyItemInShopCart(cartId string, item *UpdateItemInCartSpec) error
+	ModifyItemInShopCart(cartId string, item *shoppingdetail.UpdateItemInCartSpec) error
 
 	// Menghapus item produk pada shopping cart
 	DeleteItemInShopCart(cartId string, id string) error

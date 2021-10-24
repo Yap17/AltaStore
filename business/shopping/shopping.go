@@ -2,6 +2,7 @@ package shopping
 
 import (
 	"AltaStore/api/v1/shopping/request"
+	"AltaStore/modules/shoppingdetail"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,23 +24,6 @@ type ItemInCart struct {
 	Price       int
 	Qty         int
 	UpdatedAt   time.Time
-}
-
-type InsertItemInCartSpec struct {
-	ID        string
-	ProductId string
-	Price     int
-	Qty       int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type UpdateItemInCartSpec struct {
-	ID        string
-	ProductId string
-	Price     int
-	Qty       int
-	UpdatedAt time.Time
 }
 
 type ShopCartDetail struct {
@@ -71,8 +55,8 @@ func getShopCartDetailFormat(sum *ShoppCart, details *[]ItemInCart) *ShopCartDet
 	return &shopCartDetail
 }
 
-func insertItemFormat(item *request.DetailItemInShopCart) *InsertItemInCartSpec {
-	return &InsertItemInCartSpec{
+func insertItemFormat(item *request.DetailItemInShopCart) *shoppingdetail.InsertItemInCartSpec {
+	return &shoppingdetail.InsertItemInCartSpec{
 		ID:        uuid.NewString(),
 		ProductId: item.ProductId,
 		Price:     item.Price,
@@ -82,12 +66,37 @@ func insertItemFormat(item *request.DetailItemInShopCart) *InsertItemInCartSpec 
 	}
 }
 
-func updateItemFormat(item *request.DetailItemInShopCart) *UpdateItemInCartSpec {
-	return &UpdateItemInCartSpec{
+func updateItemFormat(item *request.DetailItemInShopCart) *shoppingdetail.UpdateItemInCartSpec {
+	return &shoppingdetail.UpdateItemInCartSpec{
 		ID:        item.ID,
 		ProductId: item.ProductId,
 		Price:     item.Price,
 		Qty:       item.Qty,
 		UpdatedAt: time.Now(),
 	}
+}
+
+func toItem(item shoppingdetail.ShopCartDetailItemWithProductName) ItemInCart {
+	return ItemInCart{
+		ID:          item.ID,
+		ProductId:   item.ProductId,
+		ProductName: item.ProductName,
+		Price:       item.Price,
+		Qty:         item.Qty,
+		UpdatedAt:   item.UpdatedAt,
+	}
+}
+
+func toDetailItemInCart(items *[]shoppingdetail.ShopCartDetailItemWithProductName) *[]ItemInCart {
+	var details []ItemInCart
+
+	for _, item := range *items {
+		details = append(details, toItem(item))
+	}
+
+	if details == nil {
+		details = []ItemInCart{}
+	}
+
+	return &details
 }
