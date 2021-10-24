@@ -19,7 +19,7 @@ indent_style = space
 indent_size = 2
 
 # 4 space indentation
-[*.{sum}]
+[*.{sum, sql}]
 indent_style = space
 indent_size = 4
 
