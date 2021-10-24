@@ -2,6 +2,7 @@ package main
 
 import (
 	"AltaStore/api"
+	"AltaStore/api/middleware"
 	adminController "AltaStore/api/v1/admin"
 	adminAuthController "AltaStore/api/v1/adminauth"
 	contrCategory "AltaStore/api/v1/category"
@@ -11,15 +12,19 @@ import (
 	adminService "AltaStore/business/admin"
 	adminAuthService "AltaStore/business/adminauth"
 	busCategory "AltaStore/business/category"
+	loggerService "AltaStore/business/logger"
 	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
 	userAuthService "AltaStore/business/userauth"
 	"AltaStore/config"
 	adminRepository "AltaStore/modules/admin"
 	repoCategory "AltaStore/modules/category"
+	loggerRepo "AltaStore/modules/logger"
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
+	"context"
+	"time"
 
 	shopController "AltaStore/api/v1/shopping"
 	shopService "AltaStore/business/shopping"
@@ -36,9 +41,13 @@ import (
 	paymentRepository "AltaStore/modules/checkoutpayment"
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"github.com/go-redis/redis/v7"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -57,6 +66,24 @@ func newDatabaseConnection(cfg *config.ConfigApp) *gorm.DB {
 	migration.TableMigration(db)
 
 	return db
+}
+
+func newMongoDBConnection(cfg *config.ConfigApp) *mongo.Database {
+	clientOptions := options.Client().ApplyURI(
+		fmt.Sprintf("mongodb://%s:%s@%s:%d", cfg.MongoUsername, cfg.MongoPassword, cfg.MongoHost, cfg.MongoPort),
+	)
+
+	client, err := mongo.NewClient(clientOptions)
+	if err != nil {
+		panic(err)
+	}
+
+	err = client.Connect(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	return client.Database(cfg.MongoDbName)
 }
 
 func newRedisConnection(cfg *config.ConfigApp) *redis.Client {
@@ -80,6 +107,19 @@ func newRedisConnection(cfg *config.ConfigApp) *redis.Client {
 func main() {
 	// retrieves application configuration and returns common values when there is a problem
 	config := config.GetConfig()
+
+	// Open mongodb logger
+	mongoConnection := newMongoDBConnection(config)
+
+	// Register repository
+	logrRepo := loggerRepo.NewRepository(mongoConnection)
+
+	// Register service
+	logeService := loggerService.NewService(logrRepo)
+
+	// Register logs
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(logeService)
 
 	// open database server base session
 	dbConnection := newDatabaseConnection(config)
@@ -184,13 +224,18 @@ func main() {
 		paymentController,
 	)
 
-	// Run server
-	func() {
+	lock := make(chan error)
+
+	go func(lock chan error) {
 		address := fmt.Sprintf(":%d", config.AppPort)
+		lock <- e.Start(address)
+	}(lock)
 
-		if err := e.Start(address); err != nil {
-			log.Info("Shutdown Echo Service")
-		}
+	time.Sleep(1 * time.Millisecond)
+	middleware.MakeLogEntry(nil).Info(fmt.Sprintf("Application Start In Port => ::%d", config.AppPort))
 
-	}()
+	err := <-lock
+	if err != nil {
+		middleware.MakeLogEntry(nil).Panic("Shutdown Echo Service")
+	}
 }

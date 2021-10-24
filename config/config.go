@@ -20,6 +20,11 @@ type ConfigApp struct {
 	RedisHost         string `mapstructure:"redis_host"`
 	RedisPort         int    `mapstructure:"redis_port"`
 	MidTransServerKey string `mapstructure:"midtransserverkey"`
+	MongoHost         string `mapstructure:"mongo_host"`
+	MongoPort         int    `mapstructure:"mongo_port"`
+	MongoUsername     string `mapstructure:"mongo_username"`
+	MongoPassword     string `mapstructure:"mongo_password"`
+	MongoDbName       string `mapstructure:"mongo_dbname"`
 }
 
 func GetConfig() *ConfigApp {
@@ -37,12 +42,17 @@ func GetConfig() *ConfigApp {
 	defaConfig.JwtSecretKey = "AltaStore"
 	defaConfig.RedisHost = "localhost"
 	defaConfig.RedisPort = 9001
+	defaConfig.MongoHost = "localhost"
+	defaConfig.MongoPort = 27017
+	defaConfig.MongoUsername = ""
+	defaConfig.MongoPassword = ""
+	defaConfig.MongoDbName = "altastoredb"
 	defaConfig.MidTransServerKey = "SB-Mid-server-Q_vEZuSAEJvflvzI7jvWqPZz"
-
 	var (
 		err error
 		cwd string
 	)
+
 	// Geting current directory
 	cwd, err = os.Getwd()
 	if err != nil {
