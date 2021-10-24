@@ -5,6 +5,7 @@ import (
 	"AltaStore/api/v1/admin"
 	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/checkout"
 	"AltaStore/api/v1/product"
 	"AltaStore/api/v1/shopping"
 	"AltaStore/api/v1/user"
@@ -21,6 +22,7 @@ func RegisterPath(e *echo.Echo,
 	adminAuthController *adminauth.Controller,
 	productController *product.Controller,
 	shopping *shopping.Controller,
+	checkout *checkout.Controller,
 ) {
 	if category == nil ||
 		userController == nil ||
@@ -84,4 +86,9 @@ func RegisterPath(e *echo.Echo,
 	user.PUT("/:id/password", userController.UpdateUserPassword)
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
+	// Checkout
+	c_out := e.Group("/v1/checkout")
+	c_out.POST("", checkout.NewCheckoutShoppingCart)
+	c_out.GET("", checkout.GetAllCheckout)
+	c_out.GET("/:id", checkout.GetCheckoutById)
 }
