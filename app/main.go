@@ -3,26 +3,37 @@ package main
 import (
 	"AltaStore/api"
 	"AltaStore/api/middleware"
+
+	// Controller
 	adminController "AltaStore/api/v1/admin"
 	adminAuthController "AltaStore/api/v1/adminauth"
-	contrCategory "AltaStore/api/v1/category"
+	cateController "AltaStore/api/v1/category"
+	checkoutController "AltaStore/api/v1/checkout"
 	productController "AltaStore/api/v1/product"
 	userController "AltaStore/api/v1/user"
 	userAuthController "AltaStore/api/v1/userauth"
+
+	// Service
 	adminService "AltaStore/business/admin"
 	adminAuthService "AltaStore/business/adminauth"
-	busCategory "AltaStore/business/category"
+	cateService "AltaStore/business/category"
+	checkoutService "AltaStore/business/checkout"
 	loggerService "AltaStore/business/logger"
 	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
 	userAuthService "AltaStore/business/userauth"
+
 	"AltaStore/config"
+
+	// Repository
 	adminRepository "AltaStore/modules/admin"
-	repoCategory "AltaStore/modules/category"
+	cateRepository "AltaStore/modules/category"
+	checkoutRepository "AltaStore/modules/checkout"
 	loggerRepo "AltaStore/modules/logger"
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
+
 	"context"
 	"time"
 
@@ -162,13 +173,13 @@ func main() {
 	adminAuthController := adminAuthController.NewController(adminAuthService)
 
 	// Initiate Respository Category
-	categoryRepo := repoCategory.NewRepository(dbConnection)
+	categoryRepo := cateRepository.NewRepository(dbConnection)
 
 	// Initiate Service Category
-	categoryService := busCategory.NewService(adminService, categoryRepo)
+	categoryService := cateService.NewService(adminService, categoryRepo)
 
 	// Initiate Controller Category
-	controllerCategory := contrCategory.NewController(categoryService)
+	controllerCategory := cateController.NewController(categoryService)
 
 	// Initiate Respository Product
 	product := productRepository.NewRepository(dbConnection)
@@ -188,6 +199,15 @@ func main() {
 
 	// initiate shopping controller
 	shopHandler := shopController.NewController(shopServc)
+
+	// initiate checkout repository shoping cart
+	c_outeRepo := checkoutRepository.NewRepository(dbConnection)
+
+	// initiate checkout service shopping cat
+	c_outServc := checkoutService.NewService(c_outeRepo, shopDetailRepo)
+
+	// initiate checkout controller shopingcart
+	c_outController := checkoutController.NewController(c_outServc)
 
 	// initiate Purchase Receiving repository
 	purchase := purchaseRepository.NewRepository(dbConnection)
@@ -220,6 +240,7 @@ func main() {
 		adminAuthController,
 		productController,
 		shopHandler,
+		c_outController,
 		purchaseController,
 		paymentController,
 	)

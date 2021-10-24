@@ -11,7 +11,7 @@ import (
 )
 
 type InserPaymentSpec struct {
-	OrderId           string `validate: required"`
+	OrderId           string `validate:"required"`
 	MerchantId        string
 	StatusCode        string `validate:"required"`
 	TransactionStatus string `validate:"required"`

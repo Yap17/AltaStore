@@ -35,7 +35,9 @@ func (s *service) GetShopCartDetailById(id string) (*ShopCartDetail, error) {
 		return nil, err
 	}
 
-	return getShopCartDetailFormat(shopCart, items), nil
+	cnvItems := toDetailItemInCart(items)
+
+	return getShopCartDetailFormat(shopCart, cnvItems), nil
 }
 
 func (s *service) NewItemInShopCart(cartId string, item *request.DetailItemInShopCart) error {

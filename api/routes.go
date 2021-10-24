@@ -5,6 +5,7 @@ import (
 	"AltaStore/api/v1/admin"
 	"AltaStore/api/v1/adminauth"
 	"AltaStore/api/v1/category"
+	"AltaStore/api/v1/checkout"
 	"AltaStore/api/v1/checkoutpayment"
 	"AltaStore/api/v1/product"
 	"AltaStore/api/v1/purchasereceiving"
@@ -23,6 +24,7 @@ func RegisterPath(e *echo.Echo,
 	adminAuthController *adminauth.Controller,
 	productController *product.Controller,
 	shopping *shopping.Controller,
+	checkout *checkout.Controller,
 	purchaseController *purchasereceiving.Controller,
 	paymentController *checkoutpayment.Controller,
 ) {
@@ -90,6 +92,12 @@ func RegisterPath(e *echo.Echo,
 	user.PUT("/:id/password", userController.UpdateUserPassword)
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
+	// Checkout
+	c_out := e.Group("/v1/checkout")
+	c_out.POST("", checkout.NewCheckoutShoppingCart)
+	c_out.GET("", checkout.GetAllCheckout)
+	c_out.GET("/:id", checkout.GetCheckoutById)
+
 	purchRec := e.Group("/v1/purchasereceivings")
 	purchRec.Use(middleware.JWTMiddleware())
 	purchRec.POST("", purchaseController.InsertPurchaseReceiving)
@@ -104,4 +112,5 @@ func RegisterPath(e *echo.Echo,
 
 	paymentCallback := e.Group("/v1/payments/notif")
 	paymentCallback.GET("", paymentController.InsertPayment)
+
 }
