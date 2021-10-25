@@ -20,10 +20,10 @@ type Service interface {
 	NewItemInShopCart(cartId string, item *request.DetailItemInShopCart) error
 
 	// Merubah item produk pada shopping cart
-	ModifyItemInShopCart(cartId string, item *request.DetailItemInShopCart) error
+	ModifyItemInShopCart(cartId string, productid string, item *request.DetailItemInShopCart) error
 
 	// Menghapus item produk pada shopping cart
-	DeleteItemInShopCart(cartId string, id string) error
+	DeleteItemInShopCart(cartId string, productid string) error
 }
 
 type Repository interface {
@@ -44,8 +44,8 @@ type RepositoryCartDetail interface {
 	NewItemInShopCart(cartId string, item *shoppingdetail.InsertItemInCartSpec) error
 
 	// Merubah item produk pada shopping cart
-	ModifyItemInShopCart(cartId string, item *shoppingdetail.UpdateItemInCartSpec) error
+	ModifyItemInShopCart(cartId string, productid string, item *shoppingdetail.UpdateItemInCartSpec) error
 
 	// Menghapus item produk pada shopping cart
-	DeleteItemInShopCart(cartId string, id string) error
+	DeleteItemInShopCart(cartId string, productid string) error
 }

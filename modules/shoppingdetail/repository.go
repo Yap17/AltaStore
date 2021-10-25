@@ -59,7 +59,6 @@ func createItemInCart(cartId string, item *InsertItemInCartSpec) *ShoppingCartDe
 
 func modifyItemInCart(item *UpdateItemInCartSpec) *ShoppingCartDetail {
 	return &ShoppingCartDetail{
-		ProductId: item.ProductId,
 		Price:     item.Price,
 		Qty:       item.Qty,
 		UpdatedAt: item.UpdatedAt,
@@ -87,10 +86,10 @@ func (r *Repository) NewItemInShopCart(cartId string, item *InsertItemInCartSpec
 	return nil
 }
 
-func (r *Repository) ModifyItemInShopCart(cartId string, item *UpdateItemInCartSpec) error {
+func (r *Repository) ModifyItemInShopCart(cartId string, productid string, item *UpdateItemInCartSpec) error {
 	var itemInCart ShoppingCartDetail
 
-	err := r.DB.Where("shopping_cart_id = ? and id = ?", cartId, item.ID).Find(&itemInCart).Error
+	err := r.DB.Where("shopping_cart_id = ? and product_id = ?", cartId, productid).Find(&itemInCart).Error
 	if err != nil {
 		return err
 	}
@@ -100,10 +99,10 @@ func (r *Repository) ModifyItemInShopCart(cartId string, item *UpdateItemInCartS
 	return nil
 }
 
-func (r *Repository) DeleteItemInShopCart(cartId string, id string) error {
+func (r *Repository) DeleteItemInShopCart(cartId string, productid string) error {
 	var itemInCart ShoppingCartDetail
 
-	err := r.DB.Where("shopping_cart_id = ? and id = ?", cartId, id).Find(&itemInCart).Error
+	err := r.DB.Where("shopping_cart_id = ? and product_id = ?", cartId, productid).Find(&itemInCart).Error
 	if err != nil {
 		return err
 	}

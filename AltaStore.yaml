@@ -7,10 +7,12 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
+  - name: Auth
+    description: Register and Authentication for User or Admin 
   - name: User
-    description: User Authentication and Information about Users
+    description: Resource for insert, modifiying and getting Users
   - name: Admin
-    description: Admin Authentication and Information about Admins
+    description: Resource for insert, modifiying and getting Admins 
   - name: Product Category
     description: Resource for insert, modifiying and getting Product Categories
   - name: Product
@@ -23,10 +25,10 @@ tags:
     description: Resource for insert, modifiying and getting Check Outs
 
 paths:
-  /user/register:
+  /v1/register:
     post:
       tags:
-        - User
+        - Auth
       summary: Register new user
       operationId: register
       parameters:
@@ -44,10 +46,10 @@ paths:
         409:
           description: Email Already Registered
 
-  /user/login:
+  /v1/login:
     post:
       tags:
-        - User
+        - Auth
       summary: Login user
       operationId: login
       parameters:
@@ -70,32 +72,7 @@ paths:
           description: Incorrect Email or Password
         404:
           description: User Not Found
-  /user/logout/{id}:
-    post:
-      tags:
-        - User
-      summary: Logout user
-      operationId: logout
-      parameters:
-        - in: query
-          name: id
-          description: Id to be passed as a query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: Logout Success
-        400:
-          description: Bad Input Parameter
-        401:
-          description: Unauthorized
-        404:
-          description: User Not Found
-  /user/{id}:
+  /v1/users/{id}:
     get:
       tags:
         - User
@@ -172,7 +149,7 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-  /user/{id}/password:
+  /v1/users/{id}/password:
     put:
       tags:
         - User
@@ -202,10 +179,10 @@ paths:
         404:
           description: User Not Found
 
-  /admin/register:
+  /v1/register/admin:
     post:
       tags:
-        - Admin
+        - Auth
       summary: Register Admin
       operationId: Register
       parameters:
@@ -220,10 +197,10 @@ paths:
           description: Register Successfully
         400:
           description: Bad Input Parameter
-  /admin/login:
+  /v1/login/admin:
     post:
       tags:
-        - Admin
+        - Auth
       summary: Login admin
       operationId: Login
       parameters:
@@ -246,30 +223,7 @@ paths:
           description: Incorrect Email or Password
         404:
           description: User Not Found
-  /admin/logout/{id}:
-    post:
-      tags:
-        - Admin
-      summary: Logout Admin
-      operationId: Logout
-      parameters:
-        - in: query
-          name: id
-          description: Id to be passed as a query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: Logout Success
-        400:
-          description: Bad Input Parameter
-        404:
-          description: User Not Found
-  /admin/{id}:
+  /v1/admins/{id}:
     get:
       tags:
         - Admin
@@ -346,7 +300,7 @@ paths:
           description: Bad Input Parameter
         404:
           description: User Not Found
-  /admin/{id}/password:
+  /v1/admins/{id}/password:
     put:
       tags:
         - Admin
@@ -376,7 +330,7 @@ paths:
         404:
           description: User Not Found
 
-  /categories:
+  /v1/categories:
     post:
       tags:
         - Product Category
@@ -410,7 +364,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProductCategoryView"
-  /categories/{id}:
+  /v1/categories/{id}:
     get:
       tags:
         - Product Category
@@ -487,7 +441,7 @@ paths:
           description: Bad Input Parameter
         404:
           description: Not Found
-  /product:
+  /v1/products:
     post:
       tags:
         - Product
@@ -555,7 +509,7 @@ paths:
                 $ref: "#/components/schemas/ProductView"
         400:
           description: Bad Input Parameter
-  /product/{id}:
+  /v1/products/{id}:
     put:
       tags:
         - Product
@@ -606,7 +560,7 @@ paths:
           description: Bad Input Parameter
         404:
           description: Not Found
-  /purchasereceiving:
+  /v1/purchasereceivings:
     post:
       tags:
         - Purchase Receiving
@@ -671,7 +625,7 @@ paths:
 
         400:
           description: Bad Input Parameter
-  /purchasereceiving/{id}:
+  /v1/purchasereceivings/{id}:
     put:
       tags:
         - Purchase Receiving
@@ -716,22 +670,22 @@ paths:
         404:
           description: Not Found
 
-  /user/{id}/shoppingcart:
+  /v1/users/{id}/shoppingcart:
     get:
       tags:
         - Shopping Cart
       summary: Take active shopping cart
       operationId: shoppingCartByUserId
       description: |
-        Take an active shopping cart by user id, return the shopping cart id 
-        if there is a shopping cart and return an empty when there is no active shopping cart.
+        Takes the identity of the active shopping cart and returns empty when not found.
       parameters:
         - in: path
           name: id
-          description: give the user id to take the active cart
+          description: User ID
           required: true
           schema:
             type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
@@ -743,7 +697,7 @@ paths:
                 $ref: "#/components/schemas/ActiveShoppingCart"
         404:
           description: when there is no active shopping cart
-  /shoppingcart:
+  /v1/shoppingcarts:
     post:
       tags:
         - Shopping Cart
@@ -755,33 +709,30 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        201:
+        200:
           description: "shopping cart created"
-        400:
-          description: "invalid input, object invalid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActiveShoppingCart"
         409:
           description: "shopping cart already exists"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ShoppingCartId"
-        description: Shopping cart to add
-  /shoppingcart/{id}:
+  /v1/shoppingcarts/{id}:
     get:
       tags:
         - Shopping Cart
-      summary: Get detail item in active shopping cart
+      summary: Get product details in active shopping cart
       operationId: shoppingCartById
       description: |
-        Retrieve item details in shopping cart
+        Get product details in active shopping cart and return shopping cart summary and product details.
       parameters:
         - in: path
           name: id
-          description: give shopping cart id
+          description: Provide pre-made shopping cart id
           required: true
           schema:
             type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
@@ -791,26 +742,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ShoppingCartDetail"
+        404:
+          description: shopping cart id not found
+  /v1/shoppingcarts/{id}/products:
     post:
       tags:
         - Shopping Cart
-      summary: Adding a new product to the shopping cart
+      summary: Add new product to shopping cart
       operationId: addProductCart
-      description: Adding a new product to the shopping cart
+      description: Add new product to shopping cart
       parameters:
         - in: path
           name: id
-          description: provide pre-made shopping cart id
+          description: Provide pre-made shopping cart id
           required: true
           schema:
             type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
         201:
           description: "product created successfully"
-        400:
-          description: "invalid input, object invalid"
         409:
           description: "product already exists"
       requestBody:
@@ -818,26 +771,33 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ShoppingCartProductNew"
+  /v1/shoppingcarts/{id}/products/{productid}:
     put:
       tags:
         - Shopping Cart
-      summary: Product updates on shopping cart
+      summary: Updating products in the shopping cart
       # operationId: updateProductCart
-      description: update product qty on shopping cart
+      description: Updating products in the shopping cart
       parameters:
         - in: path
           name: id
-          description: provide pre-made shopping cart id
+          description: Provide pre-made shopping cart id
           required: true
           schema:
             type: string
+            format: uuid
+        - in: path
+          name: productid
+          description: Product id
+          required: true
+          schema:
+            type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
-        201:
+        200:
           description: "product updated successfully"
-        400:
-          description: "invalid input, object invalid"
         404:
           description: "product not found"
       requestBody:
@@ -853,50 +813,26 @@ paths:
       parameters:
         - in: path
           name: id
-          description: provide pre-made shopping cart id
+          description: Provide pre-made shopping cart id
           required: true
           schema:
             type: string
-      security:
-        - bearerAuth: []
-      responses:
-        202:
-          description: "product deleted successfully"
-        400:
-          description: "invalid input, object invalid"
-        404:
-          description: "product not found"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ShoppingCartProductDel"
-
-  /user/{id}/checkout:
-    get:
-      tags:
-        - Check Out
-      summary: Get Checkout
-      operationId: getShoppingCartById
-      parameters:
+            format: uuid
         - in: path
-          name: id
-          description: user Id
+          name: productid
+          description: Product id
           required: true
           schema:
             type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Successful Operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CheckoutMasterView"
-        400:
-          description: Bad Input Parameter
-  /checkout:
+          description: "product deleted successfully"
+        404:
+          description: "product not found"
+  /v1/checkouts:
     post:
       tags:
         - Check Out
@@ -917,19 +853,34 @@ paths:
           description: "Checkout created"
         400:
           description: Bad Input Parameter
-  /checkout/{id}:
     get:
       tags:
         - Check Out
-      summary: Get Detail Product - Checkout
+      summary: Fetch all checkout summary
+      operationId: getShoppingCartById
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutMasterView"
+  /v1/checkouts/{id}:
+    get:
+      tags:
+        - Check Out
+      summary: Get checkout information and product details
       operationId: detailcheckoutproduct
       parameters:
         - in: path
           name: id
-          description: give checkoutid
+          description: Provide pre-made checkout id
           required: true
           schema:
             type: string
+            format: uuid
       security:
         - bearerAuth: []
       responses:
@@ -939,73 +890,87 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CheckoutProductView"
-        400:
-          description: Bad Input Parameter
-
         404:
-          description: Not Found
-  /checkout/{id}/payment:
-    put:
-      tags:
-        - Check Out
-      summary: Update Payment
-      operationId: updatepayment
-      parameters:
-        - in: path
-          name: id
-          description: give checkoutid
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: status
-          description: status payment
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: OrderId
-          description: payment id
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: Error
-          description: error payment
-          required: false
-          schema:
-            type: string
+          description: Data Not Found
+  # /v1/payment:
+  #   put:
+  #     tags:
+  #       - Check Out
+  #     summary: Update Payment
+  #     operationId: updatepayment
+  #     parameters:
+  #       - in: path
+  #         name: id
+  #         description: give checkoutid
+  #         required: true
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #       - in: query
+  #         name: status
+  #         description: status payment
+  #         required: false
+  #         schema:
+  #           type: string
+  #       - in: query
+  #         name: OrderId
+  #         description: payment id
+  #         required: false
+  #         schema:
+  #           type: string
+  #       - in: query
+  #         name: Error
+  #         description: error payment
+  #         required: false
+  #         schema:
+  #           type: string
 
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: successfully operation
-        400:
-          description: Bad Input Parameter
-        404:
-          description: Not Found
-  /checkout/payment:
-    put:
+  #     security:
+  #       - bearerAuth: []
+  #     responses:
+  #       200:
+  #         description: successfully operation
+  #       400:
+  #         description: Bad Input Parameter
+  #       404:
+  #         description: Not Found
+  /v1/payment/notif:
+    get:
       tags:
         - Check Out
       summary: Get Payment Detail
       operationId: getpaymentdetail
       parameters:
         - in: query
-          name: status
-          description: status
+          name: merchant_id
+          description: merchant_id
           required: false
           schema:
             type: string
         - in: query
-          name: Id
-          description: checkout id
+          name: order_id
+          description: order_id
           required: false
           schema:
             type: string
-            format: uuid
+        - in: query
+          name: status_code
+          description: status_code
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: transaction_status
+          description: transaction_status
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: fraud_status
+          description: fraud_status
+          required: false
+          schema:
+            type: string
 
       security:
         - bearerAuth: []
@@ -1090,7 +1055,7 @@ components:
     UserChangePassword:
       type: object
       properties:
-        password:
+        newpassword:
           type: string
           example: Abcd123
         oldpassword:
@@ -1157,7 +1122,7 @@ components:
     AdminChangePassword:
       type: object
       properties:
-        password:
+        newpassword:
           type: string
           example: Abcd123
         oldpassword:
@@ -1169,9 +1134,6 @@ components:
     ProductCategoryModel:
       type: object
       properties:
-        userid:
-          type: string
-          format: uuid
         code:
           type: string
           example: PC0001
@@ -1366,50 +1328,68 @@ components:
     ShoppingCartDetail:
       type: object
       properties:
-        shoppingCode:
+        ID:
           type: string
-          example: SC0001
-        description:
+          format: uuid
+          example: "3916445d-ca66-438e-893e-50f6e4c39a34"
+        Description:
           type: string
-        details:
+          example: ""
+        CreatedBy:
+          type: string
+          format: uuid
+          example: "961058d4-23a0-4922-816c-01333e6a13ab"
+        UpdatedAt:
+          type: string
+          format: date-time
+          example: "2021-10-24T09:48:24.560612Z"
+        Details:
           type: array
           items:
             type: object
             properties:
-              id:
+              ID:
                 type: string
                 format: uuid
-              name:
+                example: "987c1957-f8b7-42e8-a980-beec5a364f65"
+              ProductId:
                 type: string
-                example: "Buku Tulis Model xyz"
-              categoryName:
+                format: uuid
+                example: "032407b9-2b7b-4e63-8802-c82a17443f34"
+              ProductName:
                 type: string
-                example: "Buku Tulis"
-              unitName:
-                type: string
-                example: "Lusin"
-              price:
+                example: "MIE SEDAP RASA ROTO"
+              Price:
                 type: integer
-                example: 12000
-              qty:
+                example: 3500
+              Qty:
                 type: integer
-                example: 1
+                example: 3
+              UpdatedAt:
+                type: string
+                format: date-time
+                example: "2021-10-24T09:52:16.839921Z"
     ActiveShoppingCart:
       type: object
       properties:
         id:
           type: string
           format: uuid
-    ShoppingCartId:
-      type: object
-      properties:
-        userid:
+          example: "3916445d-ca66-438e-893e-50f6e4c39a34"
+        ischeckout:
+          type: boolean
+          example: false
+        description:
           type: string
-          format: uuid
+          example: ""
+        updated_at:
+          type: string
+          format: date-time
+          example: "2021-10-24T09:48:24.560612Z"
     ShoppingCartProductNew:
       type: object
       properties:
-        productId:
+        productid:
           type: string
           format: uuid
         price:
@@ -1421,9 +1401,9 @@ components:
     ShoppingCartProductUpdate:
       type: object
       properties:
-        productId:
-          type: string
-          format: uuid
+        price:
+          type: integer
+          example: 3500
         qty:
           type: integer
           example: 1
@@ -1435,81 +1415,96 @@ components:
           format: uuid
 
     CheckoutMasterView:
-      type: array
-      items:
-        properties:
-          id:
-            type: string
-            format: uuid
-          code:
-            type: string
-            example: CH0001
-          description:
-            type: string
-            example: Tolong Packing dengan rapi
-          grandtotal:
-            type: number
-            example: 10000000
-          status:
-            type: string
-            enum:
-              - Pending = 1
-              - Success = 2
-              - Canel = 3
-              - Failure = 4
-            example: 2
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        shoppingcartid:
+          type: string
+          format: uuid
+          example: 9cf9cae5-bad7-48bf-96c7-85c8d6114c68
+        description:
+          type: string
+          example: Tolong Packing dengan rapi
+        created_by:
+          type: string
+          format: uuid
+          example: 961058d4-23a0-4922-816c-01333e6a13ab
+        created_at:
+          type: string
+          format: date-time
+          example: "2021-10-26T05:37:22.958972Z"
 
     CheckoutProductView:
       type: object
       properties:
-        productcode:
+        ID:
           type: string
-          example: M00001
-        productname:
+          format: uuid
+          example: 1547b2a2-ca03-4ce8-9494-e6b882b71865
+        ShoppingCardId:
           type: string
-          example: Aquala
-        productcategoryname:
+          format: uuid
+          example: 9cf9cae5-bad7-48bf-96c7-85c8d6114c68
+        Description:
           type: string
-          example: Obat Tetes Mata
-        productunitname:
+          example: "Mohon untuk di packing dengan rapi ya"
+        CreatedBy:
           type: string
-          example: buah
-        price:
-          type: number
-          example: 10000000
-        qty:
-          type: number
-          example: 1
-
+          format: uuid
+        CreatedAt:
+          type: string
+          format: date-time
+          example: "2021-10-26T05:57:18.277861Z"
+        Details:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: string
+                format: uuid
+                example: e0fbe25d-895d-4d7a-b117-94b7025cf8a5
+              ProductId:
+                type: string
+                format: uuid
+                example: 032407b9-2b7b-4e63-8802-c82a17443f34
+              ProductName:
+                type: string
+                example: "MIE SEDAP RASA ROTO"
+              Price:
+                type: integer
+                example: 3500
+              Qty:
+                type: integer
+                example: 1
+              UpdatedAt:
+                type: string
+                format: date-time
+                example: "2021-10-26T00:18:17.872182Z"
     CheckoutPaymentView:
       type: array
       items:
         properties:
-          id:
+          merchant_id:
+            type: string
+            example: M1234567
+          order_id:
             type: string
             format: uuid
-          code:
+          status_code:
             type: string
-            example: CH0001
-          description:
+            example: 200
+          transaction_status:
             type: string
-            example: Tolong Packing dengan rapi
-          grandtotal:
-            type: number
-            example: 10000000
-          status:
+            example: settlement
+          fraud_status:
             type: string
-            enum:
-              - Pending = 1
-              - Success = 2
-              - Canel = 3
-              - Failure = 4
-            example: 2
-          orderid:
-            type: string
-            example: adsfsd012321
-          url:
-            type: string
-            example: https://abc/success
-          error:
-            type: string
+            example: ""
+    
+    # SuccessResponseWithData:
+    #   type: object
+    #   properties:
+    #     code:
+
