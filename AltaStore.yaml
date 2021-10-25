@@ -690,11 +690,13 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: search results matching criteria
+          description: "search results matching criteria"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ActiveShoppingCart"
+        400:
+          description: Bad Input Parameter
         404:
           description: when there is no active shopping cart
   /v1/shoppingcarts:
@@ -715,6 +717,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ActiveShoppingCart"
+        400:
+          description: invalid input, object invalid
         409:
           description: "shopping cart already exists"
   /v1/shoppingcarts/{id}:
@@ -737,11 +741,13 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: search results matching criteria
+          description: "search results matching criteria"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ShoppingCartDetail"
+        400:
+          description: Bad Input Parameter
         404:
           description: shopping cart id not found
   /v1/shoppingcarts/{id}/products:
@@ -764,6 +770,8 @@ paths:
       responses:
         201:
           description: "product created successfully"
+        400:
+          description: invalid input, object invalid
         409:
           description: "product already exists"
       requestBody:
@@ -798,6 +806,8 @@ paths:
       responses:
         200:
           description: "product updated successfully"
+        400:
+          description: "invalid input, object invalid"
         404:
           description: "product not found"
       requestBody:
@@ -830,6 +840,8 @@ paths:
       responses:
         200:
           description: "product deleted successfully"
+        400:
+          description: "Bad Input Parameter"
         404:
           description: "product not found"
   /v1/checkouts:
@@ -840,19 +852,16 @@ paths:
       operationId: AddCheckout
       security:
         - bearerAuth: []
-      parameters:
-        - in: query
-          name: shoppingcartid
-          description: shopping Cart Id
-          required: true
-          schema:
-            type: string
-            format: uuid
       responses:
         201:
           description: "Checkout created"
         400:
-          description: Bad Input Parameter
+          description: "invalid input, object invalid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutShopCart"
     get:
       tags:
         - Check Out
@@ -862,11 +871,13 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Successful Operation
+          description: "search results matching criteria"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CheckoutMasterView"
+        400:
+          description: "Bad Input Parameter"
   /v1/checkouts/{id}:
     get:
       tags:
@@ -885,13 +896,15 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: successfully operation
+          description: "search results matching criteria"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CheckoutProductView"
+        400:
+          description: "Bad Input Parameter"
         404:
-          description: Data Not Found
+          description: "Data Not Found"
   # /v1/payment:
   #   put:
   #     tags:
@@ -1502,7 +1515,16 @@ components:
           fraud_status:
             type: string
             example: ""
-    
+    CheckoutShopCart:
+      type: object
+      properties:
+        shoppingcartid:
+          type: string
+          format: uuid
+          example: 9cf9cae5-bad7-48bf-96c7-85c8d6114c68
+        description:
+          type: string
+          example: "Mohon untuk di packing dengan rapi ya"
     # SuccessResponseWithData:
     #   type: object
     #   properties:
