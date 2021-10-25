@@ -1,9 +1,13 @@
 package checkout
 
-import "AltaStore/modules/shoppingdetail"
+import (
+	"AltaStore/modules/shoppingdetail"
+
+	snap "github.com/midtrans/midtrans-go/snap"
+)
 
 type Service interface {
-	NewCheckoutShoppingCart(checkout *Checkout) error
+	NewCheckoutShoppingCart(checkout *Checkout) (*snap.Response, error)
 	GetAllCheckout() (*[]Checkout, error)
 	GetCheckoutById(id string) (*CheckItemDetails, error)
 }

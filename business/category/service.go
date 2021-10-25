@@ -46,7 +46,7 @@ func (s *service) UpdateCategory(id string, category *CategorySpec) error {
 	if err != nil {
 		return business.ErrNotHavePermission
 	}
-	dataCategory := ModifyProductCategory(category.Code, category.Name, admin.ID, time.Now())
+	dataCategory := ModifyProductCategory(category.Name, admin.ID, time.Now())
 
 	return s.repository.UpdateCategory(id, dataCategory)
 }

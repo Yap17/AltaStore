@@ -32,9 +32,8 @@ func NewProductCategory(code string, name string,
 	}
 }
 
-func ModifyProductCategory(code string, name string, modifier string, updatedAt time.Time) Category {
+func ModifyProductCategory(name string, modifier string, updatedAt time.Time) Category {
 	return Category{
-		Code:      code,
 		Name:      name,
 		UpdatedAt: updatedAt,
 		UpdatedBy: modifier,

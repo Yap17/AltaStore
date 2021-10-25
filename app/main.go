@@ -200,15 +200,6 @@ func main() {
 	// initiate shopping controller
 	shopHandler := shopController.NewController(shopServc)
 
-	// initiate checkout repository shoping cart
-	c_outeRepo := checkoutRepository.NewRepository(dbConnection)
-
-	// initiate checkout service shopping cat
-	c_outServc := checkoutService.NewService(c_outeRepo, shopDetailRepo)
-
-	// initiate checkout controller shopingcart
-	c_outController := checkoutController.NewController(c_outServc)
-
 	// initiate Purchase Receiving repository
 	purchase := purchaseRepository.NewRepository(dbConnection)
 	purchaseDetail := purchaseDetailRepository.NewRepository(dbConnection)
@@ -227,6 +218,15 @@ func main() {
 
 	// initiate CheckOut Payment controller
 	paymentController := paymentController.NewController(paymentService)
+
+	// initiate checkout repository shoping cart
+	c_outeRepo := checkoutRepository.NewRepository(dbConnection)
+
+	// initiate checkout service shopping cat
+	c_outServc := checkoutService.NewService(paymentService, c_outeRepo, shopDetailRepo)
+
+	// initiate checkout controller shopingcart
+	c_outController := checkoutController.NewController(c_outServc)
 
 	// create echo http
 	e := echo.New()
