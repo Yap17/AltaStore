@@ -66,10 +66,9 @@ func insertItemFormat(item *request.DetailItemInShopCart) *shoppingdetail.Insert
 	}
 }
 
-func updateItemFormat(item *request.DetailItemInShopCart) *shoppingdetail.UpdateItemInCartSpec {
+func updateItemFormat(productid string, item *request.DetailItemInShopCart) *shoppingdetail.UpdateItemInCartSpec {
 	return &shoppingdetail.UpdateItemInCartSpec{
-		ID:        item.ID,
-		ProductId: item.ProductId,
+		ProductId: productid,
 		Price:     item.Price,
 		Qty:       item.Qty,
 		UpdatedAt: time.Now(),

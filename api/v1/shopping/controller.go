@@ -98,8 +98,13 @@ func (c *Controller) ModifyItemInShopCart(ctx echo.Context) error {
 	var item = new(request.DetailItemInShopCart)
 
 	id := ctx.Param("id")
+	productid := ctx.Param("productid")
 
 	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if _, err := uuid.Parse(productid); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
@@ -107,7 +112,7 @@ func (c *Controller) ModifyItemInShopCart(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	err := c.service.ModifyItemInShopCart(id, item)
+	err := c.service.ModifyItemInShopCart(id, productid, item)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}

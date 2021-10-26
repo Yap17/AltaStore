@@ -45,10 +45,10 @@ func (s *service) NewItemInShopCart(cartId string, item *request.DetailItemInSho
 
 }
 
-func (s *service) ModifyItemInShopCart(cartId string, item *request.DetailItemInShopCart) error {
-	return s.repoCartDetail.ModifyItemInShopCart(cartId, updateItemFormat(item))
+func (s *service) ModifyItemInShopCart(cartId string, productid string, item *request.DetailItemInShopCart) error {
+	return s.repoCartDetail.ModifyItemInShopCart(cartId, productid, updateItemFormat(productid, item))
 }
 
-func (s *service) DeleteItemInShopCart(cartId string, id string) error {
-	return s.repoCartDetail.DeleteItemInShopCart(cartId, id)
+func (s *service) DeleteItemInShopCart(cartId string, productid string) error {
+	return s.repoCartDetail.DeleteItemInShopCart(cartId, productid)
 }

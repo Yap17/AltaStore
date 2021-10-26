@@ -76,13 +76,13 @@ func RegisterPath(e *echo.Echo,
 	// Routing shoping
 	//e.GET("/v1/users/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
-	shopCart := e.Group("/v1/shoppingcart")
+	shopCart := e.Group("/v1/shoppingcarts")
 	shopCart.Use(middleware.JWTMiddleware())
 	shopCart.POST("", shopping.NewShoppingCart)
 	shopCart.GET("/:id", shopping.GetShopCartDetailById)
-	shopCart.POST("/:id", shopping.NewItemInShopCart)
-	shopCart.PUT("/:id", shopping.ModifyItemInShopCart)
-	shopCart.DELETE("/:id/items/:productid", shopping.DeleteItemInShopCart)
+	shopCart.POST("/:id/products", shopping.NewItemInShopCart)
+	shopCart.PUT("/:id/products/:productid", shopping.ModifyItemInShopCart)
+	shopCart.DELETE("/:id/products/:productid", shopping.DeleteItemInShopCart)
 
 	user := e.Group("v1/users")
 	user.Use(middleware.JWTMiddleware())
@@ -93,7 +93,7 @@ func RegisterPath(e *echo.Echo,
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
 	// Checkout
-	c_out := e.Group("/v1/checkout")
+	c_out := e.Group("/v1/checkouts")
 	c_out.POST("", checkout.NewCheckoutShoppingCart)
 	c_out.GET("", checkout.GetAllCheckout)
 	c_out.GET("/:id", checkout.GetCheckoutById)
