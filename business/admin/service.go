@@ -132,25 +132,6 @@ func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error 
 	return s.repository.UpdateAdmin(modifiedAdmin)
 }
 
-// //UpdateAdmin if data not found will return error
-// func (s *service) UpdateAdminToken(id string, token string) error {
-// 	Admin, err := s.repository.FindAdminByID(id)
-// 	if err != nil {
-// 		return err
-// 	} else if Admin == nil {
-// 		return business.ErrNotFound
-// 	} else if Admin.DeletedBy != "" {
-// 		return business.ErrAdminDeleted
-// 	}
-
-// 	modifiedAdmin := Admin.ModifyAdminToken(
-// 		token,
-// 		time.Now(),
-// 	)
-
-// 	return s.repository.UpdateAdmin(modifiedAdmin)
-// }
-
 //DeleteAdmin if data not found will return error
 func (s *service) DeleteAdmin(id string) error {
 	admin, err := s.repository.FindAdminByID(id)
