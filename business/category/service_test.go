@@ -66,12 +66,12 @@ func setup() {
 
 func TestInsertCategory(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Insert Product Category Success", func(t *testing.T) {
@@ -95,12 +95,12 @@ func TestInsertCategory(t *testing.T) {
 
 func TestUpdateCategory(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Update Product Category Success", func(t *testing.T) {
@@ -124,12 +124,12 @@ func TestUpdateCategory(t *testing.T) {
 
 func TestDeleteCategory(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Delete Product Category Success", func(t *testing.T) {

@@ -99,12 +99,12 @@ func setup() {
 
 func TestInsertProduct(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Insert Product Success", func(t *testing.T) {
@@ -128,12 +128,12 @@ func TestInsertProduct(t *testing.T) {
 
 func TestUpdateProduct(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Product Not Found", func(t *testing.T) {
@@ -168,12 +168,12 @@ func TestUpdateProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
 		admin, err := adminService.FindAdminByID(id)
 
 		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotFound)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
 	t.Run("Expect Product Not Found", func(t *testing.T) {
