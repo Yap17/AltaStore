@@ -177,51 +177,57 @@
 				
 				<option value="file60">AltaStore/business/product/service.go (71.8%)</option>
 				
-				<option value="file61">AltaStore/business/purchasereceiving/purchasereceiving.go (0.0%)</option>
+				<option value="file61">AltaStore/business/purchasereceiving/mocks/Repository.go (82.4%)</option>
 				
-				<option value="file62">AltaStore/business/purchasereceiving/service.go (0.0%)</option>
+				<option value="file62">AltaStore/business/purchasereceiving/mocks/RepositoryDetail.go (47.5%)</option>
 				
-				<option value="file63">AltaStore/business/shopping/service.go (0.0%)</option>
+				<option value="file63">AltaStore/business/purchasereceiving/mocks/Service.go (0.0%)</option>
 				
-				<option value="file64">AltaStore/business/shopping/shopping.go (0.0%)</option>
+				<option value="file64">AltaStore/business/purchasereceiving/purchasereceiving.go (83.3%)</option>
 				
-				<option value="file65">AltaStore/business/user/mocks/Repository.go (82.6%)</option>
+				<option value="file65">AltaStore/business/purchasereceiving/service.go (65.8%)</option>
 				
-				<option value="file66">AltaStore/business/user/mocks/Service.go (0.0%)</option>
+				<option value="file66">AltaStore/business/shopping/service.go (0.0%)</option>
 				
-				<option value="file67">AltaStore/business/user/service.go (75.0%)</option>
+				<option value="file67">AltaStore/business/shopping/shopping.go (0.0%)</option>
 				
-				<option value="file68">AltaStore/business/user/user.go (100.0%)</option>
+				<option value="file68">AltaStore/business/user/mocks/Repository.go (82.6%)</option>
 				
-				<option value="file69">AltaStore/business/userauth/service.go (0.0%)</option>
+				<option value="file69">AltaStore/business/user/mocks/Service.go (0.0%)</option>
 				
-				<option value="file70">AltaStore/config/config.go (0.0%)</option>
+				<option value="file70">AltaStore/business/user/service.go (75.0%)</option>
 				
-				<option value="file71">AltaStore/modules/admin/repository.go (0.0%)</option>
+				<option value="file71">AltaStore/business/user/user.go (100.0%)</option>
 				
-				<option value="file72">AltaStore/modules/category/repository.go (0.0%)</option>
+				<option value="file72">AltaStore/business/userauth/service.go (0.0%)</option>
 				
-				<option value="file73">AltaStore/modules/checkout/repository.go (0.0%)</option>
+				<option value="file73">AltaStore/config/config.go (0.0%)</option>
 				
-				<option value="file74">AltaStore/modules/checkoutpayment/repository.go (0.0%)</option>
+				<option value="file74">AltaStore/modules/admin/repository.go (0.0%)</option>
 				
-				<option value="file75">AltaStore/modules/logger/repository.go (0.0%)</option>
+				<option value="file75">AltaStore/modules/category/repository.go (0.0%)</option>
 				
-				<option value="file76">AltaStore/modules/migration/migration.go (0.0%)</option>
+				<option value="file76">AltaStore/modules/checkout/repository.go (0.0%)</option>
 				
-				<option value="file77">AltaStore/modules/product/repository.go (0.0%)</option>
+				<option value="file77">AltaStore/modules/checkoutpayment/repository.go (0.0%)</option>
 				
-				<option value="file78">AltaStore/modules/purchasereceiving/repository.go (0.0%)</option>
+				<option value="file78">AltaStore/modules/logger/repository.go (0.0%)</option>
 				
-				<option value="file79">AltaStore/modules/purchasereceivingdetail/repository.go (0.0%)</option>
+				<option value="file79">AltaStore/modules/migration/migration.go (0.0%)</option>
 				
-				<option value="file80">AltaStore/modules/shopping/repository.go (0.0%)</option>
+				<option value="file80">AltaStore/modules/product/repository.go (0.0%)</option>
 				
-				<option value="file81">AltaStore/modules/shoppingdetail/repository.go (0.0%)</option>
+				<option value="file81">AltaStore/modules/purchasereceiving/repository.go (0.0%)</option>
 				
-				<option value="file82">AltaStore/modules/user/repository.go (0.0%)</option>
+				<option value="file82">AltaStore/modules/purchasereceivingdetail/repository.go (0.0%)</option>
 				
-				<option value="file83">AltaStore/util/validator/validator.go (100.0%)</option>
+				<option value="file83">AltaStore/modules/shopping/repository.go (0.0%)</option>
+				
+				<option value="file84">AltaStore/modules/shoppingdetail/repository.go (0.0%)</option>
+				
+				<option value="file85">AltaStore/modules/user/repository.go (0.0%)</option>
+				
+				<option value="file86">AltaStore/util/validator/validator.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -246,6 +252,8 @@ const (
         errInternalServerError responseCode = "500"
         errNotFound            responseCode = "404"
         errHasBeenModified     responseCode = "400"
+        errNotHavePermission   responseCode = "400"
+        errPasswordMisMatch    responseCode = "400"
         // errInvalidSpec         responseCode = ""
 )
 
@@ -264,6 +272,12 @@ func errorMapping(err error) (int, ControllerResponse) <span class="cov0" title=
 
         case business.ErrHasBeenModified:<span class="cov0" title="0">
                 return newHasBeenModifiedResponse()</span>
+
+        case business.ErrNotHavePermission:<span class="cov0" title="0">
+                return newNotHavePermission()</span>
+
+        case business.ErrPasswordMisMatch:<span class="cov0" title="0">
+                return newErrPasswordMisMatch()</span>
         }
 }
 
@@ -280,6 +294,16 @@ func newNotFoundResponse() (int, ControllerResponse) <span class="cov0" title="0
 func newHasBeenModifiedResponse() (int, ControllerResponse) <span class="cov0" title="0">{
         return http.StatusBadRequest,
                 ControllerResponse{errHasBeenModified, "Data Has Been Modified", map[string]interface{}{}}
+}</span>
+
+func newNotHavePermission() (int, ControllerResponse) <span class="cov0" title="0">{
+        return http.StatusBadRequest,
+                ControllerResponse{errHasBeenModified, "Not Have Permission", map[string]interface{}{}}
+}</span>
+
+func newErrPasswordMisMatch() (int, ControllerResponse) <span class="cov0" title="0">{
+        return http.StatusBadRequest,
+                ControllerResponse{errHasBeenModified, "Wrong Password", map[string]interface{}{}}
 }</span>
 </pre>
 		
@@ -4241,7 +4265,365 @@ func (s *service) DeleteProduct(id string, adminId string) error <span class="co
 }
 </pre>
 		
-		<pre class="file" id="file61" style="display: none">package purchasereceiving
+		<pre class="file" id="file61" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
+
+package mocks
+
+import (
+        purchasereceiving "AltaStore/business/purchasereceiving"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// Repository is an autogenerated mock type for the Repository type
+type Repository struct {
+        mock.Mock
+}
+
+// DeletePurchaseReceiving provides a mock function with given fields: item
+func (_m *Repository) DeletePurchaseReceiving(item *purchasereceiving.PurchaseReceiving) error <span class="cov8" title="1">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceiving) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov8" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="1">return r0</span>
+}
+
+// GetAllPurchaseReceiving provides a mock function with given fields:
+func (_m *Repository) GetAllPurchaseReceiving() (*[]purchasereceiving.PurchaseReceiving, error) <span class="cov8" title="1">{
+        ret := _m.Called()
+
+        var r0 *[]purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func() *[]purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*[]purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func() error); ok </span><span class="cov0" title="0">{
+                r1 = rf()
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
+// GetAllPurchaseReceivingByParameter provides a mock function with given fields: code
+func (_m *Repository) GetAllPurchaseReceivingByParameter(code string) (*[]purchasereceiving.PurchaseReceiving, error) <span class="cov8" title="1">{
+        ret := _m.Called(code)
+
+        var r0 *[]purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func(string) *[]purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf(code)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*[]purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(code)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
+// GetPurchaseReceivingById provides a mock function with given fields: id
+func (_m *Repository) GetPurchaseReceivingById(id string) (*purchasereceiving.PurchaseReceiving, error) <span class="cov8" title="1">{
+        ret := _m.Called(id)
+
+        var r0 *purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func(string) *purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
+// InsertPurchaseReceiving provides a mock function with given fields: item
+func (_m *Repository) InsertPurchaseReceiving(item *purchasereceiving.PurchaseReceiving) error <span class="cov8" title="1">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceiving) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov8" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="1">return r0</span>
+}
+
+// UpdatePurchaseReceiving provides a mock function with given fields: item
+func (_m *Repository) UpdatePurchaseReceiving(item *purchasereceiving.PurchaseReceiving) error <span class="cov8" title="1">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceiving) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov8" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="1">return r0</span>
+}
+</pre>
+		
+		<pre class="file" id="file62" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
+
+package mocks
+
+import (
+        purchasereceiving "AltaStore/business/purchasereceiving"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// RepositoryDetail is an autogenerated mock type for the RepositoryDetail type
+type RepositoryDetail struct {
+        mock.Mock
+}
+
+// DeletePurchaseReceivingDetail provides a mock function with given fields: item
+func (_m *RepositoryDetail) DeletePurchaseReceivingDetail(item *purchasereceiving.PurchaseReceivingDetail) error <span class="cov0" title="0">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceivingDetail) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// GetPurchaseReceivingDetailById provides a mock function with given fields: id
+func (_m *RepositoryDetail) GetPurchaseReceivingDetailById(id string) (*purchasereceiving.PurchaseReceivingDetail, error) <span class="cov8" title="1">{
+        ret := _m.Called(id)
+
+        var r0 *purchasereceiving.PurchaseReceivingDetail
+        if rf, ok := ret.Get(0).(func(string) *purchasereceiving.PurchaseReceivingDetail); ok </span><span class="cov0" title="0">{
+                r0 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*purchasereceiving.PurchaseReceivingDetail)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
+// GetPurchaseReceivingDetailByPurchaseReceivingId provides a mock function with given fields: id
+func (_m *RepositoryDetail) GetPurchaseReceivingDetailByPurchaseReceivingId(id string) (*[]purchasereceiving.PurchaseReceivingDetail, error) <span class="cov0" title="0">{
+        ret := _m.Called(id)
+
+        var r0 *[]purchasereceiving.PurchaseReceivingDetail
+        if rf, ok := ret.Get(0).(func(string) *[]purchasereceiving.PurchaseReceivingDetail); ok </span><span class="cov0" title="0">{
+                r0 = rf(id)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*[]purchasereceiving.PurchaseReceivingDetail)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// InsertPurchaseReceivingDetail provides a mock function with given fields: item
+func (_m *RepositoryDetail) InsertPurchaseReceivingDetail(item *purchasereceiving.PurchaseReceivingDetail) error <span class="cov8" title="1">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceivingDetail) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov8" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="1">return r0</span>
+}
+
+// UpdatePurchaseReceivingDetail provides a mock function with given fields: item
+func (_m *RepositoryDetail) UpdatePurchaseReceivingDetail(item *purchasereceiving.PurchaseReceivingDetail) error <span class="cov8" title="1">{
+        ret := _m.Called(item)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.PurchaseReceivingDetail) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item)
+        }</span> else<span class="cov8" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="1">return r0</span>
+}
+</pre>
+		
+		<pre class="file" id="file63" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
+
+package mocks
+
+import (
+        purchasereceiving "AltaStore/business/purchasereceiving"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// Service is an autogenerated mock type for the Service type
+type Service struct {
+        mock.Mock
+}
+
+// DeletePurchaseReceiving provides a mock function with given fields: id, deleter
+func (_m *Service) DeletePurchaseReceiving(id string, deleter string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, deleter)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(string, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, deleter)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// GetAllPurchaseReceiving provides a mock function with given fields: finder
+func (_m *Service) GetAllPurchaseReceiving(finder string) (*[]purchasereceiving.PurchaseReceiving, error) <span class="cov0" title="0">{
+        ret := _m.Called(finder)
+
+        var r0 *[]purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func(string) *[]purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf(finder)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*[]purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(finder)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// GetAllPurchaseReceivingByParameter provides a mock function with given fields: code, finder
+func (_m *Service) GetAllPurchaseReceivingByParameter(code string, finder string) (*[]purchasereceiving.PurchaseReceiving, error) <span class="cov0" title="0">{
+        ret := _m.Called(code, finder)
+
+        var r0 *[]purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func(string, string) *[]purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf(code, finder)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*[]purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string, string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(code, finder)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// GetPurchaseReceivingById provides a mock function with given fields: id, finder
+func (_m *Service) GetPurchaseReceivingById(id string, finder string) (*purchasereceiving.PurchaseReceiving, error) <span class="cov0" title="0">{
+        ret := _m.Called(id, finder)
+
+        var r0 *purchasereceiving.PurchaseReceiving
+        if rf, ok := ret.Get(0).(func(string, string) *purchasereceiving.PurchaseReceiving); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, finder)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*purchasereceiving.PurchaseReceiving)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string, string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id, finder)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// InsertPurchaseReceiving provides a mock function with given fields: item, creator
+func (_m *Service) InsertPurchaseReceiving(item *purchasereceiving.InsertPurchaseReceivingSpec, creator string) error <span class="cov0" title="0">{
+        ret := _m.Called(item, creator)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(*purchasereceiving.InsertPurchaseReceivingSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(item, creator)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// UpdatePurchaseReceiving provides a mock function with given fields: id, item, modifier
+func (_m *Service) UpdatePurchaseReceiving(id string, item *purchasereceiving.UpdatePurchaseReceivingSpec, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, item, modifier)
+
+        var r0 error
+        if rf, ok := ret.Get(0).(func(string, *purchasereceiving.UpdatePurchaseReceivingSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, item, modifier)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+</pre>
+		
+		<pre class="file" id="file64" style="display: none">package purchasereceiving
 
 import (
         "time"
@@ -4285,7 +4667,7 @@ func NewPurchaseReceiving(
         newDescription string,
         creator string,
         createdAt time.Time,
-) PurchaseReceiving <span class="cov0" title="0">{
+) PurchaseReceiving <span class="cov8" title="1">{
         return PurchaseReceiving{
                 ID:           uuid.NewString(),
                 Code:         newCode,
@@ -4304,7 +4686,7 @@ func NewPurchaseReceivingDetail(
         newPrice int64,
         creator string,
         createdAt time.Time,
-) PurchaseReceivingDetail <span class="cov0" title="0">{
+) PurchaseReceivingDetail <span class="cov8" title="1">{
         return PurchaseReceivingDetail{
                 ID:                  uuid.NewString(),
                 PurchaseReceivingId: purchaseReceivingId,
@@ -4323,7 +4705,7 @@ func (oldData *PurchaseReceiving) ModifyPurchaseReceiving(
         newDescription string,
         modifier string,
         modifierAt time.Time,
-) PurchaseReceiving <span class="cov0" title="0">{
+) PurchaseReceiving <span class="cov8" title="1">{
         return PurchaseReceiving{
                 ID:           oldData.ID,
                 Code:         newCode,
@@ -4343,7 +4725,7 @@ func (oldData *PurchaseReceivingDetail) ModifyPurchaseReceivingDetail(
         newPrice int64,
         modifier string,
         modifierAt time.Time,
-) PurchaseReceivingDetail <span class="cov0" title="0">{
+) PurchaseReceivingDetail <span class="cov8" title="1">{
         return PurchaseReceivingDetail{
                 ID:        oldData.ID,
                 ProductId: newProductId,
@@ -4359,7 +4741,7 @@ func (oldData *PurchaseReceivingDetail) ModifyPurchaseReceivingDetail(
 func (oldData *PurchaseReceiving) DeletePurchaseReceiving(
         deleter string,
         deletedAt time.Time,
-) PurchaseReceiving <span class="cov0" title="0">{
+) PurchaseReceiving <span class="cov8" title="1">{
         return PurchaseReceiving{
                 ID:           oldData.ID,
                 Code:         oldData.Code,
@@ -4394,7 +4776,7 @@ func (oldData *PurchaseReceivingDetail) DeletePurchaseReceivingDetail(
 }</span>
 </pre>
 		
-		<pre class="file" id="file62" style="display: none">package purchasereceiving
+		<pre class="file" id="file65" style="display: none">package purchasereceiving
 
 import (
         "AltaStore/business"
@@ -4442,7 +4824,7 @@ func NewService(
         adminService admin.Service,
         repository Repository,
         repositoryDetail RepositoryDetail,
-) Service <span class="cov0" title="0">{
+) Service <span class="cov8" title="1">{
         return &amp;service{
                 adminService, repository, repositoryDetail,
         }
@@ -4451,45 +4833,45 @@ func NewService(
 // GetAllPurchaseReceiving(finder string) (*PurchaseReceiving, error)
 // GetAllPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error)
 
-func (s *service) GetAllPurchaseReceivingByParameter(code string, finder string) (*[]PurchaseReceiving, error) <span class="cov0" title="0">{
+func (s *service) GetAllPurchaseReceivingByParameter(code string, finder string) (*[]PurchaseReceiving, error) <span class="cov8" title="1">{
         _, err := s.adminService.FindAdminByID(finder)
         if err != nil </span><span class="cov0" title="0">{
                 empty := []PurchaseReceiving{}
                 return &amp;empty, business.ErrNotHavePermission
         }</span>
-        <span class="cov0" title="0">return s.repository.GetAllPurchaseReceivingByParameter(code)</span>
+        <span class="cov8" title="1">return s.repository.GetAllPurchaseReceivingByParameter(code)</span>
 }
 
-func (s *service) GetAllPurchaseReceiving(finder string) (*[]PurchaseReceiving, error) <span class="cov0" title="0">{
+func (s *service) GetAllPurchaseReceiving(finder string) (*[]PurchaseReceiving, error) <span class="cov8" title="1">{
         _, err := s.adminService.FindAdminByID(finder)
         if err != nil </span><span class="cov0" title="0">{
                 empty := []PurchaseReceiving{}
                 return &amp;empty, business.ErrNotHavePermission
         }</span>
-        <span class="cov0" title="0">return s.repository.GetAllPurchaseReceiving()</span>
+        <span class="cov8" title="1">return s.repository.GetAllPurchaseReceiving()</span>
 }
 
-func (s *service) GetPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error) <span class="cov0" title="0">{
+func (s *service) GetPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error) <span class="cov8" title="1">{
         _, err := s.adminService.FindAdminByID(finder)
         if err != nil </span><span class="cov0" title="0">{
                 var empty PurchaseReceiving
                 return &amp;empty, business.ErrNotHavePermission
         }</span>
-        <span class="cov0" title="0">return s.repository.GetPurchaseReceivingById(id)</span>
+        <span class="cov8" title="1">return s.repository.GetPurchaseReceivingById(id)</span>
 }
 
-func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, creator string) error <span class="cov0" title="0">{
+func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, creator string) error <span class="cov8" title="1">{
         err := validator.GetValidator().Struct(item)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
         }</span>
 
-        <span class="cov0" title="0">admin, err := s.adminService.FindAdminByID(creator)
+        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(creator)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrNotHavePermission
         }</span>
 
-        <span class="cov0" title="0">newItem := NewPurchaseReceiving(
+        <span class="cov8" title="1">newItem := NewPurchaseReceiving(
                 item.Code,
                 item.DateReceived,
                 item.ReceivedBy,
@@ -4498,11 +4880,11 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
                 time.Now(),
         )
         err = s.repository.InsertPurchaseReceiving(&amp;newItem)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">for _, val := range item.Details </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">for _, val := range item.Details </span><span class="cov8" title="1">{
                 newDetail := NewPurchaseReceivingDetail(
                         newItem.ID,
                         val.ProductId,
@@ -4516,26 +4898,26 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
                         return err
                 }</span>
         }
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
-func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivingSpec, modifier string) error <span class="cov0" title="0">{
+func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivingSpec, modifier string) error <span class="cov8" title="1">{
         err := validator.GetValidator().Struct(item)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
         }</span>
 
-        <span class="cov0" title="0">admin, err := s.adminService.FindAdminByID(modifier)
+        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(modifier)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrNotHavePermission
         }</span>
 
-        <span class="cov0" title="0">purchase, err := s.repository.GetPurchaseReceivingById(id)
+        <span class="cov8" title="1">purchase, err := s.repository.GetPurchaseReceivingById(id)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
         }</span>
 
-        <span class="cov0" title="0">updateData := purchase.ModifyPurchaseReceiving(
+        <span class="cov8" title="1">updateData := purchase.ModifyPurchaseReceiving(
                 item.Code,
                 item.DateReceived,
                 item.ReceivedBy,
@@ -4545,11 +4927,11 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
         )
 
         err = s.repository.UpdatePurchaseReceiving(&amp;updateData)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">for _, val := range item.Details </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">for _, val := range item.Details </span><span class="cov8" title="1">{
                 if val.ID == "" </span><span class="cov0" title="0">{
                         if !val.IsDelete </span><span class="cov0" title="0">{
                                 newDetail := NewPurchaseReceivingDetail(
@@ -4565,12 +4947,12 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
                                         return err
                                 }</span>
                         }
-                } else<span class="cov0" title="0"> {
+                } else<span class="cov8" title="1"> {
                         detail, err := s.repositoryDetail.GetPurchaseReceivingDetailById(val.ID)
                         if err != nil </span><span class="cov0" title="0">{
                                 return err
                         }</span>
-                        <span class="cov0" title="0">if !val.IsDelete </span><span class="cov0" title="0">{
+                        <span class="cov8" title="1">if !val.IsDelete </span><span class="cov8" title="1">{
                                 updateData := detail.ModifyPurchaseReceivingDetail(
                                         val.ProductId,
                                         val.Qty,
@@ -4594,20 +4976,20 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
                         }
                 }
         }
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
-func (s *service) DeletePurchaseReceiving(id string, deleter string) error <span class="cov0" title="0">{
+func (s *service) DeletePurchaseReceiving(id string, deleter string) error <span class="cov8" title="1">{
         admin, err := s.adminService.FindAdminByID(deleter)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrNotHavePermission
         }</span>
 
-        <span class="cov0" title="0">purchase, err := s.repository.GetPurchaseReceivingById(id)
+        <span class="cov8" title="1">purchase, err := s.repository.GetPurchaseReceivingById(id)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
         }</span>
-        <span class="cov0" title="0">deleteData := purchase.DeletePurchaseReceiving(
+        <span class="cov8" title="1">deleteData := purchase.DeletePurchaseReceiving(
                 admin.ID,
                 time.Now(),
         )
@@ -4616,7 +4998,7 @@ func (s *service) DeletePurchaseReceiving(id string, deleter string) error <span
 }
 </pre>
 		
-		<pre class="file" id="file63" style="display: none">package shopping
+		<pre class="file" id="file66" style="display: none">package shopping
 
 import (
         "AltaStore/api/v1/shopping/request"
@@ -4672,7 +5054,7 @@ func (s *service) DeleteItemInShopCart(cartId string, productid string) error <s
 }</span>
 </pre>
 		
-		<pre class="file" id="file64" style="display: none">package shopping
+		<pre class="file" id="file67" style="display: none">package shopping
 
 import (
         "AltaStore/api/v1/shopping/request"
@@ -4775,7 +5157,7 @@ func toDetailItemInCart(items *[]shoppingdetail.ShopCartDetailItemWithProductNam
 }
 </pre>
 		
-		<pre class="file" id="file65" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
+		<pre class="file" id="file68" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
 
 package mocks
 
@@ -4893,7 +5275,7 @@ func (_m *Repository) UpdateUserPassword(_a0 user.User) error <span class="cov8"
 }
 </pre>
 		
-		<pre class="file" id="file66" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
+		<pre class="file" id="file69" style="display: none">// Code generated by mockery v2.9.4. DO NOT EDIT.
 
 package mocks
 
@@ -5011,7 +5393,7 @@ func (_m *Service) UpdateUserPassword(id string, password string, oldPassword st
 }
 </pre>
 		
-		<pre class="file" id="file67" style="display: none">package user
+		<pre class="file" id="file70" style="display: none">package user
 
 import (
         "AltaStore/business"
@@ -5169,7 +5551,7 @@ func (s *service) DeleteUser(id string) error <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file68" style="display: none">package user
+		<pre class="file" id="file71" style="display: none">package user
 
 import (
         "time"
@@ -5301,7 +5683,7 @@ func (oldData *User) DeleteUser(
 }</span>
 </pre>
 		
-		<pre class="file" id="file69" style="display: none">package userauth
+		<pre class="file" id="file72" style="display: none">package userauth
 
 import (
         "AltaStore/business"
@@ -5371,7 +5753,7 @@ func (s *service) CreateToken(user *user.User) (*TokenDetails, error) <span clas
 }
 </pre>
 		
-		<pre class="file" id="file70" style="display: none">package config
+		<pre class="file" id="file73" style="display: none">package config
 
 import (
         "os"
@@ -5452,7 +5834,7 @@ func GetConfig() *ConfigApp <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file71" style="display: none">package admin
+		<pre class="file" id="file74" style="display: none">package admin
 
 import (
         "AltaStore/business/admin"
@@ -5619,7 +6001,7 @@ func (repo *Repository) DeleteAdmin(admin admin.Admin) error <span class="cov0" 
 }
 </pre>
 		
-		<pre class="file" id="file72" style="display: none">package category
+		<pre class="file" id="file75" style="display: none">package category
 
 import (
         "AltaStore/business/category"
@@ -5745,7 +6127,7 @@ func (r *Repository) DeleteCategory(id string, userid string) error <span class=
 }
 </pre>
 		
-		<pre class="file" id="file73" style="display: none">package checkout
+		<pre class="file" id="file76" style="display: none">package checkout
 
 import (
         "AltaStore/business/checkout"
@@ -5838,7 +6220,7 @@ func (r *Repository) GetCheckoutById(id string) (*checkout.Checkout, error) <spa
 }
 </pre>
 		
-		<pre class="file" id="file74" style="display: none">package checkoutpayment
+		<pre class="file" id="file77" style="display: none">package checkoutpayment
 
 import (
         "AltaStore/business/checkoutpayment"
@@ -5925,7 +6307,7 @@ func (r *Repository) InsertPayment(p *checkoutpayment.CheckoutPayment) (*checkou
 // }
 </pre>
 		
-		<pre class="file" id="file75" style="display: none">package logger
+		<pre class="file" id="file78" style="display: none">package logger
 
 import (
         "context"
@@ -5951,7 +6333,7 @@ func (r *Repository) AddLoggerActivity(data *logger.LoggerData) error <span clas
 }</span>
 </pre>
 		
-		<pre class="file" id="file76" style="display: none">package migration
+		<pre class="file" id="file79" style="display: none">package migration
 
 import (
         "AltaStore/business/checkoutpayment"
@@ -5984,7 +6366,7 @@ func TableMigration(db *gorm.DB) <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file77" style="display: none">package product
+		<pre class="file" id="file80" style="display: none">package product
 
 import (
         "AltaStore/business/product"
@@ -6238,7 +6620,7 @@ func (r *Repository) DeleteProduct(p product.Product) error <span class="cov0" t
 }
 </pre>
 		
-		<pre class="file" id="file78" style="display: none">package purchasereceiving
+		<pre class="file" id="file81" style="display: none">package purchasereceiving
 
 import (
         "AltaStore/business/purchasereceiving"
@@ -6392,7 +6774,7 @@ func (r *Repository) GetPurchaseReceivingById(id string) (*purchasereceiving.Pur
 }
 </pre>
 		
-		<pre class="file" id="file79" style="display: none">package purchasereceivingdetail
+		<pre class="file" id="file82" style="display: none">package purchasereceivingdetail
 
 import (
         "AltaStore/business/purchasereceiving"
@@ -6522,7 +6904,7 @@ func (r *Repository) GetPurchaseReceivingDetailById(id string) (*purchasereceivi
 }
 </pre>
 		
-		<pre class="file" id="file80" style="display: none">package shopping
+		<pre class="file" id="file83" style="display: none">package shopping
 
 import (
         "AltaStore/business"
@@ -6613,7 +6995,7 @@ func (r *Repository) NewShoppingCart(id string, userid string, description strin
 }
 </pre>
 		
-		<pre class="file" id="file81" style="display: none">package shoppingdetail
+		<pre class="file" id="file84" style="display: none">package shoppingdetail
 
 import (
         "AltaStore/modules/product"
@@ -6731,7 +7113,7 @@ func NewRepository(db *gorm.DB) *Repository <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file82" style="display: none">package user
+		<pre class="file" id="file85" style="display: none">package user
 
 import (
         "AltaStore/business/user"
@@ -6906,7 +7288,7 @@ func (repo *Repository) DeleteUser(user user.User) error <span class="cov0" titl
 }
 </pre>
 		
-		<pre class="file" id="file83" style="display: none">package validator
+		<pre class="file" id="file86" style="display: none">package validator
 
 import (
         "sync"
