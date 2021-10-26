@@ -136,25 +136,6 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error {
 	return s.repository.UpdateUser(modifiedUser)
 }
 
-// //UpdateUser if data not found will return error
-// func (s *service) UpdateUserToken(id string, token string) error {
-// 	user, err := s.repository.FindUserByID(id)
-// 	if err != nil {
-// 		return err
-// 	} else if user == nil {
-// 		return business.ErrNotFound
-// 	} else if user.DeletedBy != "" {
-// 		return business.ErrUserDeleted
-// 	}
-
-// 	modifiedUser := user.ModifyUserToken(
-// 		token,
-// 		time.Now(),
-// 	)
-
-// 	return s.repository.UpdateUser(modifiedUser)
-// }
-
 //Deleteuser if data not found will return error
 func (s *service) DeleteUser(id string) error {
 	user, err := s.repository.FindUserByID(id)

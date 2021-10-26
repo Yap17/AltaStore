@@ -10,4 +10,5 @@ RUN sonar-scanner \
     -Dsonar.host.url="http://localhost:9000" \
     -Dsonar.projectKey="${your sonarcube project name}" \
     -Dsonar.sources="." \
+    -Dsonar.go.coverage.reportPaths="coverage.out" \
     -Dsonar.login="${your sonarcube key}" \
