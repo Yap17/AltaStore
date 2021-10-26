@@ -27,6 +27,12 @@ func errorMapping(err error) (int, ControllerResponse) {
 
 	case business.ErrHasBeenModified:
 		return newHasBeenModifiedResponse()
+
+	case business.ErrNotHavePermission:
+		return newHasBeenModifiedResponse()
+
+	case business.ErrPasswordMisMatch:
+		return newHasBeenModifiedResponse()
 	}
 }
 
@@ -43,4 +49,14 @@ func newNotFoundResponse() (int, ControllerResponse) {
 func newHasBeenModifiedResponse() (int, ControllerResponse) {
 	return http.StatusBadRequest,
 		ControllerResponse{errHasBeenModified, "Data Has Been Modified", map[string]interface{}{}}
+}
+
+func newNotHavePermission() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errHasBeenModified, "Not Have Permission", map[string]interface{}{}}
+}
+
+func newErrPasswordMisMatch() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errHasBeenModified, "Wrong Password", map[string]interface{}{}}
 }
