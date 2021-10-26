@@ -9,6 +9,8 @@ const (
 	errInternalServerError responseCode = "500"
 	errNotFound            responseCode = "404"
 	errHasBeenModified     responseCode = "400"
+	errNotHavePermission   responseCode = "400"
+	errPasswordMisMatch    responseCode = "400"
 	// errInvalidSpec         responseCode = ""
 )
 
@@ -29,10 +31,10 @@ func errorMapping(err error) (int, ControllerResponse) {
 		return newHasBeenModifiedResponse()
 
 	case business.ErrNotHavePermission:
-		return newHasBeenModifiedResponse()
+		return newNotHavePermission()
 
 	case business.ErrPasswordMisMatch:
-		return newHasBeenModifiedResponse()
+		return newErrPasswordMisMatch()
 	}
 }
 
