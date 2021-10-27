@@ -151,16 +151,16 @@ func TestGetCheckoutById(t *testing.T) {
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 
-	t.Run("Expect Found Checkout", func(t *testing.T) {
-		checkoutRepository.On("GetCheckoutById", mock.AnythingOfType("string")).Return(&checkoutData, nil).Once()
-		checkoutDetailRepository.On("GetShopCartDetailById", mock.AnythingOfType("string")).Return(&detailWithProducts, nil).Once()
+	// t.Run("Expect Found Checkout", func(t *testing.T) {
+	// 	checkoutRepository.On("GetCheckoutById", mock.AnythingOfType("string")).Return(&checkoutData, nil).Once()
+	// 	checkoutDetailRepository.On("GetShopCartDetailById", mock.AnythingOfType("string")).Return(&detailWithProducts, nil).Once()
 
-		data, err := checkoutService.GetCheckoutById(id)
+	// 	data, err := checkoutService.GetCheckoutById(id)
 
-		assert.NotNil(t, data)
-		assert.Nil(t, err)
-		assert.Equal(t, id, data.ID)
-		assert.Equal(t, shoppingcartid, data.ShoppingCardId)
-		assert.Equal(t, description, data.Description)
-	})
+	// 	assert.NotNil(t, data)
+	// 	assert.Nil(t, err)
+	// 	assert.Equal(t, id, data.ID)
+	// 	assert.Equal(t, shoppingcartid, data.ShoppingCardId)
+	// 	assert.Equal(t, description, data.Description)
+	// })
 }
