@@ -62,6 +62,6 @@ jobs:
             StrictHostKeyChecking=no
           END
       - name: Connect EC2 & Remove All Container & Pull from Registry & Start
-        run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 -- name=altastore yappy94/altastore:1.0'
+        run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 --name=altastore yappy94/altastore:1.0'
 
 
