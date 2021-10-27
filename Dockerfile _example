@@ -12,3 +12,5 @@ RUN sonar-scanner \
     -Dsonar.sources="." \
     -Dsonar.go.coverage.reportPaths="coverage.out" \
     -Dsonar.login="${your sonarcube key}" \
+    -Dsonar.exclusions="business/**/service_test.go, business/errors.go, api/**, app/**, config/**, modules/**, util/**"\
+    -Dsonar.test.exclusions="business/**/service_test.go"\  

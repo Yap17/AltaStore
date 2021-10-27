@@ -9,6 +9,8 @@ const (
 	errInternalServerError responseCode = "500"
 	errNotFound            responseCode = "404"
 	errHasBeenModified     responseCode = "400"
+	errNotHavePermission   responseCode = "400"
+	errPasswordMisMatch    responseCode = "400"
 	// errInvalidSpec         responseCode = ""
 )
 
@@ -27,6 +29,12 @@ func errorMapping(err error) (int, ControllerResponse) {
 
 	case business.ErrHasBeenModified:
 		return newHasBeenModifiedResponse()
+
+	case business.ErrNotHavePermission:
+		return newNotHavePermission()
+
+	case business.ErrPasswordMisMatch:
+		return newErrPasswordMisMatch()
 	}
 }
 
@@ -43,4 +51,14 @@ func newNotFoundResponse() (int, ControllerResponse) {
 func newHasBeenModifiedResponse() (int, ControllerResponse) {
 	return http.StatusBadRequest,
 		ControllerResponse{errHasBeenModified, "Data Has Been Modified", map[string]interface{}{}}
+}
+
+func newNotHavePermission() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errHasBeenModified, "Not Have Permission", map[string]interface{}{}}
+}
+
+func newErrPasswordMisMatch() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errHasBeenModified, "Wrong Password", map[string]interface{}{}}
 }
