@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "$CONFIG" > ./env
       - name: build image
-        run: docker build -t yappy94/altastore:1.0 . --file ./Dockefile
+        run: docker build -t yappy94/altastore:1.0 .  -f ./Dockerfile
       - name: login docker hub 
         uses: docker/login-action@v1
         with:
