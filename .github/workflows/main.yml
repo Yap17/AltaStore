@@ -1,0 +1,19 @@
+name: ci/cd proccess
+
+on:
+  push:
+    branches:
+      - 'wbDevp'
+jobs:
+  unit-test:
+    name: unit-test
+    runs-on: ubuntu-latest
+    steps: # Mau ngapain
+    - uses: action/checkout@v2
+    - name: setup golang
+      uses: action/checkout@v2
+      with: 
+        go-version: 1.17
+    - name: running unit test
+      run: go test ./... -cover # proses command seperti biasa
+
