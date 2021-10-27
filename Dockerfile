@@ -20,7 +20,7 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 RUN go clean --modcache
-RUN go build -o main ./app/
+RUN go build -o main 
 # EXPOSE 8080
 # CMD ["/app/main"]
 
@@ -28,7 +28,7 @@ RUN go build -o main ./app/
 FROM alpine:3.14
 WORKDIR /root/
 # COPY --from=builder /app/config.json .
-# COPY --from=builder /app/config/.env /config/
+COPY --from=builder /app/config/.env /config/
 COPY --from=builder /app/main .
 EXPOSE 9000
 CMD ["./main"]
