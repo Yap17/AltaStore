@@ -5,7 +5,6 @@ import (
 	"AltaStore/business/checkout"
 	checkoutMock "AltaStore/business/checkout/mocks"
 	checkoutpaymentMock "AltaStore/business/checkoutpayment/mocks"
-	shoppingMock "AltaStore/business/shopping/mocks"
 	"AltaStore/modules/shoppingdetail"
 	"os"
 	"testing"
@@ -15,8 +14,6 @@ import (
 )
 
 const (
-	userId = "f9c8c2bf-d525-420e-86e5-4caf03cd8027"
-
 	id             = "f9c8c2bf-d525-420e-86e5-4caf03cd8027"
 	shoppingcartid = "f9c8c2bf-d525-420e-86e5-4caf03cd8027"
 	description    = "description"
@@ -30,7 +27,6 @@ var (
 	checkoutPaymentService   checkoutpaymentMock.Service
 	checkoutRepository       checkoutMock.Repository
 	checkoutDetailRepository checkoutMock.RepoShoppingDetail
-	shoppingDetailRepository shoppingMock.RepositoryCartDetail
 	checkoutService          checkout.Service
 	checkoutData             checkout.Checkout
 	checkoutDatas            []checkout.Checkout
