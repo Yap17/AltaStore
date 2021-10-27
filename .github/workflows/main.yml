@@ -3,7 +3,7 @@ name: ci/cd process
 on: 
   push:
     branches: 
-      - 'development'
+      - 'alDevp'
 
 jobs:  
   unit-test:
@@ -17,3 +17,26 @@ jobs:
         go-version: 1.17
     - name: running unit-test
       run: go test ./... -cover
+  
+  build-push-docker:
+    name: build image and push docker hub image
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+    - uses: actions/checkout@v2
+    - name: generate config file
+      env:
+        CONFIG: ${{secrets.APP_CONFIG}}
+      run: |
+        echo "$CONFIG" > ./env
+
+    - name: build image
+      run: docker build -t yappy94/AltaStore:1.0
+    - name: login docker hub 
+      uses: docker/login-actions@v1
+      with:
+        username: ${{secrets.DOCKER_USERNAME}}
+        Password: ${{secrets.DOCKER_PASSWORD}}
+    - name: push docker registry image
+      run: docker push yappy94/AltaStore:1.0
+
