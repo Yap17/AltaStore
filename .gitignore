@@ -1,6 +1,7 @@
 # File configuration
 config/.env
 config/mitranskey.yaml
+.env
 
 # Binaries for programs and plugins
 *.exe

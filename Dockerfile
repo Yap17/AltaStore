@@ -20,7 +20,7 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 RUN go clean --modcache
-RUN go build -o ./app/main
+RUN go build -o main
 # EXPOSE 8080
 # CMD ["/app/main"]
 
