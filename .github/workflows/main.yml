@@ -31,14 +31,14 @@ jobs:
         echo "$CONFIG" > ./env
 
     - name: build image
-      run: docker build -t yappy94/AltaStore:1.0
+      run: docker build -t yappy94/altastore:1.0
     - name: login docker hub 
       uses: docker/login-action@v1
       with:
         username: ${{secrets.DOCKER_USERNAME}}
         Password: ${{secrets.DOCKER_PASSWORD}}
     - name: push docker registry image
-      run: docker push yappy94/AltaStore:1.0
+      run: docker push yappy94/altastore:1.0
   
   deployment-ec2:
     name: "Deploy to ec2 from registry docker hub"
@@ -63,6 +63,6 @@ jobs:
             StrictHostKeyChecking=no
           END
       - name: Connect EC2 & Remove All Container & Pull from Registry & Start
-        run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/AltaStore:1.0 && docker run -d -p 9000:9000 -- name=altastore yappy94/altastore:1.0'
+        run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 -- name=altastore yappy94/altastore:1.0'
 
 
