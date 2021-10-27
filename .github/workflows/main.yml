@@ -52,16 +52,15 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }} 
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/projectyap.pem
-          chmod 400 ~/.ssh/projectyap.pem
+          echo "$SSH_KEY" > ~/.ssh/projectYap.pem
+          chmod 400 ~/.ssh/projectYap.pem
           cat >>~/.ssh/config <<END
           Host development
             HostName $SSH_HOST
             User $SSH_USER
-            IdentityFile ~/.ssh/projectyap.pem
+            IdentityFile ~/.ssh/projectYap.pem
             StrictHostKeyChecking=no
           END
       - name: Connect EC2 & Remove All Container & Pull from Registry & Start
         run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 --name=altastore yappy94/altastore:1.0'
-
-
+       
