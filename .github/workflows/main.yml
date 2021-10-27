@@ -28,7 +28,7 @@ jobs:
         env:
           CONFIG: ${{secrets.APP_CONFIG}}
         run: |
-          echo "$CONFIG" > ./env
+          echo "$CONFIG" > ./config/.env
       - name: build image
         run: docker build -t yappy94/altastore:1.0 .
       - name: login docker hub 
