@@ -1,7 +1,6 @@
 # File configuration
 config/.env
 config/mitranskey.yaml
-Dockerfile
 
 # Binaries for programs and plugins
 *.exe
