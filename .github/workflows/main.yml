@@ -40,28 +40,28 @@ jobs:
       - name: push docker registry
         run: docker push yappy94/altastore:1.0
   
-  # deployment-ec2:
-  #   name: "Deploy to ec2 from registry docker hub"
-  #   runs-on: ubuntu-latest
-  #   needs: build-push-docker
-  #   steps:
-  #     - uses: actions/checkout@v2 
-  #     - name: configuration SSH
-  #       env:
-  #         SSH_USER: ${{ secrets.SSH_USERNAME }}
-  #         SSH_KEY: ${{ secrets.SSH_KEY }}
-  #         SSH_HOST: ${{ secrets.SSH_HOST }} 
-  #       run: |
-  #         mkdir -p ~/.ssh/
-  #         echo "$SSH_KEY" > ~/.ssh/projectYap.pem
-  #         chmod 400 ~/.ssh/projectYap.pem
-  #         cat >>~/.ssh/config <<END
-  #         Host development
-  #           HostName $SSH_HOST
-  #           User $SSH_USER
-  #           IdentityFile ~/.ssh/projectYap.pem
-  #           StrictHostKeyChecking=no
-  #         END
-  #     - name: Connect EC2 & Remove All Container & Pull from Registry & Start
-  #       run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 --name=altastore yappy94/altastore:1.0'
+  deployment-ec2:
+    name: "Deploy to ec2 from registry docker hub"
+    runs-on: ubuntu-latest
+    needs: build-push-docker
+    steps:
+      - uses: actions/checkout@v2 
+      - name: configuration SSH
+        env:
+          SSH_USER: ${{ secrets.SSH_USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }} 
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/projectYap.pem
+          chmod 400 ~/.ssh/projectYap.pem
+          cat >>~/.ssh/config <<END
+          Host development
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/projectYap.pem
+            StrictHostKeyChecking=no
+          END
+      - name: Connect EC2 & Remove All Container & Pull from Registry & Start
+        run: ssh development 'docker rm -f $(docker ps -a -q) || true && docker pull yappy94/altastore:1.0 && docker run -d -p 9000:9000 --name=altastore yappy94/altastore:1.0'
        
