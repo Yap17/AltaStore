@@ -149,7 +149,7 @@
 				
 				<option value="file46">AltaStore/business/adminauth/mocks/Service.go (0.0%)</option>
 				
-				<option value="file47">AltaStore/business/adminauth/service.go (86.4%)</option>
+				<option value="file47">AltaStore/business/adminauth/service.go (90.9%)</option>
 				
 				<option value="file48">AltaStore/business/category/category.go (100.0%)</option>
 				
@@ -157,7 +157,7 @@
 				
 				<option value="file50">AltaStore/business/category/mocks/Service.go (0.0%)</option>
 				
-				<option value="file51">AltaStore/business/category/service.go (82.4%)</option>
+				<option value="file51">AltaStore/business/category/service.go (88.2%)</option>
 				
 				<option value="file52">AltaStore/business/checkout/checkout.go (91.7%)</option>
 				
@@ -217,7 +217,7 @@
 				
 				<option value="file80">AltaStore/business/userauth/mocks/Service.go (0.0%)</option>
 				
-				<option value="file81">AltaStore/business/userauth/service.go (86.4%)</option>
+				<option value="file81">AltaStore/business/userauth/service.go (90.9%)</option>
 				
 				<option value="file82">AltaStore/config/config.go (75.8%)</option>
 				
@@ -2915,7 +2915,7 @@ func NewService(adminService admin.Service) Service <span class="cov8" title="1"
 //Login by given admin Email and Password, return error if not exist
 func (s *service) AdminLogin(adminname string, password string) (string, error) <span class="cov8" title="1">{
         admin, err := s.adminService.FindAdminByEmailAndPassword(adminname, password)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return "", business.ErrNotFound
         }</span>
         <span class="cov8" title="1">td, err := s.CreateToken(admin)
@@ -3234,7 +3234,7 @@ func (s *service) FindCategoryById(id string) (*Category, error) <span class="co
 
 func (s *service) InsertCategory(category *CategorySpec) error <span class="cov8" title="1">{
         admin, err := s.adminService.FindAdminByID(category.AdminId)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return business.ErrNotHavePermission
         }</span>
 
@@ -6206,7 +6206,7 @@ func NewService(userService user.Service) Service <span class="cov8" title="1">{
 //Login by given user Email and Password, return error if not exist
 func (s *service) UserLogin(username string, password string) (string, error) <span class="cov8" title="1">{
         user, err := s.userService.FindUserByEmailAndPassword(username, password)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return "", business.ErrNotFound
         }</span>
         <span class="cov8" title="1">td, err := s.CreateToken(user)

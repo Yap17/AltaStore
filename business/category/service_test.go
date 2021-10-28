@@ -74,6 +74,15 @@ func TestInsertCategory(t *testing.T) {
 		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
+	t.Run("Expect Admin Not Found", func(t *testing.T) {
+		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+
+		err := categoryService.InsertCategory(&categorySpec)
+
+		assert.NotNil(t, err)
+		assert.NotNil(t, err, business.ErrNotHavePermission)
+
+	})
 	t.Run("Expect Insert Product Category Success", func(t *testing.T) {
 		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("InsertCategory", mock.AnythingOfType("category.Category")).Return(nil).Once()
