@@ -2,6 +2,7 @@
 config/.env
 config/mitranskey.yaml
 Dockerfile
+.env
 
 # Binaries for programs and plugins
 *.exe
