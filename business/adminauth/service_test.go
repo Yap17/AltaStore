@@ -52,6 +52,16 @@ func TestAdminLogin(t *testing.T) {
 
 		assert.Equal(t, err, business.ErrNotFound)
 	})
+	t.Run("Expect admin not found", func(t *testing.T) {
+		adminService.On("FindAdminByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		admin, err := adminAuthService.AdminLogin(email, password)
+
+		assert.NotNil(t, err)
+		assert.NotNil(t, admin)
+
+		assert.Equal(t, err, business.ErrNotFound)
+		assert.Equal(t, admin, "")
+	})
 	t.Run("Expect Login Success", func(t *testing.T) {
 		adminService.On("FindAdminByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		token, err := adminAuthService.AdminLogin(email, password)
