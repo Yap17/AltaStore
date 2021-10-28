@@ -37,17 +37,16 @@ func GetConfig() *ConfigApp {
 	defaConfig.DbHost = "localhost"
 	defaConfig.DbPort = 5432
 	defaConfig.DbUsername = "postgres"
-	defaConfig.DbPassword = "alexanderyap"
+	defaConfig.DbPassword = "postgres"
 	defaConfig.DbName = "altastoredb"
 	defaConfig.JwtSecretKey = "AltaStore"
 	defaConfig.RedisHost = "localhost"
 	defaConfig.RedisPort = 9001
 	defaConfig.MongoHost = "localhost"
 	defaConfig.MongoPort = 27017
-	defaConfig.MongoUsername = ""
-	defaConfig.MongoPassword = ""
+	defaConfig.MongoUsername = "mongo"
+	defaConfig.MongoPassword = "mongo"
 	defaConfig.MongoDbName = "altastoredb"
-	defaConfig.MidTransServerKey = "SB-Mid-server-Q_vEZuSAEJvflvzI7jvWqPZz"
 	var (
 		err error
 		cwd string
