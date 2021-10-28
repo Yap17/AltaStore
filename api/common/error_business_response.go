@@ -9,9 +9,9 @@ const (
 	errInternalServerError responseCode = "500"
 	errNotFound            responseCode = "404"
 	errHasBeenModified     responseCode = "400"
-	errNotHavePermission   responseCode = "400"
-	errPasswordMisMatch    responseCode = "400"
-	// errInvalidSpec         responseCode = ""
+	errNotHavePermission   responseCode = "401"
+	errPasswordMisMatch    responseCode = "403"
+	errInvalidSpec         responseCode = "400"
 )
 
 // Mengembalikan respons status dari permintaan
@@ -35,6 +35,8 @@ func errorMapping(err error) (int, ControllerResponse) {
 
 	case business.ErrPasswordMisMatch:
 		return newErrPasswordMisMatch()
+	case business.ErrInvalidSpec:
+		return newErrInvalidSpec()
 	}
 }
 
@@ -61,4 +63,9 @@ func newNotHavePermission() (int, ControllerResponse) {
 func newErrPasswordMisMatch() (int, ControllerResponse) {
 	return http.StatusBadRequest,
 		ControllerResponse{errHasBeenModified, "Wrong Password", map[string]interface{}{}}
+}
+
+func newErrInvalidSpec() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errInvalidSpec, "Bad Request", map[string]interface{}{}}
 }

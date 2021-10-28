@@ -3,7 +3,7 @@ name: ci/cd process
 on: 
   push:
     branches: 
-      - 'alDevp'
+      - 'development'
 
 jobs:  
   unit-test:

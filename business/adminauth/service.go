@@ -38,7 +38,7 @@ func (s *service) AdminLogin(adminname string, password string) (string, error) 
 	}
 	td, err := s.CreateToken(admin)
 	if err != nil {
-		return "", err
+		return "", business.ErrNotFound
 	}
 	// err = s.authService.InsertToken(admin, td)
 	// if err != nil {

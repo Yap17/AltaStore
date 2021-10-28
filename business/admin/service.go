@@ -89,7 +89,7 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
 	} else if admin == nil {
 		return business.ErrNotFound
 	} else if admin.DeletedBy != "" {
-		return business.ErrDeleted
+		return business.ErrNotFound
 	} else {
 		_, err := s.repository.FindAdminByEmailAndPassword(admin.Email, oldPassword)
 		if err != nil {
@@ -116,7 +116,7 @@ func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error 
 	} else if admin == nil {
 		return business.ErrNotFound
 	} else if admin.DeletedBy != "" {
-		return business.ErrDeleted
+		return business.ErrNotFound
 	}
 
 	var uuid string = admin.ID
