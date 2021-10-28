@@ -6,17 +6,17 @@ on:
       - 'alDevp'
 
 jobs:  
-  # unit-test:
-  #   name: unit-test process
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: setup golang 
-  #     uses: actions/setup-go@v2
-  #     with:
-  #       go-version: 1.17
-  #   - name: running unit-test
-  #     run: go test ./... -cover
+  unit-test:
+    name: unit-test process
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup golang 
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: running unit-test
+      run: go test ./... -cover
   
   build-push-docker:
     name: build image and push docker hub image
