@@ -60,9 +60,9 @@ func GetConfig() *ConfigApp {
 	}
 
 	// Geting config in file .env
-	viper.SetConfigFile(cwd + "/../config/.env")
+	//viper.SetConfigFile(cwd + "/../config/.env")
 	//viper.SetConfigFile(cwd + "/config/.env")
-	//viper.SetConfigFile(cwd + "/.env")
+	viper.SetConfigFile("/.env")
 	err = viper.ReadInConfig()
 	if err != nil {
 		log.Info("Failed read config, config set to default2.")
