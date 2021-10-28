@@ -80,7 +80,7 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
 	} else if product == nil {
 		return business.ErrNotFound
 	} else if product.DeletedBy != "" {
-		return business.ErrDeleted
+		return business.ErrNotFound
 	}
 	err = validator.GetValidator().Struct(product)
 	if err != nil {
@@ -110,7 +110,7 @@ func (s *service) DeleteProduct(id string, adminId string) error {
 	} else if product == nil {
 		return business.ErrNotFound
 	} else if product.DeletedBy != "" {
-		return business.ErrDeleted
+		return business.ErrNotFound
 	}
 	admin, err := s.adminService.FindAdminByID(adminId)
 	if err != nil {

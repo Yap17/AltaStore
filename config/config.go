@@ -55,22 +55,24 @@ func GetConfig() *ConfigApp {
 	// Geting current directory
 	cwd, err = os.Getwd()
 	if err != nil {
-		log.Info("Failed get current directory, config set to default.")
+		log.Info("Failed get current directory, config set to default1.")
 		return &defaConfig
 	}
 
 	// Geting config in file .env
-	viper.SetConfigFile(cwd + "/config/.env")
+	viper.SetConfigFile(cwd + "/../config/.env")
+	//viper.SetConfigFile(cwd + "/config/.env")
+	//viper.SetConfigFile(cwd + "/.env")
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Info("Failed read config, config set to default.")
+		log.Info("Failed read config, config set to default2.")
 		return &defaConfig
 	}
 
 	var finalConfig ConfigApp
 	err = viper.Unmarshal(&finalConfig)
 	if err != nil {
-		log.Info("Failed bind config, config set to default.")
+		log.Info("Failed bind config, config set to default3.")
 		return &defaConfig
 	}
 
