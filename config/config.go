@@ -37,17 +37,16 @@ func GetConfig() *ConfigApp {
 	defaConfig.DbHost = "localhost"
 	defaConfig.DbPort = 5432
 	defaConfig.DbUsername = "postgres"
-	defaConfig.DbPassword = "alexanderyap"
+	defaConfig.DbPassword = "postgres"
 	defaConfig.DbName = "altastoredb"
 	defaConfig.JwtSecretKey = "AltaStore"
 	defaConfig.RedisHost = "localhost"
 	defaConfig.RedisPort = 9001
 	defaConfig.MongoHost = "localhost"
 	defaConfig.MongoPort = 27017
-	defaConfig.MongoUsername = ""
-	defaConfig.MongoPassword = ""
+	defaConfig.MongoUsername = "mongo"
+	defaConfig.MongoPassword = "mongo"
 	defaConfig.MongoDbName = "altastoredb"
-	defaConfig.MidTransServerKey = "SB-Mid-server-Q_vEZuSAEJvflvzI7jvWqPZz"
 	var (
 		err error
 		cwd string
@@ -56,22 +55,24 @@ func GetConfig() *ConfigApp {
 	// Geting current directory
 	cwd, err = os.Getwd()
 	if err != nil {
-		log.Info("Failed get current directory, config set to default.")
+		log.Info("Failed get current directory, config set to default1.")
 		return &defaConfig
 	}
 
 	// Geting config in file .env
-	viper.SetConfigFile(cwd + "/config/.env")
+	viper.SetConfigFile(cwd + "/../config/.env")
+	//viper.SetConfigFile(cwd + "/config/.env")
+	//viper.SetConfigFile(cwd + "/.env")
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Info("Failed read config, config set to default.")
+		log.Info("Failed read config, config set to default2.")
 		return &defaConfig
 	}
 
 	var finalConfig ConfigApp
 	err = viper.Unmarshal(&finalConfig)
 	if err != nil {
-		log.Info("Failed bind config, config set to default.")
+		log.Info("Failed bind config, config set to default3.")
 		return &defaConfig
 	}
 
