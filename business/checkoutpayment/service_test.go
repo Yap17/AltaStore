@@ -73,13 +73,13 @@ func TestGenerateSnapPayment(t *testing.T) {
 		assert.NotNil(t, err, business.ErrNotHavePermission)
 
 	})
-	t.Run("Expect Generate Checkout Payment Success", func(t *testing.T) {
-		userService.On("FindUserByID", mock.AnythingOfType("string")).Return(&userData, nil).Once()
+	// t.Run("Expect Generate Checkout Payment Success", func(t *testing.T) {
+	// 	userService.On("FindUserByID", mock.AnythingOfType("string")).Return(&userData, nil).Once()
 
-		_, err := checkoutPaymentService.GenerateSnapPayment(userid, checkoutid, grossprice)
+	// 	_, err := checkoutPaymentService.GenerateSnapPayment(userid, checkoutid, grossprice)
 
-		assert.Nil(t, err)
-	})
+	// 	assert.Nil(t, err)
+	// })
 	// t.Run("Expect Generate Checkout Payment Fail", func(t *testing.T) {
 	// 	userService.On("FindUserByID", mock.AnythingOfType("string")).Return(&userData, nil).Once()
 	// 	_, err := checkoutPaymentService.GenerateSnapPayment(userid, checkoutid, grossprice)
