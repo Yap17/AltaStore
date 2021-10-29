@@ -36,7 +36,7 @@ func (c *Controller) InsertPurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), adminid); err != nil {
+	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -65,7 +65,7 @@ func (c *Controller) UpdatePurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), adminid); err != nil {
+	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
