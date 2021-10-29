@@ -71,7 +71,7 @@ func (c *Controller) InsertProduct(ctx echo.Context) error {
 	insertProduct := new(request.InsertProductRequest)
 
 	if err = ctx.Bind(insertProduct); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.InsertProduct(insertProduct.ToProductSpec(), adminId); err != nil {
@@ -96,7 +96,7 @@ func (c *Controller) UpdateProduct(ctx echo.Context) error {
 
 	updateProduct := new(request.UpdateProductRequest)
 	if err = ctx.Bind(updateProduct); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.UpdateProduct(id, updateProduct.ToProductSpec(), adminId); err != nil {
@@ -116,11 +116,11 @@ func (c *Controller) DeleteProduct(ctx echo.Context) error {
 	}
 
 	if _, err = uuid.Parse(id); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if _, err = uuid.Parse(adminId); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.DeleteProduct(id, adminId); err != nil {

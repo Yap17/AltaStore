@@ -58,7 +58,7 @@ func (c *Controller) InsertCategory(ctx echo.Context) error {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 	if err = ctx.Bind(insertCategory); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.InsertCategory(insertCategory.ToCategorySpec(), adminId); err != nil {
@@ -83,7 +83,7 @@ func (c *Controller) UpdateCategory(ctx echo.Context) error {
 
 	updateCategory := new(request.UpdateCategoryRequest)
 	if err = ctx.Bind(updateCategory); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.UpdateCategory(id, updateCategory.ToCategory(), adminId); err != nil {
@@ -103,10 +103,10 @@ func (c *Controller) DeleteCategory(ctx echo.Context) error {
 	}
 
 	if _, err = uuid.Parse(id); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 	if _, err = uuid.Parse(adminId); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	if err = c.service.DeleteCategory(id, adminId); err != nil {
