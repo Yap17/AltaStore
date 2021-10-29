@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 )
@@ -50,7 +52,13 @@ func GetConfig() *ConfigApp {
 		err error
 	)
 
-	viper.SetConfigFile("./.env")
+	// Production
+	cwd, _ := os.Getwd()
+	viper.SetConfigFile(cwd + "/../config/.env")
+
+	//Development
+	//viper.SetConfigFile("./.env")
+
 	err = viper.ReadInConfig()
 	if err != nil {
 		log.Info("Failed read config, config set to default2.")
