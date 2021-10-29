@@ -12,6 +12,7 @@ import (
 	"AltaStore/api/v1/shopping"
 	"AltaStore/api/v1/user"
 	"AltaStore/api/v1/userauth"
+	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -42,6 +43,27 @@ func RegisterPath(e *echo.Echo,
 	// Add logger
 	e.Use(middleware.MiddlewareLogger)
 
+	// Custome response
+	e.HTTPErrorHandler = func(e error, c echo.Context) {
+		type Response struct {
+			Code    int    `json:"code"`
+			Message string `json:"message"`
+		}
+		var response Response
+		response.Code = http.StatusInternalServerError // defaul 500
+		response.Message = "Internal Server Error"
+
+		if he, ok := e.(*echo.HTTPError); ok {
+			response.Code = he.Code
+			response.Message = http.StatusText(he.Code)
+		}
+
+		c.Logger().Error(e)
+
+		_ = c.JSON(response.Code, response)
+	}
+
+	// Routing
 	regis := e.Group("v1/register")
 	regis.POST("", userController.InsertUser)
 	regis.POST("/admin", adminController.InsertAdmin)
