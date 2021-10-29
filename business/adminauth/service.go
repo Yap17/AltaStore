@@ -34,11 +34,11 @@ func NewService(adminService admin.Service) Service {
 func (s *service) AdminLogin(adminname string, password string) (string, error) {
 	admin, err := s.adminService.FindAdminByEmailAndPassword(adminname, password)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	td, err := s.CreateToken(admin)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	// err = s.authService.InsertToken(admin, td)
 	// if err != nil {

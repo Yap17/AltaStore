@@ -22,4 +22,6 @@ var (
 	ErrLoginFailed = errors.New("Login_Failed")
 
 	ErrNotHavePermission = errors.New("Not_Have_Permission")
+
+	ErrUnAuthorized = errors.New("UnAuthorized")
 )

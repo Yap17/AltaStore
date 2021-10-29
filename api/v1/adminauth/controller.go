@@ -33,7 +33,7 @@ func (controller *Controller) AdminLogin(c echo.Context) error {
 
 	token, err := controller.service.AdminLogin(loginRequest.Email, loginRequest.Password)
 	if err != nil {
-		return c.JSON(common.BadRequestResponse())
+		c.JSON(common.NewBusinessErrorResponse(err))
 	}
 
 	response := response.NewLoginResponse(token)

@@ -13,6 +13,7 @@ const (
 	errPasswordMisMatch    responseCode = "403"
 	errInvalidSpec         responseCode = "400"
 	errDataExists          responseCode = "409"
+	errUnAuthorized        responseCode = "401"
 )
 
 // Mengembalikan respons status dari permintaan
@@ -42,6 +43,9 @@ func errorMapping(err error) (int, ControllerResponse) {
 
 	case business.ErrDataExists:
 		return newErrDataExists()
+
+	case business.ErrUnAuthorized:
+		return newErrUnAuthorized()
 	}
 }
 
@@ -78,4 +82,9 @@ func newErrInvalidSpec() (int, ControllerResponse) {
 func newErrDataExists() (int, ControllerResponse) {
 	return http.StatusBadRequest,
 		ControllerResponse{errDataExists, "Data Exists", map[string]interface{}{}}
+}
+
+func newErrUnAuthorized() (int, ControllerResponse) {
+	return http.StatusBadRequest,
+		ControllerResponse{errUnAuthorized, "Unauthorized", map[string]interface{}{}}
 }
