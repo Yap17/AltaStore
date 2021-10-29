@@ -24,22 +24,24 @@ begin
 		exit when not found;
 		-- raise notice '% - %', cart_id, item_qty;
 		
-		open ref_cursor2 for 
-		    select t2.transaction_status from checkouts t1 inner join checkout_payments t2 
-		        on cast(t2.check_out_id as varchar) = cast(t1."id" as varchar) and t2.transaction_status in ('pending', 'captured', 'settlement')
-		    where t1.shopping_cart_id = cart_id and t1.deleted_at is null order by t1.created_at desc limit 1;
-		fetch ref_cursor2 into transaction_stat;
-		if found then 
-			total_payment := total_payment + item_qty;
-		else 
-			stock_cart := stock_cart + item_qty;
-		end if;
-		close ref_cursor2;
+	open ref_cursor2 for 
+		select t2.transaction_status from checkouts t1 
+		left join checkout_payments t2 
+			on cast(t2.check_out_id as varchar) = cast(t1."id" as varchar) and t2.transaction_status in ('pending', 'captured', 'settlement')
+		where t1.shopping_cart_id = cart_id and t1.deleted_at = '0001-01-01 00:00:00' order by t1.created_at desc limit 1;
+		
+	fetch ref_cursor2 into transaction_stat;
+	if found then 
+		total_payment := total_payment + item_qty;
+	else 
+		stock_cart := stock_cart + item_qty;
+	end if;
+	close ref_cursor2;
 	end loop;
 	close ref_cursor;
 	
 	open ref_cursor for select sum(qty) from purchase_receiving_details 
-		where cast(product_id as varchar) = cast(item_id as varchar) and deleted_at is null;
+		where cast(product_id as varchar) = cast(item_id as varchar) and deleted_by != '';
 	fetch ref_cursor into total_receive;
 	if total_receive is null then
 		total_receive := 0;
