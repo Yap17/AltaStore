@@ -22,7 +22,6 @@ type InsertPurchaseReceivingDetailSpec struct {
 }
 
 type UpdatePurchaseReceivingSpec struct {
-	Code         string    `validate:"required"`
 	DateReceived time.Time `validate:"required"`
 	ReceivedBy   string    `validate:"required"`
 	Description  string
@@ -56,30 +55,47 @@ func NewService(
 // GetAllPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error)
 
 func (s *service) GetAllPurchaseReceivingByParameter(code string, finder string) (*[]PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		empty := []PurchaseReceiving{}
-		return &empty, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	empty := []PurchaseReceiving{}
+	// 	return &empty, business.ErrNotHavePermission
+	// }
 	return s.repository.GetAllPurchaseReceivingByParameter(code)
 }
 
 func (s *service) GetAllPurchaseReceiving(finder string) (*[]PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		empty := []PurchaseReceiving{}
-		return &empty, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	empty := []PurchaseReceiving{}
+	// 	return &empty, business.ErrNotHavePermission
+	// }
 	return s.repository.GetAllPurchaseReceiving()
 }
 
 func (s *service) GetPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	return nil, business.ErrNotHavePermission
+	// }
+	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
-		var empty PurchaseReceiving
-		return &empty, business.ErrNotHavePermission
+		return nil, err
 	}
-	return s.repository.GetPurchaseReceivingById(id)
+
+	details, err := s.repositoryDetail.GetPurchaseReceivingDetailByPurchaseReceivingId(purchase.ID)
+	if err != nil {
+		return nil, err
+	}
+	purchase.Details = append(purchase.Details, *details...)
+	return purchase, nil
+}
+
+func (s *service) GetPurchaseReceivingByCode(code, finder string) (*PurchaseReceiving, error) {
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	return nil, business.ErrNotHavePermission
+	// }
+	return s.repository.GetPurchaseReceivingByCode(code)
 }
 
 func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, creator string) error {
@@ -88,9 +104,14 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
 		return business.ErrInvalidSpec
 	}
 
-	admin, err := s.adminService.FindAdminByID(creator)
-	if err != nil {
-		return business.ErrNotHavePermission
+	// admin, err := s.adminService.FindAdminByID(creator)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
+
+	data, _ := s.repository.GetPurchaseReceivingByCode(item.Code)
+	if data != nil {
+		return business.ErrDataExists
 	}
 
 	newItem := NewPurchaseReceiving(
@@ -98,7 +119,8 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
 		item.DateReceived,
 		item.ReceivedBy,
 		item.Description,
-		admin.ID,
+		//admin.ID,
+		creator,
 		time.Now(),
 	)
 	err = s.repository.InsertPurchaseReceiving(&newItem)
@@ -129,10 +151,10 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 		return business.ErrInvalidSpec
 	}
 
-	admin, err := s.adminService.FindAdminByID(modifier)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(modifier)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
@@ -140,11 +162,11 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 	}
 
 	updateData := purchase.ModifyPurchaseReceiving(
-		item.Code,
 		item.DateReceived,
 		item.ReceivedBy,
 		item.Description,
-		admin.ID,
+		//admin.ID,
+		modifier,
 		time.Now(),
 	)
 
@@ -172,7 +194,7 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 		} else {
 			detail, err := s.repositoryDetail.GetPurchaseReceivingDetailById(val.ID)
 			if err != nil {
-				return err
+				return business.ErrNotFound
 			}
 			if !val.IsDelete {
 				updateData := detail.ModifyPurchaseReceivingDetail(
@@ -184,7 +206,7 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 				)
 				err = s.repositoryDetail.UpdatePurchaseReceivingDetail(&updateData)
 				if err != nil {
-					return business.ErrNotFound
+					return err
 				}
 			} else {
 				deleteData := detail.DeletePurchaseReceivingDetail(
@@ -193,7 +215,7 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 				)
 				err = s.repositoryDetail.DeletePurchaseReceivingDetail(&deleteData)
 				if err != nil {
-					return business.ErrNotFound
+					return err
 				}
 			}
 		}
@@ -202,17 +224,18 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 }
 
 func (s *service) DeletePurchaseReceiving(id string, deleter string) error {
-	admin, err := s.adminService.FindAdminByID(deleter)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(deleter)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
 		return business.ErrNotFound
 	}
 	deleteData := purchase.DeletePurchaseReceiving(
-		admin.ID,
+		//admin.ID,
+		deleter,
 		time.Now(),
 	)
 

@@ -59,7 +59,7 @@ func (controller *Controller) FindUserByID(c echo.Context) error {
 func (controller *Controller) UpdateUser(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	userId, err := middleware.ExtractToken(c)
+	userId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}
@@ -87,7 +87,7 @@ func (controller *Controller) UpdateUser(c echo.Context) error {
 func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	userId, err := middleware.ExtractToken(c)
+	userId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}
@@ -115,7 +115,7 @@ func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 func (controller *Controller) DeleteUser(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	userId, err := middleware.ExtractToken(c)
+	userId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}

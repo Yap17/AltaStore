@@ -27,13 +27,13 @@ func (_m *Service) DeleteCategory(id string, deleter string) error {
 	return r0
 }
 
-// FindCategoryByCode provides a mock function with given fields: id
-func (_m *Service) FindCategoryByCode(id string) (*category.Category, error) {
-	ret := _m.Called(id)
+// FindCategoryByCode provides a mock function with given fields: code
+func (_m *Service) FindCategoryByCode(code string) (*category.Category, error) {
+	ret := _m.Called(code)
 
 	var r0 *category.Category
 	if rf, ok := ret.Get(0).(func(string) *category.Category); ok {
-		r0 = rf(id)
+		r0 = rf(code)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*category.Category)
@@ -42,7 +42,7 @@ func (_m *Service) FindCategoryByCode(id string) (*category.Category, error) {
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(id)
+		r1 = rf(code)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -63,8 +63,13 @@ func (c *Controller) FindProductById(ctx echo.Context) error {
 func (c *Controller) InsertProduct(ctx echo.Context) error {
 	var err error
 
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 
@@ -89,8 +94,13 @@ func (c *Controller) UpdateProduct(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 
@@ -110,7 +120,12 @@ func (c *Controller) DeleteProduct(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}

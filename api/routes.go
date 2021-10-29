@@ -98,7 +98,7 @@ func RegisterPath(e *echo.Echo,
 	// Routing shoping
 	//e.GET("/v1/users/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
-	shopCart := e.Group("/v1/shoppingcarts")
+	shopCart := e.Group("v1/shoppingcarts")
 	shopCart.Use(middleware.JWTMiddleware())
 	shopCart.POST("", shopping.NewShoppingCart)
 	shopCart.GET("/:id", shopping.GetShopCartDetailById)
@@ -115,12 +115,13 @@ func RegisterPath(e *echo.Echo,
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
 	// Checkout
-	c_out := e.Group("/v1/checkouts")
+	c_out := e.Group("v1/checkouts")
+	c_out.Use(middleware.JWTMiddleware())
 	c_out.POST("", checkout.NewCheckoutShoppingCart)
 	c_out.GET("", checkout.GetAllCheckout)
 	c_out.GET("/:id", checkout.GetCheckoutById)
 
-	purchRec := e.Group("/v1/purchasereceivings")
+	purchRec := e.Group("v1/purchases")
 	purchRec.Use(middleware.JWTMiddleware())
 	purchRec.POST("", purchaseController.InsertPurchaseReceiving)
 	purchRec.GET("", purchaseController.GetAllPurchaseReceiving)
@@ -128,11 +129,11 @@ func RegisterPath(e *echo.Echo,
 	purchRec.PUT("/:id", purchaseController.UpdatePurchaseReceiving)
 	purchRec.DELETE("/:id", purchaseController.DeletePurchaseReceiving)
 
-	payment := e.Group("/v1/payments")
-	purchRec.Use(middleware.JWTMiddleware())
+	payment := e.Group("v1/payments")
+	payment.Use(middleware.JWTMiddleware())
 	payment.POST("", paymentController.Call)
 
-	paymentCallback := e.Group("/v1/payments/notif")
+	paymentCallback := e.Group("v1/payments/notif")
 	paymentCallback.GET("", paymentController.InsertPayment)
 
 }
