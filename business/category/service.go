@@ -34,10 +34,10 @@ func (s *service) FindCategoryByCode(code string) (*Category, error) {
 }
 
 func (s *service) InsertCategory(category *CategorySpec, creator string) error {
-	admin, err := s.adminService.FindAdminByID(creator)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(creator)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	data, _ := s.repository.FindCategoryByCode(category.Code)
 	if data != nil {
@@ -45,25 +45,25 @@ func (s *service) InsertCategory(category *CategorySpec, creator string) error {
 	}
 
 	dataCategory := NewProductCategory(
-		category.Code, category.Name, admin.ID, time.Now(),
+		category.Code, category.Name, creator, time.Now(),
 	)
 	return s.repository.InsertCategory(dataCategory)
 }
 
 func (s *service) UpdateCategory(id string, category *CategorySpec, modifier string) error {
-	admin, err := s.adminService.FindAdminByID(modifier)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
-	dataCategory := ModifyProductCategory(category.Name, admin.ID, time.Now())
+	// admin, err := s.adminService.FindAdminByID(modifier)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
+	dataCategory := ModifyProductCategory(category.Name, modifier, time.Now())
 
 	return s.repository.UpdateCategory(id, dataCategory)
 }
 
 func (s *service) DeleteCategory(id string, deleter string) error {
-	admin, err := s.adminService.FindAdminByID(deleter)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
-	return s.repository.DeleteCategory(id, admin.ID)
+	// admin, err := s.adminService.FindAdminByID(deleter)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
+	return s.repository.DeleteCategory(id, deleter)
 }

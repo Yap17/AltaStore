@@ -58,10 +58,10 @@ func (s *service) InsertProduct(product *InsertProductSpec, creator string) erro
 	if err != nil {
 		return business.ErrInvalidSpec
 	}
-	admin, err := s.adminService.FindAdminByID(creator)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(creator)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 	dataproduct, _ := s.repository.FindProductByCode(product.Code)
 	if dataproduct != nil {
 		return business.ErrDataExists
@@ -78,7 +78,8 @@ func (s *service) InsertProduct(product *InsertProductSpec, creator string) erro
 		category.ID,
 		product.UnitName,
 		product.Description,
-		admin.ID,
+		//admin.ID,
+		creator,
 		time.Now(),
 	)
 	return s.repository.InsertProduct(data)
@@ -89,10 +90,10 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec, mod
 	if err != nil {
 		return business.ErrInvalidSpec
 	}
-	admin, err := s.adminService.FindAdminByID(modifier)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(modifier)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 	product, err := s.repository.FindProductById(id)
 	if err != nil {
 		return err
@@ -112,17 +113,18 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec, mod
 		category.ID,
 		updateProduct.UnitName,
 		updateProduct.Description,
-		admin.ID,
+		//admin.ID,
+		modifier,
 		time.Now())
 
 	return s.repository.UpdateProduct(modifiedproduct)
 }
 
 func (s *service) DeleteProduct(id string, deleter string) error {
-	admin, err := s.adminService.FindAdminByID(deleter)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(deleter)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 	product, err := s.repository.FindProductById(id)
 	if err != nil {
 		return err
@@ -133,7 +135,8 @@ func (s *service) DeleteProduct(id string, deleter string) error {
 	}
 	deleteProduct := product.DeleteProduct(
 		time.Now(),
-		admin.ID,
+		//admin.ID,
+		deleter,
 	)
 	return s.repository.DeleteProduct(deleteProduct)
 }

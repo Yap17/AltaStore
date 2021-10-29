@@ -103,15 +103,16 @@ func (r *Repository) DeletePurchaseReceiving(p *purchasereceiving.PurchaseReceiv
 func (r *Repository) GetAllPurchaseReceivingByParameter(code string) (*[]purchasereceiving.PurchaseReceiving, error) {
 	var purchases []PurchaseReceiving
 	var tempPurchase purchasereceiving.PurchaseReceiving
-	var purchasetOuts []purchasereceiving.PurchaseReceiving
+	purchasetOuts := []purchasereceiving.PurchaseReceiving{}
 
 	temp := r.DB
+
 	if code != "" {
 		temp = temp.Where("code = ?", code)
 	}
 	err := temp.Where("deleted_by = ''").Find(&purchases).Error
 	if err != nil {
-		return nil, err
+		return &purchasetOuts, nil
 	}
 
 	for _, value := range purchases {
@@ -124,12 +125,12 @@ func (r *Repository) GetAllPurchaseReceivingByParameter(code string) (*[]purchas
 func (r *Repository) GetAllPurchaseReceiving() (*[]purchasereceiving.PurchaseReceiving, error) {
 	var purchases []PurchaseReceiving
 	var tempPurchase purchasereceiving.PurchaseReceiving
-	var purchasetOuts []purchasereceiving.PurchaseReceiving
+	purchasetOuts := []purchasereceiving.PurchaseReceiving{}
 
 	temp := r.DB
 	err := temp.Where("deleted_by = ''").Find(&purchases).Error
 	if err != nil {
-		return nil, err
+		return &purchasetOuts, nil
 	}
 
 	for _, value := range purchases {
@@ -144,6 +145,17 @@ func (r *Repository) GetPurchaseReceivingById(id string) (*purchasereceiving.Pur
 	var purchase PurchaseReceiving
 
 	err := r.DB.Where("id = ?", id).Where("deleted_by = ''").First(&purchase).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return purchase.toPurchaseReceiving(), nil
+}
+
+func (r *Repository) GetPurchaseReceivingByCode(code string) (*purchasereceiving.PurchaseReceiving, error) {
+	var purchase PurchaseReceiving
+
+	err := r.DB.Where("code = ?", code).Where("deleted_by = ''").First(&purchase).Error
 	if err != nil {
 		return nil, err
 	}

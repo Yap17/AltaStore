@@ -58,6 +58,7 @@ func (s *service) CreateToken(user *user.User) (*TokenDetails, error) {
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUuid
 	atClaims["userId"] = user.ID
+	atClaims["isAdmin"] = false
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(config.GetConfig().JwtSecretKey))
