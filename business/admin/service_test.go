@@ -173,11 +173,9 @@ func TestInsertAdmin(t *testing.T) {
 func TestUpdateAdmin(t *testing.T) {
 	t.Run("Expect admin not found", func(t *testing.T) {
 		adminRepository.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		admin, err := adminService.FindAdminByID(id)
+		err := adminService.UpdateAdmin(id, updateAdminData, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, admin)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect update admin success", func(t *testing.T) {
@@ -202,21 +200,18 @@ func TestUpdateAdmin(t *testing.T) {
 func TestUpdateAdminPassword(t *testing.T) {
 	t.Run("Expect admin not found by id", func(t *testing.T) {
 		adminRepository.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		admin, err := adminService.FindAdminByID(id)
+		err := adminService.UpdateAdminPassword(id, password, password, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, admin)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect admin not found by email and password", func(t *testing.T) {
-		adminRepository.On("FindAdminByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		admin, err := adminService.FindAdminByEmailAndPassword(email, password)
+		adminRepository.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		adminRepository.On("FindAdminByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrPasswordMisMatch).Once()
+		err := adminService.UpdateAdminPassword(id, password, password, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, admin)
-
-		assert.Equal(t, err, business.ErrNotFound)
+		assert.Equal(t, err, business.ErrPasswordMisMatch)
 	})
 	t.Run("Expect update admin password success", func(t *testing.T) {
 		adminRepository.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
@@ -242,11 +237,9 @@ func TestUpdateAdminPassword(t *testing.T) {
 func TestDeleteAdmin(t *testing.T) {
 	t.Run("Expect admin not found", func(t *testing.T) {
 		adminRepository.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		admin, err := adminService.FindAdminByID(id)
+		err := adminService.DeleteAdmin(id, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, admin)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect delete admin success", func(t *testing.T) {

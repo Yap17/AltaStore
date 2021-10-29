@@ -24,4 +24,6 @@ var (
 	ErrNotHavePermission = errors.New("Not_Have_Permission")
 
 	ErrUnAuthorized = errors.New("UnAuthorized")
+
+	ErrInvalidData = errors.New("Invalid_Data")
 )

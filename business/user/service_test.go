@@ -185,11 +185,9 @@ func TestInsertUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	t.Run("Expect user not found", func(t *testing.T) {
 		userRepository.On("FindUserByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		user, err := userService.FindUserByID(id)
+		err := userService.UpdateUser(id, updateUserData, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, user)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect update user success", func(t *testing.T) {
@@ -214,21 +212,18 @@ func TestUpdateUser(t *testing.T) {
 func TestUpdateUserPassword(t *testing.T) {
 	t.Run("Expect user not found by id", func(t *testing.T) {
 		userRepository.On("FindUserByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		user, err := userService.FindUserByID(id)
+		err := userService.UpdateUserPassword(id, password, password, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, user)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect user not found by email and password", func(t *testing.T) {
-		userRepository.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		user, err := userService.FindUserByEmailAndPassword(email, password)
+		userRepository.On("FindUserByID", mock.AnythingOfType("string")).Return(&userData, nil).Once()
+		userRepository.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrPasswordMisMatch).Once()
+		err := userService.UpdateUserPassword(id, password, password, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, user)
-
-		assert.Equal(t, err, business.ErrNotFound)
+		assert.Equal(t, err, business.ErrPasswordMisMatch)
 	})
 	t.Run("Expect update user password success", func(t *testing.T) {
 		userRepository.On("FindUserByID", mock.AnythingOfType("string")).Return(&userData, nil).Once()
@@ -254,11 +249,9 @@ func TestUpdateUserPassword(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	t.Run("Expect user not found", func(t *testing.T) {
 		userRepository.On("FindUserByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		user, err := userService.FindUserByID(id)
+		err := userService.DeleteUser(id, id)
 
 		assert.NotNil(t, err)
-		assert.Nil(t, user)
-
 		assert.Equal(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect delete user success", func(t *testing.T) {
