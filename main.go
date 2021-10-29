@@ -115,18 +115,18 @@ func main() {
 	// retrieves application configuration and returns common values when there is a problem
 	config := config.GetConfig()
 
-	// Open mongodb logger
-	mongoConnection := newMongoDBConnection(config)
+	// // Open mongodb logger
+	// mongoConnection := newMongoDBConnection(config)
 
-	// Register repository
-	logrRepo := loggerRepo.NewRepository(mongoConnection)
+	// // Register repository
+	// logrRepo := loggerRepo.NewRepository(mongoConnection)
 
-	// Register service
-	logeService := loggerService.NewService(logrRepo)
+	// // Register service
+	// logeService := loggerService.NewService(logrRepo)
 
-	// Register logs
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetOutput(logeService)
+	// // Register logs
+	// log.SetFormatter(&log.JSONFormatter{})
+	// log.SetOutput(logeService)
 
 	// open database server base session
 	dbConnection := newDatabaseConnection(config)
