@@ -2,6 +2,7 @@ package admin
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/admin/request"
 	"AltaStore/api/v1/admin/response"
 	"AltaStore/business/admin"
@@ -58,14 +59,21 @@ func (controller *Controller) FindAdminByID(c echo.Context) error {
 func (controller *Controller) UpdateAdmin(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
+	adminId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
 	updateAdminRequest := new(request.UpdateAdminRequest)
 
-	if err := c.Bind(updateAdminRequest); err != nil {
+	if err = c.Bind(updateAdminRequest); err != nil {
 		return c.JSON(common.BadRequestResponse())
 	}
 	admin := *updateAdminRequest.ToUpsertAdminSpec()
 
-	err := controller.service.UpdateAdmin(id.String(), admin)
+	err = controller.service.UpdateAdmin(id.String(), admin, adminId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -79,12 +87,19 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error {
 
 	updateAdminPasswordRequest := new(request.UpdateAdminPasswordRequest)
 
-	if err := c.Bind(updateAdminPasswordRequest); err != nil {
+	adminId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
+	if err = c.Bind(updateAdminPasswordRequest); err != nil {
 		return c.JSON(common.BadRequestResponse())
 	}
 	admin := *updateAdminPasswordRequest.ToUpsertAdminSpec()
 
-	err := controller.service.UpdateAdminPassword(id.String(), admin.NewPassword, admin.OldPassword)
+	err = controller.service.UpdateAdminPassword(id.String(), admin.NewPassword, admin.OldPassword, adminId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -96,7 +111,14 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error {
 func (controller *Controller) DeleteAdmin(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	err := controller.service.DeleteAdmin(id.String())
+	adminId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
+	err = controller.service.DeleteAdmin(id.String(), adminId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}

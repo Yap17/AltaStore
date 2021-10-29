@@ -34,15 +34,15 @@ func NewService(userService user.Service) Service {
 func (s *service) UserLogin(username string, password string) (string, error) {
 	user, err := s.userService.FindUserByEmailAndPassword(username, password)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	td, err := s.CreateToken(user)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	// err = s.authService.InsertToken(user, td)
 	// if err != nil {
-	// 	return "", business.ErrNotFound
+	// 	return "", business.ErrUnAuthorized
 	// }
 	return td.AccessToken, nil
 }
@@ -57,7 +57,7 @@ func (s *service) CreateToken(user *user.User) (*TokenDetails, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUuid
-	atClaims["user_id"] = user.ID
+	atClaims["userId"] = user.ID
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(config.GetConfig().JwtSecretKey))

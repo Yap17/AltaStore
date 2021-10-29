@@ -44,22 +44,22 @@ func setup() {
 
 func TestUserLogin(t *testing.T) {
 	t.Run("Expect User not found", func(t *testing.T) {
-		userService.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		userService.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrUnAuthorized).Once()
 		user, err := userService.FindUserByEmailAndPassword(id, password)
 
 		assert.NotNil(t, err)
 		assert.Nil(t, user)
 
-		assert.Equal(t, err, business.ErrNotFound)
+		assert.Equal(t, err, business.ErrUnAuthorized)
 	})
 	t.Run("Expect User not found", func(t *testing.T) {
-		userService.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		userService.On("FindUserByEmailAndPassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, business.ErrUnAuthorized).Once()
 		user, err := userAuthService.UserLogin(email, password)
 
 		assert.NotNil(t, err)
 		assert.NotNil(t, user)
 
-		assert.Equal(t, err, business.ErrNotFound)
+		assert.Equal(t, err, business.ErrUnAuthorized)
 		assert.Equal(t, user, "")
 	})
 	t.Run("Expect Login Success", func(t *testing.T) {

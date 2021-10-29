@@ -47,6 +47,11 @@ func (s *service) InsertAdmin(insertAdminSpec InsertAdminSpec) error {
 		return business.ErrInvalidSpec
 	}
 
+	admin, _ := s.repository.FindAdminByEmail(insertAdminSpec.Email)
+	if admin != nil {
+		return business.ErrDataExists
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(insertAdminSpec.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return business.ErrInvalidSpec
@@ -75,13 +80,18 @@ func (s *service) FindAdminByEmailAndPassword(email string, password string) (*A
 	return s.repository.FindAdminByEmailAndPassword(email, password)
 }
 
+//FindAdminByAdminnameAndPassword If data not found will return nil
+func (s *service) FindAdminByEmail(email string) (*Admin, error) {
+	return s.repository.FindAdminByEmail(email)
+}
+
 //FindAdminByID If data not found will return nil without error
 func (s *service) FindAdminByID(id string) (*Admin, error) {
 	return s.repository.FindAdminByID(id)
 }
 
 //UpdateAdminPaasword if data not found or old password wrong will return error
-func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string) error {
+func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string, modifier string) error {
 
 	admin, err := s.repository.FindAdminByID(id)
 	if err != nil {
@@ -102,6 +112,7 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
 	}
 	modifiedAdmin := admin.ModifyAdminPassword(
 		string(hashedPassword),
+		modifier,
 		time.Now(),
 	)
 
@@ -109,7 +120,7 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
 }
 
 //UpdateAdmin if data not found will return error
-func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error {
+func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec, modifier string) error {
 	admin, err := s.repository.FindAdminByID(id)
 	if err != nil {
 		return err
@@ -119,21 +130,18 @@ func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error 
 		return business.ErrNotFound
 	}
 
-	var uuid string = admin.ID
-
 	modifiedAdmin := admin.ModifyAdmin(
-		updateAdminSpec.Email,
 		updateAdminSpec.FirstName,
 		updateAdminSpec.LastName,
 		time.Now(),
-		uuid,
+		modifier,
 	)
 
 	return s.repository.UpdateAdmin(modifiedAdmin)
 }
 
 //DeleteAdmin if data not found will return error
-func (s *service) DeleteAdmin(id string) error {
+func (s *service) DeleteAdmin(id string, modifier string) error {
 	admin, err := s.repository.FindAdminByID(id)
 	if err != nil {
 		return err
@@ -141,11 +149,9 @@ func (s *service) DeleteAdmin(id string) error {
 		return business.ErrNotFound
 	}
 
-	var uuid string = admin.ID
-
 	deleteAdmin := admin.DeleteAdmin(
 		time.Now(),
-		uuid,
+		modifier,
 	)
 
 	return s.repository.DeleteAdmin(deleteAdmin)

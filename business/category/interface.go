@@ -7,14 +7,16 @@ type Service interface {
 	// Mengambil data kategori berdasarkan kode kategori
 	FindCategoryById(id string) (*Category, error)
 
+	FindCategoryByCode(code string) (*Category, error)
+
 	// Menambahan kategori baru
-	InsertCategory(category *CategorySpec) error
+	InsertCategory(category *CategorySpec, creator string) error
 
 	// Memperbarui produk kategori
-	UpdateCategory(id string, category *CategorySpec) error
+	UpdateCategory(id string, category *CategorySpec, modifier string) error
 
 	// Menghapus produk kategori
-	DeleteCategory(id string, adminId string) error
+	DeleteCategory(id string, deleter string) error
 }
 
 type Repository interface {
@@ -23,6 +25,8 @@ type Repository interface {
 
 	// Mengambil data kategoru bedasarkan kode kategori
 	FindCategoryById(id string) (*Category, error)
+
+	FindCategoryByCode(code string) (*Category, error)
 
 	// Menambahkan kategori baru
 	InsertCategory(category Category) error
