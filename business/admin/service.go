@@ -131,7 +131,6 @@ func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec, modifi
 	}
 
 	modifiedAdmin := admin.ModifyAdmin(
-		updateAdminSpec.Email,
 		updateAdminSpec.FirstName,
 		updateAdminSpec.LastName,
 		time.Now(),

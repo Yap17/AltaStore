@@ -34,15 +34,15 @@ func NewService(userService user.Service) Service {
 func (s *service) UserLogin(username string, password string) (string, error) {
 	user, err := s.userService.FindUserByEmailAndPassword(username, password)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	td, err := s.CreateToken(user)
 	if err != nil {
-		return "", business.ErrNotFound
+		return "", business.ErrUnAuthorized
 	}
 	// err = s.authService.InsertToken(user, td)
 	// if err != nil {
-	// 	return "", business.ErrNotFound
+	// 	return "", business.ErrUnAuthorized
 	// }
 	return td.AccessToken, nil
 }

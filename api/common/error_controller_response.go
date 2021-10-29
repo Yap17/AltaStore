@@ -6,6 +6,7 @@ const (
 	BadRequestCode responseCode = "400"
 	ForbiddenCode  responseCode = "403"
 	NotFoundCode   responseCode = "404"
+	UnAuthorized   responseCode = "401"
 )
 
 func BadRequestResponse() (int, ControllerResponse) {
@@ -18,4 +19,8 @@ func ForbiddenResponse() (int, ControllerResponse) {
 
 func NotFoundResponse() (int, ControllerResponse) {
 	return http.StatusNotFound, ControllerResponse{NotFoundCode, "Not Found", map[string]interface{}{}}
+}
+
+func UnAuthorizedResponse() (int, ControllerResponse) {
+	return http.StatusNotFound, ControllerResponse{NotFoundCode, "UnAuthorized", map[string]interface{}{}}
 }

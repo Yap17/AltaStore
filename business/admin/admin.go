@@ -42,7 +42,6 @@ func NewAdmin(
 
 //ModifyAdmin update existing AdminData
 func (oldData *Admin) ModifyAdmin(
-	newEmail,
 	newFirstName,
 	newLastName string,
 	updatedAt time.Time,
@@ -50,7 +49,7 @@ func (oldData *Admin) ModifyAdmin(
 
 	return Admin{
 		ID:        oldData.ID,
-		Email:     newEmail,
+		Email:     oldData.Email,
 		FirstName: newFirstName,
 		LastName:  newLastName,
 		Password:  oldData.Password,

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"AltaStore/config"
+	"errors"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -34,7 +35,10 @@ func ExtractToken(ctx echo.Context) (string, error) {
 	if user.Valid {
 		claim := user.Claims.(jwt.MapClaims)
 		userId := claim["userId"].(string)
+		if userId == "" {
+			return "", errors.New("Unauthorize")
+		}
 		return userId, nil
 	}
-	return "", nil
+	return "", errors.New("Unauthorize")
 }

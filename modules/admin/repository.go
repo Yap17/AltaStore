@@ -149,7 +149,6 @@ func (repo *Repository) UpdateAdmin(admin admin.Admin) error {
 	AdminData := newAdminTable(admin)
 
 	err := repo.DB.Model(&AdminData).Updates(Admin{
-		Email:     AdminData.Email,
 		FirstName: AdminData.FirstName,
 		LastName:  AdminData.LastName,
 		Password:  AdminData.Password,

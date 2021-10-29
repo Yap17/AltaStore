@@ -49,6 +49,11 @@ func (s *service) InsertUser(insertUserSpec InsertUserSpec) error {
 		return business.ErrInvalidSpec
 	}
 
+	userdata, _ := s.repository.FindUserByEmail(insertUserSpec.Email)
+	if userdata != nil {
+		return business.ErrDataExists
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(insertUserSpec.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return business.ErrInvalidSpec
@@ -77,13 +82,18 @@ func (s *service) FindUserByEmailAndPassword(email string, password string) (*Us
 	return s.repository.FindUserByEmailAndPassword(email, password)
 }
 
+//FindUserByUsername If data not found will return nil
+func (s *service) FindUserByEmail(email string) (*User, error) {
+	return s.repository.FindUserByEmail(email)
+}
+
 //FindUserByID If data not found will return nil without error
 func (s *service) FindUserByID(id string) (*User, error) {
 	return s.repository.FindUserByID(id)
 }
 
 //UpdateUserPaasword if data not found or old password wrong will return error
-func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string) error {
+func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string, modifier string) error {
 
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
@@ -104,6 +114,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 	}
 	modifiedUser := user.ModifyUserPassword(
 		string(hashedPassword),
+		modifier,
 		time.Now(),
 	)
 
@@ -111,7 +122,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 }
 
 //UpdateUser if data not found will return error
-func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error {
+func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, modifier string) error {
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
 		return err
@@ -121,23 +132,20 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error {
 		return business.ErrNotFound
 	}
 
-	var uuid string = user.ID
-
 	modifiedUser := user.ModifyUser(
-		updateUserSpec.Email,
 		updateUserSpec.FirstName,
 		updateUserSpec.LastName,
 		updateUserSpec.HandPhone,
 		updateUserSpec.Address,
 		time.Now(),
-		uuid,
+		modifier,
 	)
 
 	return s.repository.UpdateUser(modifiedUser)
 }
 
 //Deleteuser if data not found will return error
-func (s *service) DeleteUser(id string) error {
+func (s *service) DeleteUser(id string, modifier string) error {
 	user, err := s.repository.FindUserByID(id)
 	if err != nil {
 		return err
@@ -145,11 +153,9 @@ func (s *service) DeleteUser(id string) error {
 		return business.ErrNotFound
 	}
 
-	var uuid string = user.ID
-
 	deleteUser := user.DeleteUser(
 		time.Now(),
-		uuid,
+		modifier,
 	)
 
 	return s.repository.DeleteUser(deleteUser)

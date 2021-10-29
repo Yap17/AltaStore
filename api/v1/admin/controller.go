@@ -61,9 +61,11 @@ func (controller *Controller) UpdateAdmin(c echo.Context) error {
 
 	adminId, err := middleware.ExtractToken(c)
 	if err != nil {
-		return c.JSON(common.BadRequestResponse())
+		return c.JSON(common.UnAuthorizedResponse())
 	}
-
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
 	updateAdminRequest := new(request.UpdateAdminRequest)
 
 	if err = c.Bind(updateAdminRequest); err != nil {
@@ -87,9 +89,11 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error {
 
 	adminId, err := middleware.ExtractToken(c)
 	if err != nil {
-		return c.JSON(common.BadRequestResponse())
+		return c.JSON(common.UnAuthorizedResponse())
 	}
-
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
 	if err = c.Bind(updateAdminPasswordRequest); err != nil {
 		return c.JSON(common.BadRequestResponse())
 	}
@@ -109,9 +113,11 @@ func (controller *Controller) DeleteAdmin(c echo.Context) error {
 
 	adminId, err := middleware.ExtractToken(c)
 	if err != nil {
-		return c.JSON(common.BadRequestResponse())
+		return c.JSON(common.UnAuthorizedResponse())
 	}
-
+	if adminId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
 	err = controller.service.DeleteAdmin(id.String(), adminId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))

@@ -2,6 +2,7 @@ package user
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/user/request"
 	"AltaStore/api/v1/user/response"
 	"AltaStore/business/user"
@@ -58,6 +59,15 @@ func (controller *Controller) FindUserByID(c echo.Context) error {
 func (controller *Controller) UpdateUser(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+
+	if userId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
+
 	updateUserRequest := new(request.UpdateUserRequest)
 
 	if err := c.Bind(updateUserRequest); err != nil {
@@ -65,7 +75,7 @@ func (controller *Controller) UpdateUser(c echo.Context) error {
 	}
 	user := *updateUserRequest.ToUpsertUserSpec()
 
-	err := controller.service.UpdateUser(id.String(), user)
+	err = controller.service.UpdateUser(id.String(), user, userId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -77,6 +87,15 @@ func (controller *Controller) UpdateUser(c echo.Context) error {
 func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+
+	if userId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
+
 	updateUserPasswordRequest := new(request.UpdateUserPasswordRequest)
 
 	if err := c.Bind(updateUserPasswordRequest); err != nil {
@@ -84,7 +103,7 @@ func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 	}
 	user := *updateUserPasswordRequest.ToUpsertUserSpec()
 
-	err := controller.service.UpdateUserPassword(id.String(), user.NewPassword, user.OldPassword)
+	err = controller.service.UpdateUserPassword(id.String(), user.NewPassword, user.OldPassword, userId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -96,7 +115,16 @@ func (controller *Controller) UpdateUserPassword(c echo.Context) error {
 func (controller *Controller) DeleteUser(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	err := controller.service.DeleteUser(id.String())
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+
+	if userId != id.String() {
+		return c.JSON(common.ForbiddenResponse())
+	}
+
+	err = controller.service.DeleteUser(id.String(), userId)
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}

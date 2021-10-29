@@ -6,7 +6,6 @@ import (
 
 //UpdateUserRequest create User request payload
 type UpdateUserRequest struct {
-	Email     string `json:"email"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	HandPhone string `json:"handphone"`
@@ -18,7 +17,6 @@ func (req *UpdateUserRequest) ToUpsertUserSpec() *user.UpdateUserSpec {
 
 	var updateUserSpec user.UpdateUserSpec
 
-	updateUserSpec.Email = req.Email
 	updateUserSpec.FirstName = req.FirstName
 	updateUserSpec.LastName = req.LastName
 	updateUserSpec.HandPhone = req.HandPhone
