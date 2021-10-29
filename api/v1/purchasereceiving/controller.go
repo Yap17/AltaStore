@@ -21,11 +21,14 @@ func NewController(service purchasereceiving.Service) *Controller {
 
 func (c *Controller) InsertPurchaseReceiving(ctx echo.Context) error {
 	var err error
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
-
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
@@ -51,11 +54,14 @@ func (c *Controller) UpdatePurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
-
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
@@ -76,11 +82,14 @@ func (c *Controller) DeletePurchaseReceiving(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
-
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err = uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
@@ -104,11 +113,14 @@ func (c *Controller) GetAllPurchaseReceiving(ctx echo.Context) error {
 	}
 	code := ctx.QueryParam("code")
 
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
-
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
@@ -131,11 +143,14 @@ func (c *Controller) FindPurchaseReceivingById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-	adminId, err := middleware.ExtractToken(ctx)
+	adminId, err := middleware.ExtractTokenUser(ctx)
 	if err != nil {
 		return ctx.JSON(common.UnAuthorizedResponse())
 	}
-
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}

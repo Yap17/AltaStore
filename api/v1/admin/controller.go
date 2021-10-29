@@ -59,7 +59,7 @@ func (controller *Controller) FindAdminByID(c echo.Context) error {
 func (controller *Controller) UpdateAdmin(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	adminId, err := middleware.ExtractToken(c)
+	adminId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}
@@ -87,7 +87,7 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error {
 
 	updateAdminPasswordRequest := new(request.UpdateAdminPasswordRequest)
 
-	adminId, err := middleware.ExtractToken(c)
+	adminId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}
@@ -111,7 +111,7 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error {
 func (controller *Controller) DeleteAdmin(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
-	adminId, err := middleware.ExtractToken(c)
+	adminId, err := middleware.ExtractTokenUser(c)
 	if err != nil {
 		return c.JSON(common.UnAuthorizedResponse())
 	}

@@ -55,28 +55,28 @@ func NewService(
 // GetAllPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error)
 
 func (s *service) GetAllPurchaseReceivingByParameter(code string, finder string) (*[]PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		empty := []PurchaseReceiving{}
-		return &empty, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	empty := []PurchaseReceiving{}
+	// 	return &empty, business.ErrNotHavePermission
+	// }
 	return s.repository.GetAllPurchaseReceivingByParameter(code)
 }
 
 func (s *service) GetAllPurchaseReceiving(finder string) (*[]PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		empty := []PurchaseReceiving{}
-		return &empty, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	empty := []PurchaseReceiving{}
+	// 	return &empty, business.ErrNotHavePermission
+	// }
 	return s.repository.GetAllPurchaseReceiving()
 }
 
 func (s *service) GetPurchaseReceivingById(id, finder string) (*PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		return nil, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	return nil, business.ErrNotHavePermission
+	// }
 	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
 		return nil, err
@@ -91,10 +91,10 @@ func (s *service) GetPurchaseReceivingById(id, finder string) (*PurchaseReceivin
 }
 
 func (s *service) GetPurchaseReceivingByCode(code, finder string) (*PurchaseReceiving, error) {
-	_, err := s.adminService.FindAdminByID(finder)
-	if err != nil {
-		return nil, business.ErrNotHavePermission
-	}
+	// _, err := s.adminService.FindAdminByID(finder)
+	// if err != nil {
+	// 	return nil, business.ErrNotHavePermission
+	// }
 	return s.repository.GetPurchaseReceivingByCode(code)
 }
 
@@ -104,10 +104,10 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
 		return business.ErrInvalidSpec
 	}
 
-	admin, err := s.adminService.FindAdminByID(creator)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(creator)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	data, _ := s.repository.GetPurchaseReceivingByCode(item.Code)
 	if data != nil {
@@ -119,7 +119,8 @@ func (s *service) InsertPurchaseReceiving(item *InsertPurchaseReceivingSpec, cre
 		item.DateReceived,
 		item.ReceivedBy,
 		item.Description,
-		admin.ID,
+		//admin.ID,
+		creator,
 		time.Now(),
 	)
 	err = s.repository.InsertPurchaseReceiving(&newItem)
@@ -150,10 +151,10 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 		return business.ErrInvalidSpec
 	}
 
-	admin, err := s.adminService.FindAdminByID(modifier)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(modifier)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
@@ -164,7 +165,8 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 		item.DateReceived,
 		item.ReceivedBy,
 		item.Description,
-		admin.ID,
+		//admin.ID,
+		modifier,
 		time.Now(),
 	)
 
@@ -222,17 +224,18 @@ func (s *service) UpdatePurchaseReceiving(id string, item *UpdatePurchaseReceivi
 }
 
 func (s *service) DeletePurchaseReceiving(id string, deleter string) error {
-	admin, err := s.adminService.FindAdminByID(deleter)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// admin, err := s.adminService.FindAdminByID(deleter)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 
 	purchase, err := s.repository.GetPurchaseReceivingById(id)
 	if err != nil {
 		return business.ErrNotFound
 	}
 	deleteData := purchase.DeletePurchaseReceiving(
-		admin.ID,
+		//admin.ID,
+		deleter,
 		time.Now(),
 	)
 

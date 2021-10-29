@@ -65,17 +65,17 @@ func setup() {
 }
 
 func TestInsertCategory(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := categoryService.InsertCategory(&categorySpec, adminId)
+	// 	err := categoryService.InsertCategory(&categorySpec, adminId)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Category Exist", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("FindCategoryByCode", mock.AnythingOfType("string")).Return(&categoryData, nil).Once()
 
 		err := categoryService.InsertCategory(&categorySpec, adminId)
@@ -86,7 +86,7 @@ func TestInsertCategory(t *testing.T) {
 
 	})
 	t.Run("Expect Insert Product Category Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("FindCategoryByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
 		categoryRepository.On("InsertCategory", mock.AnythingOfType("category.Category")).Return(nil).Once()
 
@@ -95,7 +95,7 @@ func TestInsertCategory(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Insert Product Category Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("FindCategoryByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
 		categoryRepository.On("InsertCategory", mock.AnythingOfType("category.Category")).Return(business.ErrInternalServer).Once()
 
@@ -107,17 +107,17 @@ func TestInsertCategory(t *testing.T) {
 }
 
 func TestUpdateCategory(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := categoryService.UpdateCategory(id, &categorySpec, adminId)
+	// 	err := categoryService.UpdateCategory(id, &categorySpec, adminId)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Update Product Category Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("UpdateCategory", mock.AnythingOfType("string"), mock.AnythingOfType("category.Category")).Return(nil).Once()
 
 		_ = categoryService.UpdateCategory(id, &categorySpec, id)
@@ -125,7 +125,7 @@ func TestUpdateCategory(t *testing.T) {
 		// assert.Nil(t, err)
 	})
 	t.Run("Expect Update Product Category Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("UpdateCategory", mock.AnythingOfType("string"), mock.AnythingOfType("category.Category")).Return(business.ErrInternalServer).Once()
 
 		err := categoryService.UpdateCategory(id, &categorySpec, id)
@@ -136,17 +136,17 @@ func TestUpdateCategory(t *testing.T) {
 }
 
 func TestDeleteCategory(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := categoryService.DeleteCategory(id, adminId)
+	// 	err := categoryService.DeleteCategory(id, adminId)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Delete Product Category Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("DeleteCategory", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil).Once()
 
 		err := categoryService.DeleteCategory(id, adminId)
@@ -154,7 +154,7 @@ func TestDeleteCategory(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Delete Product Category Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		categoryRepository.On("DeleteCategory", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(business.ErrInternalServer).Once()
 
 		err := categoryService.DeleteCategory(id, adminId)

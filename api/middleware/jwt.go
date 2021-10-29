@@ -30,7 +30,7 @@ func JWTMiddleware() echo.MiddlewareFunc {
 	})
 }
 
-func ExtractToken(ctx echo.Context) (string, error) {
+func ExtractTokenUser(ctx echo.Context) (string, error) {
 	user := ctx.Get("user").(*jwt.Token)
 	if user.Valid {
 		claim := user.Claims.(jwt.MapClaims)
@@ -41,4 +41,14 @@ func ExtractToken(ctx echo.Context) (string, error) {
 		return userId, nil
 	}
 	return "", errors.New("Unauthorize")
+}
+
+func ExtractTokenRule(ctx echo.Context) (bool, error) {
+	user := ctx.Get("user").(*jwt.Token)
+	if user.Valid {
+		claim := user.Claims.(jwt.MapClaims)
+		isAdmin := claim["isAdmin"].(bool)
+		return isAdmin, nil
+	}
+	return false, errors.New("Unauthorize")
 }
