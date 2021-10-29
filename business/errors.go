@@ -15,6 +15,8 @@ var (
 
 	ErrInvalidSpec = errors.New("Given_Spec_Is_Not_Valid")
 
+	ErrDataExists = errors.New("Data_Exists")
+
 	ErrPasswordMisMatch = errors.New("Wrong_Password")
 
 	ErrLoginFailed = errors.New("Login_Failed")

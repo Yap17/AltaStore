@@ -18,7 +18,6 @@ import (
 	adminAuthService "AltaStore/business/adminauth"
 	cateService "AltaStore/business/category"
 	checkoutService "AltaStore/business/checkout"
-	loggerService "AltaStore/business/logger"
 	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
 	userAuthService "AltaStore/business/userauth"
@@ -29,7 +28,6 @@ import (
 	adminRepository "AltaStore/modules/admin"
 	cateRepository "AltaStore/modules/category"
 	checkoutRepository "AltaStore/modules/checkout"
-	loggerRepo "AltaStore/modules/logger"
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
@@ -51,8 +49,6 @@ import (
 	paymentService "AltaStore/business/checkoutpayment"
 	paymentRepository "AltaStore/modules/checkoutpayment"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -119,18 +115,18 @@ func main() {
 	// retrieves application configuration and returns common values when there is a problem
 	config := config.GetConfig()
 
-	// Open mongodb logger
-	mongoConnection := newMongoDBConnection(config)
+	// // Open mongodb logger
+	// mongoConnection := newMongoDBConnection(config)
 
-	// Register repository
-	logrRepo := loggerRepo.NewRepository(mongoConnection)
+	// // Register repository
+	// logrRepo := loggerRepo.NewRepository(mongoConnection)
 
-	// Register service
-	logeService := loggerService.NewService(logrRepo)
+	// // Register service
+	// logeService := loggerService.NewService(logrRepo)
 
-	// Register logs
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetOutput(logeService)
+	// // Register logs
+	// log.SetFormatter(&log.JSONFormatter{})
+	// log.SetOutput(logeService)
 
 	// open database server base session
 	dbConnection := newDatabaseConnection(config)

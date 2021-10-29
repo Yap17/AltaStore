@@ -83,6 +83,7 @@ func (oldData *Admin) ModifyAdmin(
 //ModifyAdminPassword update existing AdminData
 func (oldData *Admin) ModifyAdminPassword(
 	newPassword string,
+	modifier string,
 	updatedAt time.Time) Admin {
 
 	return Admin{
@@ -94,7 +95,7 @@ func (oldData *Admin) ModifyAdminPassword(
 		CreatedAt: oldData.CreatedAt,
 		CreatedBy: oldData.CreatedBy,
 		UpdatedAt: updatedAt,
-		UpdatedBy: oldData.ID,
+		UpdatedBy: modifier,
 	}
 }
 
