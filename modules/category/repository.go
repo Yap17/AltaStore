@@ -16,11 +16,11 @@ type ProductCategory struct {
 	Code      string    `gorm:"code;type:varchar(50);unique"`
 	Name      string    `gorm:"name;type:varchar(100)"`
 	CreatedAt time.Time `gorm:"created_at"`
-	CreatedBy string    `gorm:"created_by;type:uuid"`
+	CreatedBy string    `gorm:"created_by;type:varchar(50)"`
 	UpdatedAt time.Time `gorm:"updated_at"`
-	UpdatedBy string    `gorm:"updated_by;type:uuid"`
+	UpdatedBy string    `gorm:"updated_by;type:varchar(50)"`
 	DeletedAt time.Time `gorm:"deleted_at"`
-	DeletedBy string    `gorm:"deleted_by;type:uuid"`
+	DeletedBy string    `gorm:"deleted_by;type:varchar(50)"`
 }
 
 func (p *ProductCategory) toCategory() category.Category {
@@ -32,6 +32,18 @@ func (p *ProductCategory) toCategory() category.Category {
 		CreatedBy: p.CreatedBy,
 		UpdatedAt: p.UpdatedAt,
 		UpdatedBy: p.UpdatedBy,
+	}
+}
+
+func newDataCategory(cat category.Category) *ProductCategory {
+	return &ProductCategory{
+		ID:        cat.ID,
+		Code:      cat.Code,
+		Name:      cat.Name,
+		CreatedAt: cat.CreatedAt,
+		CreatedBy: cat.CreatedBy,
+		UpdatedAt: cat.CreatedAt,
+		UpdatedBy: cat.CreatedBy,
 	}
 }
 
@@ -55,14 +67,70 @@ func (r *Repository) GetAllCategory() (*[]category.Category, error) {
 	return &result, nil
 }
 
-// func (r *Repository) FindCategoryById(id string) (*category.Category, error) {
+func (r *Repository) FindCategoryById(id string) (*category.Category, error) {
+	var category ProductCategory
 
-// }
+	err := r.DB.First(&category, "id = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
 
-// func (r *Repository) InsertCategory(category category.Category) error {
+	response := category.toCategory()
+	return &response, nil
+}
 
-// }
+func (r *Repository) FindCategoryByCode(code string) (*category.Category, error) {
+	var category ProductCategory
 
-// func (r *Repository) UpdateCategory(category category.Category) error {
+	err := r.DB.First(&category, "code = ?", code).Error
+	if err != nil {
+		return nil, err
+	}
 
-// }
+	response := category.toCategory()
+	return &response, nil
+}
+
+func (r *Repository) InsertCategory(cat category.Category) error {
+	dataCategory := newDataCategory(cat)
+	if err := r.DB.Create(dataCategory).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Repository) UpdateCategory(id string, cat category.Category) error {
+	var category ProductCategory
+	var err error
+
+	err = r.DB.First(&category, "id = ?", id).Error
+	if err != nil {
+		return err
+	}
+
+	err = r.DB.Model(&category).Updates(
+		ProductCategory{Name: cat.Name, UpdatedAt: cat.UpdatedAt, UpdatedBy: cat.UpdatedBy},
+	).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Repository) DeleteCategory(id string, userid string) error {
+	var category ProductCategory
+	var err error
+
+	if err = r.DB.First(&category, "id = ?", id).Error; err != nil {
+		return err
+	}
+
+	if err = r.DB.Model(&category).Update("deleted_by", userid).Error; err != nil {
+		return err
+	}
+
+	r.DB.Delete(&category)
+	return nil
+}

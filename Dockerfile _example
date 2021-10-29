@@ -1,0 +1,16 @@
+# Rename Dockerfile_example to Dockerfile
+
+FROM sonarsource/sonar-scanner-cli:latest AS sonarqube_scan
+WORKDIR /app
+COPY . .
+RUN ls -list
+# sonar.projectName property used for providing human-friendly project name in addition 
+# for projectKey
+RUN sonar-scanner \
+    -Dsonar.host.url="http://localhost:9000" \
+    -Dsonar.projectKey="${your sonarcube project name}" \
+    -Dsonar.sources="." \
+    -Dsonar.go.coverage.reportPaths="coverage.out" \
+    -Dsonar.login="${your sonarcube key}" \
+    -Dsonar.exclusions="business/**/service_test.go, business/errors.go, api/**, app/**, config/**, modules/**, util/**"\
+    -Dsonar.test.exclusions="business/**/service_test.go"\

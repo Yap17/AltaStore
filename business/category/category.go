@@ -1,6 +1,10 @@
 package category
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 // Membuat core data pada domain bisnis
 type Category struct {
@@ -14,12 +18,11 @@ type Category struct {
 }
 
 // fungsi menambahkan data kategory
-func NewProductCategory(
-	id string, code string, name string,
+func NewProductCategory(code string, name string,
 	creator string, createdAt time.Time,
 ) Category {
 	return Category{
-		ID:        id,
+		ID:        uuid.NewString(),
 		Code:      code,
 		Name:      name,
 		CreatedAt: createdAt,
@@ -29,17 +32,10 @@ func NewProductCategory(
 	}
 }
 
-// fungsi memperbarui data
-func (p *Category) UpdateProductCategory(code string,
-	name string, updater string, updatedAt time.Time,
-) Category {
+func ModifyProductCategory(name string, modifier string, updatedAt time.Time) Category {
 	return Category{
-		ID:        p.ID,
-		Code:      code,
 		Name:      name,
-		CreatedAt: p.CreatedAt,
-		CreatedBy: p.CreatedBy,
 		UpdatedAt: updatedAt,
-		UpdatedBy: updater,
+		UpdatedBy: modifier,
 	}
 }
