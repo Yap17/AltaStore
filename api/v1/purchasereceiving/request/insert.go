@@ -6,7 +6,6 @@ import (
 )
 
 type InsertPurchaseReceivingRequest struct {
-	UserId       string                                 `json:"userid"`
 	Code         string                                 `json:"code"`
 	DateReceived time.Time                              `json:"datereceived"`
 	ReceivedBy   string                                 `json:"receivedby"`

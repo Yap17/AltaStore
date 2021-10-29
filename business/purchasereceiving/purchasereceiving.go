@@ -12,7 +12,7 @@ type PurchaseReceiving struct {
 	DateReceived time.Time
 	ReceivedBy   string
 	Description  string
-	Details      []*PurchaseReceivingDetail
+	Details      []PurchaseReceivingDetail
 	CreatedBy    string
 	CreatedAt    time.Time
 	UpdatedBy    string
@@ -74,7 +74,6 @@ func NewPurchaseReceivingDetail(
 }
 
 func (oldData *PurchaseReceiving) ModifyPurchaseReceiving(
-	newCode string,
 	newDateReceived time.Time,
 	newReceivedBy string,
 	newDescription string,
@@ -83,7 +82,7 @@ func (oldData *PurchaseReceiving) ModifyPurchaseReceiving(
 ) PurchaseReceiving {
 	return PurchaseReceiving{
 		ID:           oldData.ID,
-		Code:         newCode,
+		Code:         oldData.Code,
 		DateReceived: newDateReceived,
 		ReceivedBy:   newReceivedBy,
 		Description:  newDescription,

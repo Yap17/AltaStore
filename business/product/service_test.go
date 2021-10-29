@@ -123,7 +123,6 @@ func TestInsertProduct(t *testing.T) {
 		assert.NotNil(t, err)
 
 		assert.Equal(t, err, business.ErrDataExists)
-
 	})
 	t.Run("Expect category not Exist", func(t *testing.T) {
 		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
