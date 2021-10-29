@@ -142,7 +142,7 @@ func TestFindAdminByEmail(t *testing.T) {
 }
 
 func TestInsertAdmin(t *testing.T) {
-	t.Run("Expect found admin data", func(t *testing.T) {
+	t.Run("Expect admin email exist", func(t *testing.T) {
 		adminRepository.On("FindAdminByEmail", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		err := adminService.InsertAdmin(insertAdminData)
 

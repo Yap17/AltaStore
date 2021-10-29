@@ -154,7 +154,7 @@ func TestFindUserByEmailAndPassword(t *testing.T) {
 }
 
 func TestInsertUser(t *testing.T) {
-	t.Run("Expect found user data", func(t *testing.T) {
+	t.Run("Expect user email exist", func(t *testing.T) {
 		userRepository.On("FindUserByEmail", mock.AnythingOfType("string")).Return(&userData, nil).Once()
 		err := userService.InsertUser(insertUserData)
 
