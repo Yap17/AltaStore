@@ -211,6 +211,18 @@ func (r *Repository) FindProductById(id string) (*product.Product, error) {
 	return &response, nil
 }
 
+func (r *Repository) FindProductByCode(code string) (*product.Product, error) {
+	var product *Product
+
+	err := r.DB.Where("code = ?", code).Where("deleted_by = ''").First(&product).Error
+	if err != nil {
+		return nil, err
+	}
+
+	response := product.ToProduct()
+	return &response, nil
+}
+
 func (r *Repository) InsertProduct(p product.Product) error {
 	product := newDataProduct(p)
 	if err := r.DB.Create(product).Error; err != nil {

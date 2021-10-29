@@ -18,7 +18,6 @@ import (
 	adminAuthService "AltaStore/business/adminauth"
 	cateService "AltaStore/business/category"
 	checkoutService "AltaStore/business/checkout"
-	loggerService "AltaStore/business/logger"
 	productService "AltaStore/business/product"
 	userService "AltaStore/business/user"
 	userAuthService "AltaStore/business/userauth"
@@ -29,7 +28,6 @@ import (
 	adminRepository "AltaStore/modules/admin"
 	cateRepository "AltaStore/modules/category"
 	checkoutRepository "AltaStore/modules/checkout"
-	loggerRepo "AltaStore/modules/logger"
 	"AltaStore/modules/migration"
 	productRepository "AltaStore/modules/product"
 	userRepository "AltaStore/modules/user"
@@ -51,8 +49,6 @@ import (
 	paymentService "AltaStore/business/checkoutpayment"
 	paymentRepository "AltaStore/modules/checkoutpayment"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -185,7 +181,7 @@ func main() {
 	product := productRepository.NewRepository(dbConnection)
 
 	// Initiate Service Product
-	ProductService := productService.NewService(adminService, product)
+	ProductService := productService.NewService(adminService, categoryService, product)
 
 	// Initiate Controller Product
 	productController := productController.NewController(ProductService)

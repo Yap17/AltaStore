@@ -1,15 +1,15 @@
 # FROM sonarsource/sonar-scanner-cli:latest AS sonarqube_scan
 # WORKDIR /app
 # COPY . .
-# RUN ls -list
+# RUN ls -list    
 # # sonar.projectName property used for providing human-friendly project name in addition 
 # # for projectKey
 # RUN sonar-scanner \
-#     -Dsonar.host.url="http://localhost:9001" \
+#     -Dsonar.host.url="http://localhost:9090" \
 #     -Dsonar.projectKey="AltaStore" \
 #     -Dsonar.sources="." \
 #     -Dsonar.go.coverage.reportPaths="coverage.out" \
-#     -Dsonar.login="8ee743bd320f575d5091260647fd5ef517bd1fb7" \ 
+#     -Dsonar.login="ff9f3a19daf80a937e25559f51f3d6049b0525a6" \ 
 #     -Dsonar.exclusions="business/**/service_test.go, business/errors.go, api/**, app/**, config/**, modules/**, util/**"\
 #     -Dsonar.test.exclusions="business/**/service_test.go"\  
 

@@ -61,7 +61,7 @@
 				
 				<option value="file2">AltaStore/api/common/success_response.go (0.0%)</option>
 				
-				<option value="file3">AltaStore/api/middleware/jwt.go (0.0%)</option>
+				<option value="file3">AltaStore/api/middleware/jwt.go (18.2%)</option>
 				
 				<option value="file4">AltaStore/api/middleware/logger.go (0.0%)</option>
 				
@@ -141,11 +141,11 @@
 				
 				<option value="file42">AltaStore/business/admin/admin.go (100.0%)</option>
 				
-				<option value="file43">AltaStore/business/admin/mocks/Repository.go (82.6%)</option>
+				<option value="file43">AltaStore/business/admin/mocks/Repository.go (82.5%)</option>
 				
-				<option value="file44">AltaStore/business/admin/mocks/Service.go (39.1%)</option>
+				<option value="file44">AltaStore/business/admin/mocks/Service.go (31.6%)</option>
 				
-				<option value="file45">AltaStore/business/admin/service.go (75.0%)</option>
+				<option value="file45">AltaStore/business/admin/service.go (84.0%)</option>
 				
 				<option value="file46">AltaStore/business/adminauth/mocks/Service.go (0.0%)</option>
 				
@@ -153,11 +153,11 @@
 				
 				<option value="file48">AltaStore/business/category/category.go (100.0%)</option>
 				
-				<option value="file49">AltaStore/business/category/mocks/Repository.go (82.5%)</option>
+				<option value="file49">AltaStore/business/category/mocks/Repository.go (82.4%)</option>
 				
 				<option value="file50">AltaStore/business/category/mocks/Service.go (0.0%)</option>
 				
-				<option value="file51">AltaStore/business/category/service.go (88.2%)</option>
+				<option value="file51">AltaStore/business/category/service.go (100.0%)</option>
 				
 				<option value="file52">AltaStore/business/checkout/checkout.go (91.7%)</option>
 				
@@ -179,13 +179,13 @@
 				
 				<option value="file61">AltaStore/business/logger/service.go (0.0%)</option>
 				
-				<option value="file62">AltaStore/business/product/mocks/Repository.go (82.4%)</option>
+				<option value="file62">AltaStore/business/product/mocks/Repository.go (82.3%)</option>
 				
 				<option value="file63">AltaStore/business/product/mocks/Service.go (0.0%)</option>
 				
 				<option value="file64">AltaStore/business/product/product.go (100.0%)</option>
 				
-				<option value="file65">AltaStore/business/product/service.go (71.8%)</option>
+				<option value="file65">AltaStore/business/product/service.go (86.0%)</option>
 				
 				<option value="file66">AltaStore/business/purchasereceiving/mocks/Repository.go (82.4%)</option>
 				
@@ -207,11 +207,11 @@
 				
 				<option value="file75">AltaStore/business/shopping/shopping.go (90.5%)</option>
 				
-				<option value="file76">AltaStore/business/user/mocks/Repository.go (82.6%)</option>
+				<option value="file76">AltaStore/business/user/mocks/Repository.go (82.5%)</option>
 				
-				<option value="file77">AltaStore/business/user/mocks/Service.go (37.0%)</option>
+				<option value="file77">AltaStore/business/user/mocks/Service.go (29.8%)</option>
 				
-				<option value="file78">AltaStore/business/user/service.go (75.0%)</option>
+				<option value="file78">AltaStore/business/user/service.go (84.0%)</option>
 				
 				<option value="file79">AltaStore/business/user/user.go (100.0%)</option>
 				
@@ -219,7 +219,7 @@
 				
 				<option value="file81">AltaStore/business/userauth/service.go (90.9%)</option>
 				
-				<option value="file82">AltaStore/config/config.go (75.8%)</option>
+				<option value="file82">AltaStore/config/config.go (79.3%)</option>
 				
 				<option value="file83">AltaStore/main.go (0.0%)</option>
 				
@@ -275,6 +275,8 @@ const (
         errNotHavePermission   responseCode = "401"
         errPasswordMisMatch    responseCode = "403"
         errInvalidSpec         responseCode = "400"
+        errDataExists          responseCode = "409"
+        errUnAuthorized        responseCode = "401"
 )
 
 // Mengembalikan respons status dari permintaan
@@ -298,8 +300,15 @@ func errorMapping(err error) (int, ControllerResponse) <span class="cov0" title=
 
         case business.ErrPasswordMisMatch:<span class="cov0" title="0">
                 return newErrPasswordMisMatch()</span>
+
         case business.ErrInvalidSpec:<span class="cov0" title="0">
                 return newErrInvalidSpec()</span>
+
+        case business.ErrDataExists:<span class="cov0" title="0">
+                return newErrDataExists()</span>
+
+        case business.ErrUnAuthorized:<span class="cov0" title="0">
+                return newErrUnAuthorized()</span>
         }
 }
 
@@ -332,6 +341,16 @@ func newErrInvalidSpec() (int, ControllerResponse) <span class="cov0" title="0">
         return http.StatusBadRequest,
                 ControllerResponse{errInvalidSpec, "Bad Request", map[string]interface{}{}}
 }</span>
+
+func newErrDataExists() (int, ControllerResponse) <span class="cov0" title="0">{
+        return http.StatusBadRequest,
+                ControllerResponse{errDataExists, "Data Exists", map[string]interface{}{}}
+}</span>
+
+func newErrUnAuthorized() (int, ControllerResponse) <span class="cov0" title="0">{
+        return http.StatusBadRequest,
+                ControllerResponse{errUnAuthorized, "Unauthorized", map[string]interface{}{}}
+}</span>
 </pre>
 		
 		<pre class="file" id="file1" style="display: none">package common
@@ -342,6 +361,7 @@ const (
         BadRequestCode responseCode = "400"
         ForbiddenCode  responseCode = "403"
         NotFoundCode   responseCode = "404"
+        UnAuthorized   responseCode = "401"
 )
 
 func BadRequestResponse() (int, ControllerResponse) <span class="cov0" title="0">{
@@ -354,6 +374,10 @@ func ForbiddenResponse() (int, ControllerResponse) <span class="cov0" title="0">
 
 func NotFoundResponse() (int, ControllerResponse) <span class="cov0" title="0">{
         return http.StatusNotFound, ControllerResponse{NotFoundCode, "Not Found", map[string]interface{}{}}
+}</span>
+
+func UnAuthorizedResponse() (int, ControllerResponse) <span class="cov0" title="0">{
+        return http.StatusNotFound, ControllerResponse{NotFoundCode, "UnAuthorized", map[string]interface{}{}}
 }</span>
 </pre>
 		
@@ -380,11 +404,26 @@ func SuccessResponseWithoutData() (int, ControllerResponse) <span class="cov0" t
 
 import (
         "AltaStore/config"
+        "errors"
+        "net/http"
 
         "github.com/golang-jwt/jwt"
         echo "github.com/labstack/echo/v4"
         "github.com/labstack/echo/v4/middleware"
 )
+
+func init() <span class="cov8" title="1">{
+        middleware.ErrJWTMissing = echo.NewHTTPError(
+                http.StatusBadRequest, map[string]interface{}{
+                        "code":    400,
+                        "message": "missing or malformed jwt",
+                })
+        middleware.ErrJWTInvalid = echo.NewHTTPError(
+                http.StatusUnauthorized, map[string]interface{}{
+                        "code":    401,
+                        "massage": "invalid or expired jwt",
+                })
+}</span>
 
 func JWTMiddleware() echo.MiddlewareFunc <span class="cov0" title="0">{
         return middleware.JWTWithConfig(middleware.JWTConfig{
@@ -398,9 +437,12 @@ func ExtractToken(ctx echo.Context) (string, error) <span class="cov0" title="0"
         if user.Valid </span><span class="cov0" title="0">{
                 claim := user.Claims.(jwt.MapClaims)
                 userId := claim["userId"].(string)
-                return userId, nil
-        }</span>
-        <span class="cov0" title="0">return "", nil</span>
+                if userId == "" </span><span class="cov0" title="0">{
+                        return "", errors.New("Unauthorize")
+                }</span>
+                <span class="cov0" title="0">return userId, nil</span>
+        }
+        <span class="cov0" title="0">return "", errors.New("Unauthorize")</span>
 }
 </pre>
 		
@@ -471,6 +513,7 @@ import (
         "AltaStore/api/v1/shopping"
         "AltaStore/api/v1/user"
         "AltaStore/api/v1/userauth"
+        "net/http"
 
         echo "github.com/labstack/echo/v4"
 )
@@ -501,7 +544,28 @@ func RegisterPath(e *echo.Echo,
         // Add logger
         <span class="cov0" title="0">e.Use(middleware.MiddlewareLogger)
 
-        regis := e.Group("v1/register")
+        // Custome response
+        e.HTTPErrorHandler = func(e error, c echo.Context) </span><span class="cov0" title="0">{
+                type Response struct {
+                        Code    int    `json:"code"`
+                        Message string `json:"message"`
+                }
+                var response Response
+                response.Code = http.StatusInternalServerError // defaul 500
+                response.Message = "Internal Server Error"
+
+                if he, ok := e.(*echo.HTTPError); ok </span><span class="cov0" title="0">{
+                        response.Code = he.Code
+                        response.Message = http.StatusText(he.Code)
+                }</span>
+
+                <span class="cov0" title="0">c.Logger().Error(e)
+
+                _ = c.JSON(response.Code, response)</span>
+        }
+
+        // Routing
+        <span class="cov0" title="0">regis := e.Group("v1/register")
         regis.POST("", userController.InsertUser)
         regis.POST("/admin", adminController.InsertAdmin)
 
@@ -579,6 +643,7 @@ func RegisterPath(e *echo.Echo,
 
 import (
         "AltaStore/api/common"
+        "AltaStore/api/middleware"
         "AltaStore/api/v1/admin/request"
         "AltaStore/api/v1/admin/response"
         "AltaStore/business/admin"
@@ -635,14 +700,21 @@ func (controller *Controller) FindAdminByID(c echo.Context) error <span class="c
 func (controller *Controller) UpdateAdmin(c echo.Context) error <span class="cov0" title="0">{
         id, _ := uuid.Parse(c.Param("id"))
 
-        updateAdminRequest := new(request.UpdateAdminRequest)
+        adminId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+        <span class="cov0" title="0">if adminId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+        <span class="cov0" title="0">updateAdminRequest := new(request.UpdateAdminRequest)
 
-        if err := c.Bind(updateAdminRequest); err != nil </span><span class="cov0" title="0">{
+        if err = c.Bind(updateAdminRequest); err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.BadRequestResponse())
         }</span>
         <span class="cov0" title="0">admin := *updateAdminRequest.ToUpsertAdminSpec()
 
-        err := controller.service.UpdateAdmin(id.String(), admin)
+        err = controller.service.UpdateAdmin(id.String(), admin, adminId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -656,12 +728,19 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error <span cl
 
         updateAdminPasswordRequest := new(request.UpdateAdminPasswordRequest)
 
-        if err := c.Bind(updateAdminPasswordRequest); err != nil </span><span class="cov0" title="0">{
+        adminId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+        <span class="cov0" title="0">if adminId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+        <span class="cov0" title="0">if err = c.Bind(updateAdminPasswordRequest); err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.BadRequestResponse())
         }</span>
         <span class="cov0" title="0">admin := *updateAdminPasswordRequest.ToUpsertAdminSpec()
 
-        err := controller.service.UpdateAdminPassword(id.String(), admin.NewPassword, admin.OldPassword)
+        err = controller.service.UpdateAdminPassword(id.String(), admin.NewPassword, admin.OldPassword, adminId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -673,7 +752,14 @@ func (controller *Controller) UpdateAdminPassword(c echo.Context) error <span cl
 func (controller *Controller) DeleteAdmin(c echo.Context) error <span class="cov0" title="0">{
         id, _ := uuid.Parse(c.Param("id"))
 
-        err := controller.service.DeleteAdmin(id.String())
+        adminId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+        <span class="cov0" title="0">if adminId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+        <span class="cov0" title="0">err = controller.service.DeleteAdmin(id.String(), adminId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -717,7 +803,6 @@ import (
 
 //UpdateAdminRequest create Admin request payload
 type UpdateAdminRequest struct {
-        Email     string `json:"email"`
         FirstName string `json:"firstname"`
         LastName  string `json:"lastname"`
 }
@@ -727,7 +812,6 @@ func (req *UpdateAdminRequest) ToUpsertAdminSpec() *admin.UpdateAdminSpec <span 
 
         var updateAdminSpec admin.UpdateAdminSpec
 
-        updateAdminSpec.Email = req.Email
         updateAdminSpec.FirstName = req.FirstName
         updateAdminSpec.LastName = req.LastName
 
@@ -821,7 +905,7 @@ func (controller *Controller) AdminLogin(c echo.Context) error <span class="cov0
 
         <span class="cov0" title="0">token, err := controller.service.AdminLogin(loginRequest.Email, loginRequest.Password)
         if err != nil </span><span class="cov0" title="0">{
-                return c.JSON(common.BadRequestResponse())
+                return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
         <span class="cov0" title="0">response := response.NewLoginResponse(token)
@@ -859,6 +943,7 @@ func NewLoginResponse(token string) *LoginResponse <span class="cov0" title="0">
 
 import (
         "AltaStore/api/common"
+        "AltaStore/api/middleware"
         "AltaStore/api/v1/category/request"
         "AltaStore/api/v1/category/response"
         "AltaStore/business/category"
@@ -909,12 +994,15 @@ func (c *Controller) InsertCategory(ctx echo.Context) error <span class="cov0" t
         var err error
 
         insertCategory := new(request.InsertCategoryRequest)
-
-        if err = ctx.Bind(insertCategory); err != nil </span><span class="cov0" title="0">{
+        adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
+        }</span>
+        <span class="cov0" title="0">if err = ctx.Bind(insertCategory); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
-        <span class="cov0" title="0">if err = c.service.InsertCategory(insertCategory.ToCategorySpec()); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if err = c.service.InsertCategory(insertCategory.ToCategorySpec(), adminId); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
@@ -929,12 +1017,17 @@ func (c *Controller) UpdateCategory(ctx echo.Context) error <span class="cov0" t
                 return ctx.JSON(common.BadRequestResponse())
         }</span>
 
+        <span class="cov0" title="0">adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
+        }</span>
+
         <span class="cov0" title="0">updateCategory := new(request.UpdateCategoryRequest)
         if err = ctx.Bind(updateCategory); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
-        <span class="cov0" title="0">if err = c.service.UpdateCategory(id, updateCategory.ToCategory()); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if err = c.service.UpdateCategory(id, updateCategory.ToCategory(), adminId); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
@@ -945,9 +1038,12 @@ func (c *Controller) DeleteCategory(ctx echo.Context) error <span class="cov0" t
         var err error
 
         id := ctx.Param("id")
-        adminId := ctx.QueryParam("adminId")
+        adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
+        }</span>
 
-        if _, err = uuid.Parse(id); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if _, err = uuid.Parse(id); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
         <span class="cov0" title="0">if _, err = uuid.Parse(adminId); err != nil </span><span class="cov0" title="0">{
@@ -969,15 +1065,13 @@ import (
 )
 
 type InsertCategoryRequest struct {
-        AdminId string `json:"adminid"`
-        Code    string `json:"code"`
-        Name    string `json:"name"`
+        Code string `json:"code"`
+        Name string `json:"name"`
 }
 
 func (i *InsertCategoryRequest) ToCategorySpec() *category.CategorySpec <span class="cov0" title="0">{
         var spec category.CategorySpec
 
-        spec.AdminId = i.AdminId
         spec.Code = i.Code
         spec.Name = i.Name
 
@@ -990,16 +1084,11 @@ func (i *InsertCategoryRequest) ToCategorySpec() *category.CategorySpec <span cl
 import "AltaStore/business/category"
 
 type UpdateCategoryRequest struct {
-        AdminId string `json:"adminid"`
-        // Code    string `json:"code"`
         Name string `json:"name"`
 }
 
 func (u *UpdateCategoryRequest) ToCategory() *category.CategorySpec <span class="cov0" title="0">{
         var spec category.CategorySpec
-
-        spec.AdminId = u.AdminId
-        //spec.Code = u.Code
         spec.Name = u.Name
 
         return &amp;spec
@@ -1302,6 +1391,7 @@ func (u *InserPaymentRequest) ToPaymentSpec() *checkoutpayment.InserPaymentSpec 
 
 import (
         "AltaStore/api/common"
+        "AltaStore/api/middleware"
         "AltaStore/api/v1/product/request"
         "AltaStore/api/v1/product/response"
         "AltaStore/business/product"
@@ -1362,13 +1452,18 @@ func (c *Controller) FindProductById(ctx echo.Context) error <span class="cov0" 
 func (c *Controller) InsertProduct(ctx echo.Context) error <span class="cov0" title="0">{
         var err error
 
-        insertProduct := new(request.InsertProductRequest)
+        adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
+        }</span>
+
+        <span class="cov0" title="0">insertProduct := new(request.InsertProductRequest)
 
         if err = ctx.Bind(insertProduct); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
-        <span class="cov0" title="0">if err = c.service.InsertProduct(insertProduct.ToProductSpec()); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if err = c.service.InsertProduct(insertProduct.ToProductSpec(), adminId); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
@@ -1383,12 +1478,17 @@ func (c *Controller) UpdateProduct(ctx echo.Context) error <span class="cov0" ti
                 return ctx.JSON(common.BadRequestResponse())
         }</span>
 
+        <span class="cov0" title="0">adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
+        }</span>
+
         <span class="cov0" title="0">updateProduct := new(request.UpdateProductRequest)
         if err = ctx.Bind(updateProduct); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
-        <span class="cov0" title="0">if err = c.service.UpdateProduct(id, updateProduct.ToProductSpec()); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if err = c.service.UpdateProduct(id, updateProduct.ToProductSpec(), adminId); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
@@ -1399,16 +1499,20 @@ func (c *Controller) DeleteProduct(ctx echo.Context) error <span class="cov0" ti
         var err error
 
         id := ctx.Param("id")
-        userid := ctx.QueryParam("adminid")
-
-        if _, err = uuid.Parse(id); err != nil </span><span class="cov0" title="0">{
-                return ctx.JSON(common.NewBusinessErrorResponse(err))
-        }</span>
-        <span class="cov0" title="0">if _, err = uuid.Parse(userid); err != nil </span><span class="cov0" title="0">{
-                return ctx.JSON(common.NewBusinessErrorResponse(err))
+        adminId, err := middleware.ExtractToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.UnAuthorizedResponse())
         }</span>
 
-        <span class="cov0" title="0">if err = c.service.DeleteProduct(id, userid); err != nil </span><span class="cov0" title="0">{
+        <span class="cov0" title="0">if _, err = uuid.Parse(id); err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.NewBusinessErrorResponse(err))
+        }</span>
+
+        <span class="cov0" title="0">if _, err = uuid.Parse(adminId); err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(common.NewBusinessErrorResponse(err))
+        }</span>
+
+        <span class="cov0" title="0">if err = c.service.DeleteProduct(id, adminId); err != nil </span><span class="cov0" title="0">{
                 return ctx.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
@@ -1423,7 +1527,6 @@ import (
 )
 
 type InsertProductRequest struct {
-        AdminId           string `json:"adminid"`
         Code              string `json:"code"`
         Name              string `json:"name"`
         Price             int64  `json:"price"`
@@ -1436,7 +1539,6 @@ type InsertProductRequest struct {
 func (i *InsertProductRequest) ToProductSpec() *product.InsertProductSpec <span class="cov0" title="0">{
         var spec product.InsertProductSpec
 
-        spec.AdminId = i.AdminId
         spec.Code = i.Code
         spec.Name = i.Name
         spec.Price = i.Price
@@ -1454,7 +1556,6 @@ func (i *InsertProductRequest) ToProductSpec() *product.InsertProductSpec <span 
 import "AltaStore/business/product"
 
 type UpdateProductRequest struct {
-        AdminId           string `json:"adminid"`
         Name              string `json:"name"`
         Price             int64  `json:"price"`
         IsActive          bool   `json:"isactive"`
@@ -1466,7 +1567,6 @@ type UpdateProductRequest struct {
 func (u *UpdateProductRequest) ToProductSpec() *product.UpdateProductSpec <span class="cov0" title="0">{
         var spec product.UpdateProductSpec
 
-        spec.AdminId = u.AdminId
         spec.Name = u.Name
         spec.Price = u.Price
         spec.IsActive = u.IsActive
@@ -2025,6 +2125,7 @@ func GetOneResponse(data *shopping.ShoppCart) *ShoppData <span class="cov0" titl
 
 import (
         "AltaStore/api/common"
+        "AltaStore/api/middleware"
         "AltaStore/api/v1/user/request"
         "AltaStore/api/v1/user/response"
         "AltaStore/business/user"
@@ -2081,14 +2182,23 @@ func (controller *Controller) FindUserByID(c echo.Context) error <span class="co
 func (controller *Controller) UpdateUser(c echo.Context) error <span class="cov0" title="0">{
         id, _ := uuid.Parse(c.Param("id"))
 
-        updateUserRequest := new(request.UpdateUserRequest)
+        userId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+
+        <span class="cov0" title="0">if userId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+
+        <span class="cov0" title="0">updateUserRequest := new(request.UpdateUserRequest)
 
         if err := c.Bind(updateUserRequest); err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.BadRequestResponse())
         }</span>
         <span class="cov0" title="0">user := *updateUserRequest.ToUpsertUserSpec()
 
-        err := controller.service.UpdateUser(id.String(), user)
+        err = controller.service.UpdateUser(id.String(), user, userId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -2100,14 +2210,23 @@ func (controller *Controller) UpdateUser(c echo.Context) error <span class="cov0
 func (controller *Controller) UpdateUserPassword(c echo.Context) error <span class="cov0" title="0">{
         id, _ := uuid.Parse(c.Param("id"))
 
-        updateUserPasswordRequest := new(request.UpdateUserPasswordRequest)
+        userId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+
+        <span class="cov0" title="0">if userId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+
+        <span class="cov0" title="0">updateUserPasswordRequest := new(request.UpdateUserPasswordRequest)
 
         if err := c.Bind(updateUserPasswordRequest); err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.BadRequestResponse())
         }</span>
         <span class="cov0" title="0">user := *updateUserPasswordRequest.ToUpsertUserSpec()
 
-        err := controller.service.UpdateUserPassword(id.String(), user.NewPassword, user.OldPassword)
+        err = controller.service.UpdateUserPassword(id.String(), user.NewPassword, user.OldPassword, userId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -2119,7 +2238,16 @@ func (controller *Controller) UpdateUserPassword(c echo.Context) error <span cla
 func (controller *Controller) DeleteUser(c echo.Context) error <span class="cov0" title="0">{
         id, _ := uuid.Parse(c.Param("id"))
 
-        err := controller.service.DeleteUser(id.String())
+        userId, err := middleware.ExtractToken(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(common.UnAuthorizedResponse())
+        }</span>
+
+        <span class="cov0" title="0">if userId != id.String() </span><span class="cov0" title="0">{
+                return c.JSON(common.ForbiddenResponse())
+        }</span>
+
+        <span class="cov0" title="0">err = controller.service.DeleteUser(id.String(), userId)
         if err != nil </span><span class="cov0" title="0">{
                 return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
@@ -2163,7 +2291,6 @@ import (
 
 //UpdateUserRequest create User request payload
 type UpdateUserRequest struct {
-        Email     string `json:"email"`
         FirstName string `json:"firstname"`
         LastName  string `json:"lastname"`
         HandPhone string `json:"handphone"`
@@ -2175,7 +2302,6 @@ func (req *UpdateUserRequest) ToUpsertUserSpec() *user.UpdateUserSpec <span clas
 
         var updateUserSpec user.UpdateUserSpec
 
-        updateUserSpec.Email = req.Email
         updateUserSpec.FirstName = req.FirstName
         updateUserSpec.LastName = req.LastName
         updateUserSpec.HandPhone = req.HandPhone
@@ -2275,7 +2401,7 @@ func (controller *Controller) UserLogin(c echo.Context) error <span class="cov0"
 
         <span class="cov0" title="0">token, err := controller.service.UserLogin(loginRequest.Email, loginRequest.Password)
         if err != nil </span><span class="cov0" title="0">{
-                return c.JSON(common.BadRequestResponse())
+                return c.JSON(common.NewBusinessErrorResponse(err))
         }</span>
 
         <span class="cov0" title="0">response := response.NewLoginResponse(token)
@@ -2353,7 +2479,6 @@ func NewAdmin(
 
 //ModifyAdmin update existing AdminData
 func (oldData *Admin) ModifyAdmin(
-        newEmail,
         newFirstName,
         newLastName string,
         updatedAt time.Time,
@@ -2361,7 +2486,7 @@ func (oldData *Admin) ModifyAdmin(
 
         return Admin{
                 ID:        oldData.ID,
-                Email:     newEmail,
+                Email:     oldData.Email,
                 FirstName: newFirstName,
                 LastName:  newLastName,
                 Password:  oldData.Password,
@@ -2394,6 +2519,7 @@ func (oldData *Admin) ModifyAdmin(
 //ModifyAdminPassword update existing AdminData
 func (oldData *Admin) ModifyAdminPassword(
         newPassword string,
+        modifier string,
         updatedAt time.Time) Admin <span class="cov8" title="1">{
 
         return Admin{
@@ -2405,7 +2531,7 @@ func (oldData *Admin) ModifyAdminPassword(
                 CreatedAt: oldData.CreatedAt,
                 CreatedBy: oldData.CreatedBy,
                 UpdatedAt: updatedAt,
-                UpdatedBy: oldData.ID,
+                UpdatedBy: modifier,
         }
 }</span>
 
@@ -2456,6 +2582,29 @@ func (_m *Repository) DeleteAdmin(Admin admin.Admin) error <span class="cov8" ti
         }</span>
 
         <span class="cov8" title="1">return r0</span>
+}
+
+// FindAdminByEmail provides a mock function with given fields: email
+func (_m *Repository) FindAdminByEmail(email string) (*admin.Admin, error) <span class="cov8" title="1">{
+        ret := _m.Called(email)
+
+        var r0 *admin.Admin
+        if rf, ok := ret.Get(0).(func(string) *admin.Admin); ok </span><span class="cov0" title="0">{
+                r0 = rf(email)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*admin.Admin)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(email)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
 }
 
 // FindAdminByEmailAndPassword provides a mock function with given fields: email, password
@@ -2562,18 +2711,41 @@ type Service struct {
         mock.Mock
 }
 
-// DeleteAdmin provides a mock function with given fields: id
-func (_m *Service) DeleteAdmin(id string) error <span class="cov0" title="0">{
-        ret := _m.Called(id)
+// DeleteAdmin provides a mock function with given fields: id, modifier
+func (_m *Service) DeleteAdmin(id string, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id)
+        if rf, ok := ret.Get(0).(func(string, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
 
         <span class="cov0" title="0">return r0</span>
+}
+
+// FindAdminByEmail provides a mock function with given fields: email
+func (_m *Service) FindAdminByEmail(email string) (*admin.Admin, error) <span class="cov0" title="0">{
+        ret := _m.Called(email)
+
+        var r0 *admin.Admin
+        if rf, ok := ret.Get(0).(func(string) *admin.Admin); ok </span><span class="cov0" title="0">{
+                r0 = rf(email)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*admin.Admin)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(email)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
 }
 
 // FindAdminByEmailAndPassword provides a mock function with given fields: email, password
@@ -2636,13 +2808,13 @@ func (_m *Service) InsertAdmin(insertAdminSpec admin.InsertAdminSpec) error <spa
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateAdmin provides a mock function with given fields: id, updateAdminSpec
-func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec) error <span class="cov0" title="0">{
-        ret := _m.Called(id, updateAdminSpec)
+// UpdateAdmin provides a mock function with given fields: id, updateAdminSpec, modifier
+func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, updateAdminSpec, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, admin.UpdateAdminSpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, updateAdminSpec)
+        if rf, ok := ret.Get(0).(func(string, admin.UpdateAdminSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, updateAdminSpec, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -2650,13 +2822,13 @@ func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec)
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateAdminPassword provides a mock function with given fields: id, password, oldPassword
-func (_m *Service) UpdateAdminPassword(id string, password string, oldPassword string) error <span class="cov0" title="0">{
-        ret := _m.Called(id, password, oldPassword)
+// UpdateAdminPassword provides a mock function with given fields: id, password, oldPassword, modifier
+func (_m *Service) UpdateAdminPassword(id string, password string, oldPassword string, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, password, oldPassword, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, string, string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, password, oldPassword)
+        if rf, ok := ret.Get(0).(func(string, string, string, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, password, oldPassword, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -2714,6 +2886,11 @@ func (s *service) InsertAdmin(insertAdminSpec InsertAdminSpec) error <span class
                 return business.ErrInvalidSpec
         }</span>
 
+        <span class="cov8" title="1">admin, _ := s.repository.FindAdminByEmail(insertAdminSpec.Email)
+        if admin != nil </span><span class="cov8" title="1">{
+                return business.ErrDataExists
+        }</span>
+
         <span class="cov8" title="1">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(insertAdminSpec.Password), bcrypt.DefaultCost)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
@@ -2742,16 +2919,21 @@ func (s *service) FindAdminByEmailAndPassword(email string, password string) (*A
         return s.repository.FindAdminByEmailAndPassword(email, password)
 }</span>
 
+//FindAdminByAdminnameAndPassword If data not found will return nil
+func (s *service) FindAdminByEmail(email string) (*Admin, error) <span class="cov8" title="1">{
+        return s.repository.FindAdminByEmail(email)
+}</span>
+
 //FindAdminByID If data not found will return nil without error
 func (s *service) FindAdminByID(id string) (*Admin, error) <span class="cov8" title="1">{
         return s.repository.FindAdminByID(id)
 }</span>
 
 //UpdateAdminPaasword if data not found or old password wrong will return error
-func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string) error <span class="cov8" title="1">{
+func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string, modifier string) error <span class="cov8" title="1">{
 
         admin, err := s.repository.FindAdminByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if admin == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
@@ -2759,7 +2941,7 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
                 return business.ErrNotFound
         }</span> else<span class="cov8" title="1"> {
                 _, err := s.repository.FindAdminByEmailAndPassword(admin.Email, oldPassword)
-                if err != nil </span><span class="cov0" title="0">{
+                if err != nil </span><span class="cov8" title="1">{
                         return business.ErrPasswordMisMatch
                 }</span>
         }
@@ -2769,6 +2951,7 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
         }</span>
         <span class="cov8" title="1">modifiedAdmin := admin.ModifyAdminPassword(
                 string(hashedPassword),
+                modifier,
                 time.Now(),
         )
 
@@ -2776,9 +2959,9 @@ func (s *service) UpdateAdminPassword(id string, newpassword, oldPassword string
 }
 
 //UpdateAdmin if data not found will return error
-func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error <span class="cov8" title="1">{
+func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec, modifier string) error <span class="cov8" title="1">{
         admin, err := s.repository.FindAdminByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if admin == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
@@ -2786,33 +2969,28 @@ func (s *service) UpdateAdmin(id string, updateAdminSpec UpdateAdminSpec) error 
                 return business.ErrNotFound
         }</span>
 
-        <span class="cov8" title="1">var uuid string = admin.ID
-
-        modifiedAdmin := admin.ModifyAdmin(
-                updateAdminSpec.Email,
+        <span class="cov8" title="1">modifiedAdmin := admin.ModifyAdmin(
                 updateAdminSpec.FirstName,
                 updateAdminSpec.LastName,
                 time.Now(),
-                uuid,
+                modifier,
         )
 
         return s.repository.UpdateAdmin(modifiedAdmin)</span>
 }
 
 //DeleteAdmin if data not found will return error
-func (s *service) DeleteAdmin(id string) error <span class="cov8" title="1">{
+func (s *service) DeleteAdmin(id string, modifier string) error <span class="cov8" title="1">{
         admin, err := s.repository.FindAdminByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if admin == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
         }</span>
 
-        <span class="cov8" title="1">var uuid string = admin.ID
-
-        deleteAdmin := admin.DeleteAdmin(
+        <span class="cov8" title="1">deleteAdmin := admin.DeleteAdmin(
                 time.Now(),
-                uuid,
+                modifier,
         )
 
         return s.repository.DeleteAdmin(deleteAdmin)</span>
@@ -2916,11 +3094,11 @@ func NewService(adminService admin.Service) Service <span class="cov8" title="1"
 func (s *service) AdminLogin(adminname string, password string) (string, error) <span class="cov8" title="1">{
         admin, err := s.adminService.FindAdminByEmailAndPassword(adminname, password)
         if err != nil </span><span class="cov8" title="1">{
-                return "", business.ErrNotFound
+                return "", business.ErrUnAuthorized
         }</span>
         <span class="cov8" title="1">td, err := s.CreateToken(admin)
         if err != nil </span><span class="cov0" title="0">{
-                return "", business.ErrNotFound
+                return "", business.ErrUnAuthorized
         }</span>
         // err = s.authService.InsertToken(admin, td)
         // if err != nil {
@@ -2939,7 +3117,7 @@ func (s *service) CreateToken(admin *admin.Admin) (*TokenDetails, error) <span c
         atClaims := jwt.MapClaims{}
         atClaims["authorized"] = true
         atClaims["access_uuid"] = td.AccessUuid
-        atClaims["admin_id"] = admin.ID
+        atClaims["userId"] = admin.ID
         atClaims["exp"] = td.AtExpires
         at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
         td.AccessToken, err = at.SignedString([]byte(config.GetConfig().JwtSecretKey))
@@ -3020,6 +3198,29 @@ func (_m *Repository) DeleteCategory(id string, adminId string) error <span clas
         }</span>
 
         <span class="cov8" title="1">return r0</span>
+}
+
+// FindCategoryByCode provides a mock function with given fields: id
+func (_m *Repository) FindCategoryByCode(id string) (*category.Category, error) <span class="cov8" title="1">{
+        ret := _m.Called(id)
+
+        var r0 *category.Category
+        if rf, ok := ret.Get(0).(func(string) *category.Category); ok </span><span class="cov0" title="0">{
+                r0 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*category.Category)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
 }
 
 // FindCategoryById provides a mock function with given fields: id
@@ -3112,18 +3313,41 @@ type Service struct {
         mock.Mock
 }
 
-// DeleteCategory provides a mock function with given fields: id, adminId
-func (_m *Service) DeleteCategory(id string, adminId string) error <span class="cov0" title="0">{
-        ret := _m.Called(id, adminId)
+// DeleteCategory provides a mock function with given fields: id, deleter
+func (_m *Service) DeleteCategory(id string, deleter string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, deleter)
 
         var r0 error
         if rf, ok := ret.Get(0).(func(string, string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, adminId)
+                r0 = rf(id, deleter)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
 
         <span class="cov0" title="0">return r0</span>
+}
+
+// FindCategoryByCode provides a mock function with given fields: id
+func (_m *Service) FindCategoryByCode(id string) (*category.Category, error) <span class="cov0" title="0">{
+        ret := _m.Called(id)
+
+        var r0 *category.Category
+        if rf, ok := ret.Get(0).(func(string) *category.Category); ok </span><span class="cov0" title="0">{
+                r0 = rf(id)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*category.Category)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(id)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
 }
 
 // FindCategoryById provides a mock function with given fields: id
@@ -3172,13 +3396,13 @@ func (_m *Service) GetAllCategory() (*[]category.Category, error) <span class="c
         <span class="cov0" title="0">return r0, r1</span>
 }
 
-// InsertCategory provides a mock function with given fields: _a0
-func (_m *Service) InsertCategory(_a0 *category.CategorySpec) error <span class="cov0" title="0">{
-        ret := _m.Called(_a0)
+// InsertCategory provides a mock function with given fields: _a0, creator
+func (_m *Service) InsertCategory(_a0 *category.CategorySpec, creator string) error <span class="cov0" title="0">{
+        ret := _m.Called(_a0, creator)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(*category.CategorySpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(_a0)
+        if rf, ok := ret.Get(0).(func(*category.CategorySpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(_a0, creator)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -3186,13 +3410,13 @@ func (_m *Service) InsertCategory(_a0 *category.CategorySpec) error <span class=
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateCategory provides a mock function with given fields: id, _a1
-func (_m *Service) UpdateCategory(id string, _a1 *category.CategorySpec) error <span class="cov0" title="0">{
-        ret := _m.Called(id, _a1)
+// UpdateCategory provides a mock function with given fields: id, _a1, modifier
+func (_m *Service) UpdateCategory(id string, _a1 *category.CategorySpec, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, _a1, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, *category.CategorySpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, _a1)
+        if rf, ok := ret.Get(0).(func(string, *category.CategorySpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, _a1, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -3232,10 +3456,19 @@ func (s *service) FindCategoryById(id string) (*Category, error) <span class="co
         return s.repository.FindCategoryById(id)
 }</span>
 
-func (s *service) InsertCategory(category *CategorySpec) error <span class="cov8" title="1">{
-        admin, err := s.adminService.FindAdminByID(category.AdminId)
+func (s *service) FindCategoryByCode(code string) (*Category, error) <span class="cov8" title="1">{
+        return s.repository.FindCategoryByCode(code)
+}</span>
+
+func (s *service) InsertCategory(category *CategorySpec, creator string) error <span class="cov8" title="1">{
+        admin, err := s.adminService.FindAdminByID(creator)
         if err != nil </span><span class="cov8" title="1">{
                 return business.ErrNotHavePermission
+        }</span>
+
+        <span class="cov8" title="1">data, _ := s.repository.FindCategoryByCode(category.Code)
+        if data != nil </span><span class="cov8" title="1">{
+                return business.ErrDataExists
         }</span>
 
         <span class="cov8" title="1">dataCategory := NewProductCategory(
@@ -3244,9 +3477,9 @@ func (s *service) InsertCategory(category *CategorySpec) error <span class="cov8
         return s.repository.InsertCategory(dataCategory)</span>
 }
 
-func (s *service) UpdateCategory(id string, category *CategorySpec) error <span class="cov8" title="1">{
-        admin, err := s.adminService.FindAdminByID(category.AdminId)
-        if err != nil </span><span class="cov0" title="0">{
+func (s *service) UpdateCategory(id string, category *CategorySpec, modifier string) error <span class="cov8" title="1">{
+        admin, err := s.adminService.FindAdminByID(modifier)
+        if err != nil </span><span class="cov8" title="1">{
                 return business.ErrNotHavePermission
         }</span>
         <span class="cov8" title="1">dataCategory := ModifyProductCategory(category.Name, admin.ID, time.Now())
@@ -3254,9 +3487,9 @@ func (s *service) UpdateCategory(id string, category *CategorySpec) error <span 
         return s.repository.UpdateCategory(id, dataCategory)</span>
 }
 
-func (s *service) DeleteCategory(id string, adminId string) error <span class="cov8" title="1">{
-        admin, err := s.adminService.FindAdminByID(adminId)
-        if err != nil </span><span class="cov0" title="0">{
+func (s *service) DeleteCategory(id string, deleter string) error <span class="cov8" title="1">{
+        admin, err := s.adminService.FindAdminByID(deleter)
+        if err != nil </span><span class="cov8" title="1">{
                 return business.ErrNotHavePermission
         }</span>
         <span class="cov8" title="1">return s.repository.DeleteCategory(id, admin.ID)</span>
@@ -3938,6 +4171,29 @@ func (_m *Repository) DeleteProduct(Product product.Product) error <span class="
         <span class="cov8" title="1">return r0</span>
 }
 
+// FindProductByCode provides a mock function with given fields: code
+func (_m *Repository) FindProductByCode(code string) (*product.Product, error) <span class="cov8" title="1">{
+        ret := _m.Called(code)
+
+        var r0 *product.Product
+        if rf, ok := ret.Get(0).(func(string) *product.Product); ok </span><span class="cov0" title="0">{
+                r0 = rf(code)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*product.Product)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(code)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
 // FindProductById provides a mock function with given fields: id
 func (_m *Repository) FindProductById(id string) (*product.Product, error) <span class="cov8" title="1">{
         ret := _m.Called(id)
@@ -4051,18 +4307,41 @@ type Service struct {
         mock.Mock
 }
 
-// DeleteProduct provides a mock function with given fields: id, adminId
-func (_m *Service) DeleteProduct(id string, adminId string) error <span class="cov0" title="0">{
-        ret := _m.Called(id, adminId)
+// DeleteProduct provides a mock function with given fields: id, deleter
+func (_m *Service) DeleteProduct(id string, deleter string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, deleter)
 
         var r0 error
         if rf, ok := ret.Get(0).(func(string, string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, adminId)
+                r0 = rf(id, deleter)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
 
         <span class="cov0" title="0">return r0</span>
+}
+
+// FindProductByCode provides a mock function with given fields: code
+func (_m *Service) FindProductByCode(code string) (*product.Product, error) <span class="cov0" title="0">{
+        ret := _m.Called(code)
+
+        var r0 *product.Product
+        if rf, ok := ret.Get(0).(func(string) *product.Product); ok </span><span class="cov0" title="0">{
+                r0 = rf(code)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*product.Product)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(code)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
 }
 
 // FindProductById provides a mock function with given fields: id
@@ -4134,13 +4413,13 @@ func (_m *Service) GetAllProductByParameter(id string, isActive string, category
         <span class="cov0" title="0">return r0, r1</span>
 }
 
-// InsertProduct provides a mock function with given fields: Product
-func (_m *Service) InsertProduct(Product *product.InsertProductSpec) error <span class="cov0" title="0">{
-        ret := _m.Called(Product)
+// InsertProduct provides a mock function with given fields: Product, creator
+func (_m *Service) InsertProduct(Product *product.InsertProductSpec, creator string) error <span class="cov0" title="0">{
+        ret := _m.Called(Product, creator)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(*product.InsertProductSpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(Product)
+        if rf, ok := ret.Get(0).(func(*product.InsertProductSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(Product, creator)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -4148,13 +4427,13 @@ func (_m *Service) InsertProduct(Product *product.InsertProductSpec) error <span
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateProduct provides a mock function with given fields: id, Product
-func (_m *Service) UpdateProduct(id string, Product *product.UpdateProductSpec) error <span class="cov0" title="0">{
-        ret := _m.Called(id, Product)
+// UpdateProduct provides a mock function with given fields: id, Product, modifier
+func (_m *Service) UpdateProduct(id string, Product *product.UpdateProductSpec, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, Product, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, *product.UpdateProductSpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, Product)
+        if rf, ok := ret.Get(0).(func(string, *product.UpdateProductSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, Product, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -4278,7 +4557,6 @@ import (
 )
 
 type InsertProductSpec struct {
-        AdminId           string `validate:"required"`
         Code              string `validate:"required"`
         Name              string `validate:"required"`
         Price             int64  `validate:"required"`
@@ -4289,7 +4567,6 @@ type InsertProductSpec struct {
 }
 
 type UpdateProductSpec struct {
-        AdminId           string `validate:"required"`
         Name              string `validate:"required"`
         Price             int64  `validate:"required"`
         IsActive          bool   `validate:"required"`
@@ -4319,16 +4596,23 @@ func (s *service) FindProductById(id string) (*Product, error) <span class="cov8
         return s.repository.FindProductById(id)
 }</span>
 
-func (s *service) InsertProduct(product *InsertProductSpec) error <span class="cov8" title="1">{
+func (s *service) FindProductByCode(code string) (*Product, error) <span class="cov8" title="1">{
+        return s.repository.FindProductByCode(code)
+}</span>
+
+func (s *service) InsertProduct(product *InsertProductSpec, creator string) error <span class="cov8" title="1">{
         err := validator.GetValidator().Struct(product)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
         }</span>
-        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(product.AdminId)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(creator)
+        if err != nil </span><span class="cov8" title="1">{
                 return business.ErrNotHavePermission
         }</span>
-
+        <span class="cov8" title="1">dataproduct, _ := s.repository.FindProductByCode(product.Code)
+        if dataproduct != nil </span><span class="cov8" title="1">{
+                return business.ErrDataExists
+        }</span>
         <span class="cov8" title="1">data := NewProduct(
                 product.Code,
                 product.Name,
@@ -4343,9 +4627,13 @@ func (s *service) InsertProduct(product *InsertProductSpec) error <span class="c
         return s.repository.InsertProduct(data)</span>
 }
 
-func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) error <span class="cov8" title="1">{
-        product, err := s.repository.FindProductById(id)
-        if err != nil </span><span class="cov0" title="0">{
+func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec, modifier string) error <span class="cov8" title="1">{
+        admin, err := s.adminService.FindAdminByID(modifier)
+        if err != nil </span><span class="cov8" title="1">{
+                return business.ErrNotHavePermission
+        }</span>
+        <span class="cov8" title="1">product, err := s.repository.FindProductById(id)
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if product == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
@@ -4356,10 +4644,7 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
         }</span>
-        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(updateProduct.AdminId)
-        if err != nil </span><span class="cov0" title="0">{
-                return business.ErrNotHavePermission
-        }</span>
+
         <span class="cov8" title="1">modifiedproduct := product.ModifyProduct(
                 updateProduct.Name,
                 updateProduct.Price,
@@ -4373,18 +4658,18 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
         return s.repository.UpdateProduct(modifiedproduct)</span>
 }
 
-func (s *service) DeleteProduct(id string, adminId string) error <span class="cov8" title="1">{
-        product, err := s.repository.FindProductById(id)
-        if err != nil </span><span class="cov0" title="0">{
+func (s *service) DeleteProduct(id string, deleter string) error <span class="cov8" title="1">{
+        admin, err := s.adminService.FindAdminByID(deleter)
+        if err != nil </span><span class="cov8" title="1">{
+                return business.ErrNotHavePermission
+        }</span>
+        <span class="cov8" title="1">product, err := s.repository.FindProductById(id)
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if product == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
         }</span> else<span class="cov8" title="1"> if product.DeletedBy != "" </span><span class="cov0" title="0">{
                 return business.ErrNotFound
-        }</span>
-        <span class="cov8" title="1">admin, err := s.adminService.FindAdminByID(adminId)
-        if err != nil </span><span class="cov0" title="0">{
-                return business.ErrNotHavePermission
         }</span>
         <span class="cov8" title="1">deleteProduct := product.DeleteProduct(
                 time.Now(),
@@ -5612,6 +5897,29 @@ func (_m *Repository) DeleteUser(_a0 user.User) error <span class="cov8" title="
         <span class="cov8" title="1">return r0</span>
 }
 
+// FindUserByEmail provides a mock function with given fields: email
+func (_m *Repository) FindUserByEmail(email string) (*user.User, error) <span class="cov8" title="1">{
+        ret := _m.Called(email)
+
+        var r0 *user.User
+        if rf, ok := ret.Get(0).(func(string) *user.User); ok </span><span class="cov0" title="0">{
+                r0 = rf(email)
+        }</span> else<span class="cov8" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov8" title="1">{
+                        r0 = ret.Get(0).(*user.User)
+                }</span>
+        }
+
+        <span class="cov8" title="1">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(email)
+        }</span> else<span class="cov8" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov8" title="1">return r0, r1</span>
+}
+
 // FindUserByEmailAndPassword provides a mock function with given fields: email, password
 func (_m *Repository) FindUserByEmailAndPassword(email string, password string) (*user.User, error) <span class="cov8" title="1">{
         ret := _m.Called(email, password)
@@ -5716,18 +6024,41 @@ type Service struct {
         mock.Mock
 }
 
-// DeleteUser provides a mock function with given fields: id
-func (_m *Service) DeleteUser(id string) error <span class="cov0" title="0">{
-        ret := _m.Called(id)
+// DeleteUser provides a mock function with given fields: id, deleter
+func (_m *Service) DeleteUser(id string, deleter string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, deleter)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id)
+        if rf, ok := ret.Get(0).(func(string, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, deleter)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
 
         <span class="cov0" title="0">return r0</span>
+}
+
+// FindUserByEmail provides a mock function with given fields: email
+func (_m *Service) FindUserByEmail(email string) (*user.User, error) <span class="cov0" title="0">{
+        ret := _m.Called(email)
+
+        var r0 *user.User
+        if rf, ok := ret.Get(0).(func(string) *user.User); ok </span><span class="cov0" title="0">{
+                r0 = rf(email)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*user.User)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var r1 error
+        if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(email)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
 }
 
 // FindUserByEmailAndPassword provides a mock function with given fields: email, password
@@ -5790,13 +6121,13 @@ func (_m *Service) InsertUser(insertUserSpec user.InsertUserSpec) error <span cl
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateUser provides a mock function with given fields: id, updateUserSpec
-func (_m *Service) UpdateUser(id string, updateUserSpec user.UpdateUserSpec) error <span class="cov0" title="0">{
-        ret := _m.Called(id, updateUserSpec)
+// UpdateUser provides a mock function with given fields: id, updateUserSpec, modifier
+func (_m *Service) UpdateUser(id string, updateUserSpec user.UpdateUserSpec, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, updateUserSpec, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, user.UpdateUserSpec) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, updateUserSpec)
+        if rf, ok := ret.Get(0).(func(string, user.UpdateUserSpec, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, updateUserSpec, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -5804,13 +6135,13 @@ func (_m *Service) UpdateUser(id string, updateUserSpec user.UpdateUserSpec) err
         <span class="cov0" title="0">return r0</span>
 }
 
-// UpdateUserPassword provides a mock function with given fields: id, password, oldPassword
-func (_m *Service) UpdateUserPassword(id string, password string, oldPassword string) error <span class="cov0" title="0">{
-        ret := _m.Called(id, password, oldPassword)
+// UpdateUserPassword provides a mock function with given fields: id, password, oldPassword, modifier
+func (_m *Service) UpdateUserPassword(id string, password string, oldPassword string, modifier string) error <span class="cov0" title="0">{
+        ret := _m.Called(id, password, oldPassword, modifier)
 
         var r0 error
-        if rf, ok := ret.Get(0).(func(string, string, string) error); ok </span><span class="cov0" title="0">{
-                r0 = rf(id, password, oldPassword)
+        if rf, ok := ret.Get(0).(func(string, string, string, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(id, password, oldPassword, modifier)
         }</span> else<span class="cov0" title="0"> {
                 r0 = ret.Error(0)
         }</span>
@@ -5870,6 +6201,11 @@ func (s *service) InsertUser(insertUserSpec InsertUserSpec) error <span class="c
                 return business.ErrInvalidSpec
         }</span>
 
+        <span class="cov8" title="1">userdata, _ := s.repository.FindUserByEmail(insertUserSpec.Email)
+        if userdata != nil </span><span class="cov8" title="1">{
+                return business.ErrDataExists
+        }</span>
+
         <span class="cov8" title="1">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(insertUserSpec.Password), bcrypt.DefaultCost)
         if err != nil </span><span class="cov0" title="0">{
                 return business.ErrInvalidSpec
@@ -5898,16 +6234,21 @@ func (s *service) FindUserByEmailAndPassword(email string, password string) (*Us
         return s.repository.FindUserByEmailAndPassword(email, password)
 }</span>
 
+//FindUserByUsername If data not found will return nil
+func (s *service) FindUserByEmail(email string) (*User, error) <span class="cov8" title="1">{
+        return s.repository.FindUserByEmail(email)
+}</span>
+
 //FindUserByID If data not found will return nil without error
 func (s *service) FindUserByID(id string) (*User, error) <span class="cov8" title="1">{
         return s.repository.FindUserByID(id)
 }</span>
 
 //UpdateUserPaasword if data not found or old password wrong will return error
-func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string) error <span class="cov8" title="1">{
+func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string, modifier string) error <span class="cov8" title="1">{
 
         user, err := s.repository.FindUserByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if user == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
@@ -5915,7 +6256,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
                 return business.ErrNotFound
         }</span> else<span class="cov8" title="1"> {
                 _, err := s.repository.FindUserByEmailAndPassword(user.Email, oldPassword)
-                if err != nil </span><span class="cov0" title="0">{
+                if err != nil </span><span class="cov8" title="1">{
                         return business.ErrPasswordMisMatch
                 }</span>
         }
@@ -5925,6 +6266,7 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
         }</span>
         <span class="cov8" title="1">modifiedUser := user.ModifyUserPassword(
                 string(hashedPassword),
+                modifier,
                 time.Now(),
         )
 
@@ -5932,9 +6274,9 @@ func (s *service) UpdateUserPassword(id string, newpassword, oldPassword string)
 }
 
 //UpdateUser if data not found will return error
-func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error <span class="cov8" title="1">{
+func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec, modifier string) error <span class="cov8" title="1">{
         user, err := s.repository.FindUserByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if user == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
@@ -5942,35 +6284,30 @@ func (s *service) UpdateUser(id string, updateUserSpec UpdateUserSpec) error <sp
                 return business.ErrNotFound
         }</span>
 
-        <span class="cov8" title="1">var uuid string = user.ID
-
-        modifiedUser := user.ModifyUser(
-                updateUserSpec.Email,
+        <span class="cov8" title="1">modifiedUser := user.ModifyUser(
                 updateUserSpec.FirstName,
                 updateUserSpec.LastName,
                 updateUserSpec.HandPhone,
                 updateUserSpec.Address,
                 time.Now(),
-                uuid,
+                modifier,
         )
 
         return s.repository.UpdateUser(modifiedUser)</span>
 }
 
 //Deleteuser if data not found will return error
-func (s *service) DeleteUser(id string) error <span class="cov8" title="1">{
+func (s *service) DeleteUser(id string, modifier string) error <span class="cov8" title="1">{
         user, err := s.repository.FindUserByID(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span> else<span class="cov8" title="1"> if user == nil </span><span class="cov0" title="0">{
                 return business.ErrNotFound
         }</span>
 
-        <span class="cov8" title="1">var uuid string = user.ID
-
-        deleteUser := user.DeleteUser(
+        <span class="cov8" title="1">deleteUser := user.DeleteUser(
                 time.Now(),
-                uuid,
+                modifier,
         )
 
         return s.repository.DeleteUser(deleteUser)</span>
@@ -6023,7 +6360,6 @@ func NewUser(
 
 //ModifyUser update existing UserData
 func (oldData *User) ModifyUser(
-        newEmail,
         newFirstName,
         newLastName,
         newHandPhone,
@@ -6033,7 +6369,7 @@ func (oldData *User) ModifyUser(
 
         return User{
                 ID:        oldData.ID,
-                Email:     newEmail,
+                Email:     oldData.Email,
                 FirstName: newFirstName,
                 LastName:  newLastName,
                 Password:  oldData.Password,
@@ -6070,6 +6406,7 @@ func (oldData *User) ModifyUser(
 //ModifyUserPassword update existing UserData
 func (oldData *User) ModifyUserPassword(
         newPassword string,
+        updater string,
         updatedAt time.Time) User <span class="cov8" title="1">{
 
         return User{
@@ -6083,7 +6420,7 @@ func (oldData *User) ModifyUserPassword(
                 CreatedAt: oldData.CreatedAt,
                 CreatedBy: oldData.CreatedBy,
                 UpdatedAt: updatedAt,
-                UpdatedBy: oldData.ID,
+                UpdatedBy: updater,
         }
 }</span>
 
@@ -6207,15 +6544,15 @@ func NewService(userService user.Service) Service <span class="cov8" title="1">{
 func (s *service) UserLogin(username string, password string) (string, error) <span class="cov8" title="1">{
         user, err := s.userService.FindUserByEmailAndPassword(username, password)
         if err != nil </span><span class="cov8" title="1">{
-                return "", business.ErrNotFound
+                return "", business.ErrUnAuthorized
         }</span>
         <span class="cov8" title="1">td, err := s.CreateToken(user)
         if err != nil </span><span class="cov0" title="0">{
-                return "", business.ErrNotFound
+                return "", business.ErrUnAuthorized
         }</span>
         // err = s.authService.InsertToken(user, td)
         // if err != nil {
-        //         return "", business.ErrNotFound
+        //         return "", business.ErrUnAuthorized
         // }
         <span class="cov8" title="1">return td.AccessToken, nil</span>
 }
@@ -6230,7 +6567,7 @@ func (s *service) CreateToken(user *user.User) (*TokenDetails, error) <span clas
         atClaims := jwt.MapClaims{}
         atClaims["authorized"] = true
         atClaims["access_uuid"] = td.AccessUuid
-        atClaims["user_id"] = user.ID
+        atClaims["userId"] = user.ID
         atClaims["exp"] = td.AtExpires
         at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
         td.AccessToken, err = at.SignedString([]byte(config.GetConfig().JwtSecretKey))
@@ -6244,8 +6581,6 @@ func (s *service) CreateToken(user *user.User) (*TokenDetails, error) <span clas
 		<pre class="file" id="file82" style="display: none">package config
 
 import (
-        "os"
-
         "github.com/labstack/gommon/log"
         "github.com/spf13/viper"
 )
@@ -6290,22 +6625,12 @@ func GetConfig() *ConfigApp <span class="cov8" title="1">{
         defaConfig.MongoUsername = "mongo"
         defaConfig.MongoPassword = "mongo"
         defaConfig.MongoDbName = "altastoredb"
+
         var (
                 err error
-                cwd string
         )
 
-        // Geting current directory
-        cwd, err = os.Getwd()
-        if err != nil </span><span class="cov0" title="0">{
-                log.Info("Failed get current directory, config set to default1.")
-                return &amp;defaConfig
-        }</span>
-
-        // Geting config in file .env
-        //viper.SetConfigFile(cwd + "/../config/.env")
-        //viper.SetConfigFile(cwd + "/config/.env")
-        <span class="cov8" title="1">viper.SetConfigFile(cwd + "/.env")
+        viper.SetConfigFile("./.env")
         err = viper.ReadInConfig()
         if err != nil </span><span class="cov8" title="1">{
                 log.Info("Failed read config, config set to default2.")
@@ -6343,7 +6668,6 @@ import (
         adminAuthService "AltaStore/business/adminauth"
         cateService "AltaStore/business/category"
         checkoutService "AltaStore/business/checkout"
-        loggerService "AltaStore/business/logger"
         productService "AltaStore/business/product"
         userService "AltaStore/business/user"
         userAuthService "AltaStore/business/userauth"
@@ -6354,7 +6678,6 @@ import (
         adminRepository "AltaStore/modules/admin"
         cateRepository "AltaStore/modules/category"
         checkoutRepository "AltaStore/modules/checkout"
-        loggerRepo "AltaStore/modules/logger"
         "AltaStore/modules/migration"
         productRepository "AltaStore/modules/product"
         userRepository "AltaStore/modules/user"
@@ -6376,8 +6699,6 @@ import (
         paymentService "AltaStore/business/checkoutpayment"
         paymentRepository "AltaStore/modules/checkoutpayment"
         "fmt"
-
-        log "github.com/sirupsen/logrus"
 
         "go.mongodb.org/mongo-driver/mongo"
         "go.mongodb.org/mongo-driver/mongo/options"
@@ -6444,18 +6765,18 @@ func main() <span class="cov0" title="0">{
         // retrieves application configuration and returns common values when there is a problem
         config := config.GetConfig()
 
-        // Open mongodb logger
-        mongoConnection := newMongoDBConnection(config)
+        // // Open mongodb logger
+        // mongoConnection := newMongoDBConnection(config)
 
-        // Register repository
-        logrRepo := loggerRepo.NewRepository(mongoConnection)
+        // // Register repository
+        // logrRepo := loggerRepo.NewRepository(mongoConnection)
 
-        // Register service
-        logeService := loggerService.NewService(logrRepo)
+        // // Register service
+        // logeService := loggerService.NewService(logrRepo)
 
-        // Register logs
-        log.SetFormatter(&amp;log.JSONFormatter{})
-        log.SetOutput(logeService)
+        // // Register logs
+        // log.SetFormatter(&amp;log.JSONFormatter{})
+        // log.SetOutput(logeService)
 
         // open database server base session
         dbConnection := newDatabaseConnection(config)
@@ -6690,6 +7011,20 @@ func (repo *Repository) FindAdminByEmailAndPassword(email string, password strin
         return &amp;Admin, nil</span>
 }
 
+func (repo *Repository) FindAdminByEmail(email string) (*admin.Admin, error) <span class="cov0" title="0">{
+
+        var adminData Admin
+
+        err := repo.DB.Where("email = ?", email).Where("deleted_by = ''").First(&amp;adminData).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">Admin := adminData.Toadmin()
+
+        return &amp;Admin, nil</span>
+}
+
 //FindAdminByID If data not found will return nil without error
 func (repo *Repository) FindAdminByID(id string) (*admin.Admin, error) <span class="cov0" title="0">{
 
@@ -6724,7 +7059,6 @@ func (repo *Repository) UpdateAdmin(admin admin.Admin) error <span class="cov0" 
         AdminData := newAdminTable(admin)
 
         err := repo.DB.Model(&amp;AdminData).Updates(Admin{
-                Email:     AdminData.Email,
                 FirstName: AdminData.FirstName,
                 LastName:  AdminData.LastName,
                 Password:  AdminData.Password,
@@ -6827,6 +7161,18 @@ func (r *Repository) FindCategoryById(id string) (*category.Category, error) <sp
         var category ProductCategory
 
         err := r.DB.First(&amp;category, "id = ?", id).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">response := category.toCategory()
+        return &amp;response, nil</span>
+}
+
+func (r *Repository) FindCategoryByCode(code string) (*category.Category, error) <span class="cov0" title="0">{
+        var category ProductCategory
+
+        err := r.DB.First(&amp;category, "code = ?", code).Error
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
@@ -7324,6 +7670,18 @@ func (r *Repository) FindProductById(id string) (*product.Product, error) <span 
         var product *Product
 
         err := r.DB.Where("id = ?", id).Where("deleted_by = ''").First(&amp;product).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">response := product.ToProduct()
+        return &amp;response, nil</span>
+}
+
+func (r *Repository) FindProductByCode(code string) (*product.Product, error) <span class="cov0" title="0">{
+        var product *Product
+
+        err := r.DB.Where("code = ?", code).Where("deleted_by = ''").First(&amp;product).Error
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
@@ -7975,6 +8333,20 @@ func (repo *Repository) FindUserByEmailAndPassword(email string, password string
         return &amp;user, nil</span>
 }
 
+func (repo *Repository) FindUserByEmail(email string) (*user.User, error) <span class="cov0" title="0">{
+
+        var userData User
+
+        err := repo.DB.Where("email = ?", email).Where("deleted_by = ''").First(&amp;userData).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">user := userData.ToUser()
+
+        return &amp;user, nil</span>
+}
+
 //FindUserByID If data not found will return nil without error
 func (repo *Repository) FindUserByID(id string) (*user.User, error) <span class="cov0" title="0">{
 
@@ -8009,7 +8381,6 @@ func (repo *Repository) UpdateUser(user user.User) error <span class="cov0" titl
         userData := newUserTable(user)
 
         err := repo.DB.Model(&amp;userData).Updates(User{
-                Email:     userData.Email,
                 FirstName: userData.FirstName,
                 LastName:  userData.LastName,
                 Address:   userData.Address,
