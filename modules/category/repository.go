@@ -79,6 +79,18 @@ func (r *Repository) FindCategoryById(id string) (*category.Category, error) {
 	return &response, nil
 }
 
+func (r *Repository) FindCategoryByCode(code string) (*category.Category, error) {
+	var category ProductCategory
+
+	err := r.DB.First(&category, "code = ?", code).Error
+	if err != nil {
+		return nil, err
+	}
+
+	response := category.toCategory()
+	return &response, nil
+}
+
 func (r *Repository) InsertCategory(cat category.Category) error {
 	dataCategory := newDataCategory(cat)
 	if err := r.DB.Create(dataCategory).Error; err != nil {
