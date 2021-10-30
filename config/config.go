@@ -47,22 +47,18 @@ func GetConfig() *ConfigApp {
 	defaConfig.MongoUsername = "mongo"
 	defaConfig.MongoPassword = "mongo"
 	defaConfig.MongoDbName = "altastoredb"
+
 	var (
 		err error
-		//cwd string
 	)
 
-	// Geting current directory
-	_, err = os.Getwd()
-	if err != nil {
-		log.Info("Failed get current directory, config set to default1.")
-		return &defaConfig
-	}
+	// Production
+	cwd, _ := os.Getwd()
+	viper.SetConfigFile(cwd + "/../config/.env")
 
-	// Geting config in file .env
-	//viper.SetConfigFile(cwd + "/../config/.env")
-	//viper.SetConfigFile(cwd + "/config/.env")
-	viper.SetConfigFile("/.env")
+	//Development
+	//viper.SetConfigFile("./.env")
+
 	err = viper.ReadInConfig()
 	if err != nil {
 		log.Info("Failed read config, config set to default2.")

@@ -6,8 +6,6 @@ import (
 )
 
 type UpdatePurchaseReceivingRequest struct {
-	UserId       string                                 `json:"userid"`
-	Code         string                                 `json:"code"`
 	DateReceived time.Time                              `json:"datereceived"`
 	ReceivedBy   string                                 `json:"receivedby"`
 	Description  string                                 `json:"description"`
@@ -17,7 +15,6 @@ type UpdatePurchaseReceivingRequest struct {
 func (i *UpdatePurchaseReceivingRequest) ToPurchaseReceivingSpec() *purchasereceiving.UpdatePurchaseReceivingSpec {
 	var spec purchasereceiving.UpdatePurchaseReceivingSpec
 
-	spec.Code = i.Code
 	spec.DateReceived = i.DateReceived
 	spec.ReceivedBy = i.ReceivedBy
 	spec.Description = i.Description

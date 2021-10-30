@@ -107,6 +107,20 @@ func (repo *Repository) FindUserByEmailAndPassword(email string, password string
 	return &user, nil
 }
 
+func (repo *Repository) FindUserByEmail(email string) (*user.User, error) {
+
+	var userData User
+
+	err := repo.DB.Where("email = ?", email).Where("deleted_by = ''").First(&userData).Error
+	if err != nil {
+		return nil, err
+	}
+
+	user := userData.ToUser()
+
+	return &user, nil
+}
+
 //FindUserByID If data not found will return nil without error
 func (repo *Repository) FindUserByID(id string) (*user.User, error) {
 
@@ -141,7 +155,6 @@ func (repo *Repository) UpdateUser(user user.User) error {
 	userData := newUserTable(user)
 
 	err := repo.DB.Model(&userData).Updates(User{
-		Email:     userData.Email,
 		FirstName: userData.FirstName,
 		LastName:  userData.LastName,
 		Address:   userData.Address,

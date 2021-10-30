@@ -73,6 +73,29 @@ func (_m *Service) GetAllPurchaseReceivingByParameter(code string, finder string
 	return r0, r1
 }
 
+// GetPurchaseReceivingByCode provides a mock function with given fields: code, finder
+func (_m *Service) GetPurchaseReceivingByCode(code string, finder string) (*purchasereceiving.PurchaseReceiving, error) {
+	ret := _m.Called(code, finder)
+
+	var r0 *purchasereceiving.PurchaseReceiving
+	if rf, ok := ret.Get(0).(func(string, string) *purchasereceiving.PurchaseReceiving); ok {
+		r0 = rf(code, finder)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*purchasereceiving.PurchaseReceiving)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(code, finder)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetPurchaseReceivingById provides a mock function with given fields: id, finder
 func (_m *Service) GetPurchaseReceivingById(id string, finder string) (*purchasereceiving.PurchaseReceiving, error) {
 	ret := _m.Called(id, finder)

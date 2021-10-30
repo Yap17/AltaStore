@@ -2,6 +2,7 @@ package product
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/product/request"
 	"AltaStore/api/v1/product/response"
 	"AltaStore/business/product"
@@ -25,7 +26,10 @@ func (c *Controller) GetAllProduct(ctx echo.Context) error {
 			return ctx.JSON(common.BadRequestResponse())
 		}
 	}
-
+	_, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	isActive := ctx.QueryParam("isactive")
 	categoryName := ctx.QueryParam("categoryname")
 	code := ctx.QueryParam("code")
@@ -48,7 +52,10 @@ func (c *Controller) FindProductById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-
+	_, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	product, err := c.service.FindProductById(id)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
@@ -62,13 +69,23 @@ func (c *Controller) FindProductById(ctx echo.Context) error {
 func (c *Controller) InsertProduct(ctx echo.Context) error {
 	var err error
 
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
 	insertProduct := new(request.InsertProductRequest)
 
 	if err = ctx.Bind(insertProduct); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.InsertProduct(insertProduct.ToProductSpec()); err != nil {
+	if err = c.service.InsertProduct(insertProduct.ToProductSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -83,12 +100,22 @@ func (c *Controller) UpdateProduct(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	updateProduct := new(request.UpdateProductRequest)
-	if err = ctx.Bind(updateProduct); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 
-	if err = c.service.UpdateProduct(id, updateProduct.ToProductSpec()); err != nil {
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	updateProduct := new(request.UpdateProductRequest)
+	if err = ctx.Bind(updateProduct); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err = c.service.UpdateProduct(id, updateProduct.ToProductSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -99,16 +126,25 @@ func (c *Controller) DeleteProduct(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	userid := ctx.QueryParam("adminid")
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 
 	if _, err = uuid.Parse(id); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
-	}
-	if _, err = uuid.Parse(userid); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.DeleteProduct(id, userid); err != nil {
+	if _, err = uuid.Parse(adminId); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err = c.service.DeleteProduct(id, adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 

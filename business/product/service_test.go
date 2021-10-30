@@ -4,6 +4,8 @@ import (
 	"AltaStore/business"
 	"AltaStore/business/admin"
 	adminMock "AltaStore/business/admin/mocks"
+	"AltaStore/business/category"
+	categoryMock "AltaStore/business/category/mocks"
 	"AltaStore/business/product"
 	productMock "AltaStore/business/product/mocks"
 	"os"
@@ -36,10 +38,12 @@ const (
 
 var (
 	adminService      adminMock.Service
+	categoryService   categoryMock.Service
 	productRepository productMock.Repository
 	productService    product.Service
 
 	adminData         admin.Admin
+	categoryData      category.Category
 	productData       product.Product
 	productDatas      []product.Product
 	insertProductSpec product.InsertProductSpec
@@ -72,8 +76,12 @@ func setup() {
 		LastName:  lastname,
 		Password:  password,
 	}
+	categoryData = category.Category{
+		ID:   id,
+		Code: code,
+		Name: name,
+	}
 	insertProductSpec = product.InsertProductSpec{
-		AdminId:           adminId,
 		Code:              code,
 		Name:              name,
 		Price:             price,
@@ -84,7 +92,6 @@ func setup() {
 	}
 
 	updateProductSpec = product.UpdateProductSpec{
-		AdminId:           adminId,
 		Name:              name,
 		Price:             price,
 		IsActive:          isactive,
@@ -94,32 +101,58 @@ func setup() {
 	}
 	productDatas = append(productDatas, productData)
 
-	productService = product.NewService(&adminService, &productRepository)
+	productService = product.NewService(&productRepository)
 }
 
 func TestInsertProduct(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		admin, err := adminService.FindAdminByID(id)
+	// 	err := productService.InsertProduct(&insertProductSpec, adminId)
 
-		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
+	// })
+	t.Run("Expect Product Exist", func(t *testing.T) {
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(&productData, nil).Once()
+
+		err := productService.InsertProduct(&insertProductSpec, adminId)
+
+		assert.NotNil(t, err)
+
+		assert.Equal(t, err, business.ErrDataExists)
 	})
+	// t.Run("Expect category not Exist", func(t *testing.T) {
+	// 	//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+	// 	productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
+	// 	categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(nil, business.ErrInvalidData).Once()
+
+	// 	err := productService.InsertProduct(&insertProductSpec, adminId)
+
+	// 	assert.NotNil(t, err)
+
+	// 	assert.Equal(t, err, business.ErrInvalidData)
+
+	// })
 	t.Run("Expect Insert Product Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
+		//categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(&categoryData, nil).Once()
 		productRepository.On("InsertProduct", mock.AnythingOfType("product.Product")).Return(nil).Once()
 
-		err := productService.InsertProduct(&insertProductSpec)
+		err := productService.InsertProduct(&insertProductSpec, adminId)
 
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Insert Product product Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
+		//categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(&categoryData, nil).Once()
 		productRepository.On("InsertProduct", mock.AnythingOfType("product.Product")).Return(business.ErrInternalServer).Once()
 
-		err := productService.InsertProduct(&insertProductSpec)
+		err := productService.InsertProduct(&insertProductSpec, adminId)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, err, business.ErrInternalServer)
@@ -127,39 +160,53 @@ func TestInsertProduct(t *testing.T) {
 }
 
 func TestUpdateProduct(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		admin, err := adminService.FindAdminByID(id)
+	// 	err := productService.UpdateProduct(id, &updateProductSpec, adminId)
 
-		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Product Not Found", func(t *testing.T) {
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 
-		product, err := productService.FindProductById(id)
+		err := productService.UpdateProduct(id, &updateProductSpec, adminId)
 
-		assert.Nil(t, product)
 		assert.NotNil(t, err, business.ErrNotFound)
 
 	})
+	// t.Run("Expect category not Exist", func(t *testing.T) {
+	// 	//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+	// 	productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(&productData, nil).Once()
+	// 	categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(nil, business.ErrInvalidData).Once()
+
+	// 	err := productService.UpdateProduct(id, &updateProductSpec, adminId)
+
+	// 	assert.NotNil(t, err)
+
+	// 	assert.Equal(t, err, business.ErrInvalidData)
+
+	// })
 	t.Run("Expect Update Product Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(&productData, nil).Once()
+		//categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(&categoryData, nil).Once()
 		productRepository.On("UpdateProduct", mock.AnythingOfType("product.Product")).Return(nil).Once()
 
-		err := productService.UpdateProduct(id, &updateProductSpec)
+		err := productService.UpdateProduct(id, &updateProductSpec, adminId)
 
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Update Product Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(&productData, nil).Once()
+		//categoryService.On("FindCategoryById", mock.AnythingOfType("string")).Return(&categoryData, nil).Once()
 		productRepository.On("UpdateProduct", mock.AnythingOfType("product.Product")).Return(business.ErrInternalServer).Once()
 
-		err := productService.UpdateProduct(id, &updateProductSpec)
+		err := productService.UpdateProduct(id, &updateProductSpec, adminId)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, err, business.ErrInternalServer)
@@ -167,25 +214,25 @@ func TestUpdateProduct(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		admin, err := adminService.FindAdminByID(id)
+	// 	err := productService.DeleteProduct(id, adminId)
 
-		assert.Nil(t, admin)
-		assert.NotNil(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Product Not Found", func(t *testing.T) {
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 
-		product, err := productService.FindProductById(id)
+		err := productService.DeleteProduct(id, adminId)
 
-		assert.Nil(t, product)
 		assert.NotNil(t, err, business.ErrNotFound)
 	})
 	t.Run("Expect Delete Product Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(&productData, nil).Once()
 		productRepository.On("DeleteProduct", mock.AnythingOfType("product.Product")).Return(nil).Once()
 
@@ -194,7 +241,7 @@ func TestDeleteProduct(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Delete Product Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(&productData, nil).Once()
 		productRepository.On("DeleteProduct", mock.AnythingOfType("product.Product")).Return(business.ErrInternalServer).Once()
 
@@ -316,6 +363,39 @@ func TestFindProductById(t *testing.T) {
 	t.Run("Expect product product not found", func(t *testing.T) {
 		productRepository.On("FindProductById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 		product, err := productService.FindProductById(id)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, product)
+
+		assert.Equal(t, err, business.ErrNotFound)
+	})
+}
+
+func TestFindProductByCode(t *testing.T) {
+	t.Run("Expect found the product", func(t *testing.T) {
+		productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(&productData, nil).Once()
+
+		product, err := productService.FindProductByCode(code)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, product)
+
+		assert.Equal(t, id, product.ID)
+		assert.Equal(t, code, product.Code)
+		assert.Equal(t, name, product.Name)
+		assert.Equal(t, price, product.Price)
+		assert.Equal(t, qty, product.Qty)
+		assert.Equal(t, qtycart, product.QtyCart)
+		assert.Equal(t, isactive, product.IsActive)
+		assert.Equal(t, productcategoryid, product.ProductCategoryId)
+		assert.Equal(t, productcategoryname, product.ProductCategoryName)
+		assert.Equal(t, unitname, product.UnitName)
+		assert.Equal(t, description, product.Description)
+	})
+
+	t.Run("Expect product product not found", func(t *testing.T) {
+		productRepository.On("FindProductByCode", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+		product, err := productService.FindProductByCode(code)
 
 		assert.NotNil(t, err)
 		assert.Nil(t, product)

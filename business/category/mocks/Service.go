@@ -13,18 +13,41 @@ type Service struct {
 	mock.Mock
 }
 
-// DeleteCategory provides a mock function with given fields: id, adminId
-func (_m *Service) DeleteCategory(id string, adminId string) error {
-	ret := _m.Called(id, adminId)
+// DeleteCategory provides a mock function with given fields: id, deleter
+func (_m *Service) DeleteCategory(id string, deleter string) error {
+	ret := _m.Called(id, deleter)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = rf(id, adminId)
+		r0 = rf(id, deleter)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// FindCategoryByCode provides a mock function with given fields: code
+func (_m *Service) FindCategoryByCode(code string) (*category.Category, error) {
+	ret := _m.Called(code)
+
+	var r0 *category.Category
+	if rf, ok := ret.Get(0).(func(string) *category.Category); ok {
+		r0 = rf(code)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*category.Category)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(code)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // FindCategoryById provides a mock function with given fields: id
@@ -73,13 +96,13 @@ func (_m *Service) GetAllCategory() (*[]category.Category, error) {
 	return r0, r1
 }
 
-// InsertCategory provides a mock function with given fields: _a0
-func (_m *Service) InsertCategory(_a0 *category.CategorySpec) error {
-	ret := _m.Called(_a0)
+// InsertCategory provides a mock function with given fields: _a0, creator
+func (_m *Service) InsertCategory(_a0 *category.CategorySpec, creator string) error {
+	ret := _m.Called(_a0, creator)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*category.CategorySpec) error); ok {
-		r0 = rf(_a0)
+	if rf, ok := ret.Get(0).(func(*category.CategorySpec, string) error); ok {
+		r0 = rf(_a0, creator)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -87,13 +110,13 @@ func (_m *Service) InsertCategory(_a0 *category.CategorySpec) error {
 	return r0
 }
 
-// UpdateCategory provides a mock function with given fields: id, _a1
-func (_m *Service) UpdateCategory(id string, _a1 *category.CategorySpec) error {
-	ret := _m.Called(id, _a1)
+// UpdateCategory provides a mock function with given fields: id, _a1, modifier
+func (_m *Service) UpdateCategory(id string, _a1 *category.CategorySpec, modifier string) error {
+	ret := _m.Called(id, _a1, modifier)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, *category.CategorySpec) error); ok {
-		r0 = rf(id, _a1)
+	if rf, ok := ret.Get(0).(func(string, *category.CategorySpec, string) error); ok {
+		r0 = rf(id, _a1, modifier)
 	} else {
 		r0 = ret.Error(0)
 	}

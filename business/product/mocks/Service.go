@@ -13,18 +13,41 @@ type Service struct {
 	mock.Mock
 }
 
-// DeleteProduct provides a mock function with given fields: id, adminId
-func (_m *Service) DeleteProduct(id string, adminId string) error {
-	ret := _m.Called(id, adminId)
+// DeleteProduct provides a mock function with given fields: id, deleter
+func (_m *Service) DeleteProduct(id string, deleter string) error {
+	ret := _m.Called(id, deleter)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = rf(id, adminId)
+		r0 = rf(id, deleter)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// FindProductByCode provides a mock function with given fields: code
+func (_m *Service) FindProductByCode(code string) (*product.Product, error) {
+	ret := _m.Called(code)
+
+	var r0 *product.Product
+	if rf, ok := ret.Get(0).(func(string) *product.Product); ok {
+		r0 = rf(code)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*product.Product)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(code)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // FindProductById provides a mock function with given fields: id
@@ -96,13 +119,13 @@ func (_m *Service) GetAllProductByParameter(id string, isActive string, category
 	return r0, r1
 }
 
-// InsertProduct provides a mock function with given fields: Product
-func (_m *Service) InsertProduct(Product *product.InsertProductSpec) error {
-	ret := _m.Called(Product)
+// InsertProduct provides a mock function with given fields: Product, creator
+func (_m *Service) InsertProduct(Product *product.InsertProductSpec, creator string) error {
+	ret := _m.Called(Product, creator)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*product.InsertProductSpec) error); ok {
-		r0 = rf(Product)
+	if rf, ok := ret.Get(0).(func(*product.InsertProductSpec, string) error); ok {
+		r0 = rf(Product, creator)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -110,13 +133,13 @@ func (_m *Service) InsertProduct(Product *product.InsertProductSpec) error {
 	return r0
 }
 
-// UpdateProduct provides a mock function with given fields: id, Product
-func (_m *Service) UpdateProduct(id string, Product *product.UpdateProductSpec) error {
-	ret := _m.Called(id, Product)
+// UpdateProduct provides a mock function with given fields: id, Product, modifier
+func (_m *Service) UpdateProduct(id string, Product *product.UpdateProductSpec, modifier string) error {
+	ret := _m.Called(id, Product, modifier)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, *product.UpdateProductSpec) error); ok {
-		r0 = rf(id, Product)
+	if rf, ok := ret.Get(0).(func(string, *product.UpdateProductSpec, string) error); ok {
+		r0 = rf(id, Product, modifier)
 	} else {
 		r0 = ret.Error(0)
 	}

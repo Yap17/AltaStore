@@ -13,18 +13,41 @@ type Service struct {
 	mock.Mock
 }
 
-// DeleteAdmin provides a mock function with given fields: id
-func (_m *Service) DeleteAdmin(id string) error {
-	ret := _m.Called(id)
+// DeleteAdmin provides a mock function with given fields: id, modifier
+func (_m *Service) DeleteAdmin(id string, modifier string) error {
+	ret := _m.Called(id, modifier)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(id, modifier)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// FindAdminByEmail provides a mock function with given fields: email
+func (_m *Service) FindAdminByEmail(email string) (*admin.Admin, error) {
+	ret := _m.Called(email)
+
+	var r0 *admin.Admin
+	if rf, ok := ret.Get(0).(func(string) *admin.Admin); ok {
+		r0 = rf(email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*admin.Admin)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // FindAdminByEmailAndPassword provides a mock function with given fields: email, password
@@ -87,13 +110,13 @@ func (_m *Service) InsertAdmin(insertAdminSpec admin.InsertAdminSpec) error {
 	return r0
 }
 
-// UpdateAdmin provides a mock function with given fields: id, updateAdminSpec
-func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec) error {
-	ret := _m.Called(id, updateAdminSpec)
+// UpdateAdmin provides a mock function with given fields: id, updateAdminSpec, modifier
+func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec, modifier string) error {
+	ret := _m.Called(id, updateAdminSpec, modifier)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, admin.UpdateAdminSpec) error); ok {
-		r0 = rf(id, updateAdminSpec)
+	if rf, ok := ret.Get(0).(func(string, admin.UpdateAdminSpec, string) error); ok {
+		r0 = rf(id, updateAdminSpec, modifier)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -101,13 +124,13 @@ func (_m *Service) UpdateAdmin(id string, updateAdminSpec admin.UpdateAdminSpec)
 	return r0
 }
 
-// UpdateAdminPassword provides a mock function with given fields: id, password, oldPassword
-func (_m *Service) UpdateAdminPassword(id string, password string, oldPassword string) error {
-	ret := _m.Called(id, password, oldPassword)
+// UpdateAdminPassword provides a mock function with given fields: id, password, oldPassword, modifier
+func (_m *Service) UpdateAdminPassword(id string, password string, oldPassword string, modifier string) error {
+	ret := _m.Called(id, password, oldPassword, modifier)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string, string) error); ok {
-		r0 = rf(id, password, oldPassword)
+	if rf, ok := ret.Get(0).(func(string, string, string, string) error); ok {
+		r0 = rf(id, password, oldPassword, modifier)
 	} else {
 		r0 = ret.Error(0)
 	}

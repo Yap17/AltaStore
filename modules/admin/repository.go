@@ -101,6 +101,20 @@ func (repo *Repository) FindAdminByEmailAndPassword(email string, password strin
 	return &Admin, nil
 }
 
+func (repo *Repository) FindAdminByEmail(email string) (*admin.Admin, error) {
+
+	var adminData Admin
+
+	err := repo.DB.Where("email = ?", email).Where("deleted_by = ''").First(&adminData).Error
+	if err != nil {
+		return nil, err
+	}
+
+	Admin := adminData.Toadmin()
+
+	return &Admin, nil
+}
+
 //FindAdminByID If data not found will return nil without error
 func (repo *Repository) FindAdminByID(id string) (*admin.Admin, error) {
 
@@ -135,7 +149,6 @@ func (repo *Repository) UpdateAdmin(admin admin.Admin) error {
 	AdminData := newAdminTable(admin)
 
 	err := repo.DB.Model(&AdminData).Updates(Admin{
-		Email:     AdminData.Email,
 		FirstName: AdminData.FirstName,
 		LastName:  AdminData.LastName,
 		Password:  AdminData.Password,

@@ -2,13 +2,11 @@ package product
 
 import (
 	"AltaStore/business"
-	"AltaStore/business/admin"
 	"AltaStore/util/validator"
 	"time"
 )
 
 type InsertProductSpec struct {
-	AdminId           string `validate:"required"`
 	Code              string `validate:"required"`
 	Name              string `validate:"required"`
 	Price             int64  `validate:"required"`
@@ -19,7 +17,6 @@ type InsertProductSpec struct {
 }
 
 type UpdateProductSpec struct {
-	AdminId           string `validate:"required"`
 	Name              string `validate:"required"`
 	Price             int64  `validate:"required"`
 	IsActive          bool   `validate:"required"`
@@ -29,12 +26,17 @@ type UpdateProductSpec struct {
 }
 
 type service struct {
-	adminService admin.Service
-	repository   Repository
+	//adminService    admin.Service
+	//categoryService category.Service
+	repository Repository
 }
 
-func NewService(adminService admin.Service, repository Repository) Service {
-	return &service{adminService, repository}
+// func NewService(adminService admin.Service, categoryService category.Service, repository Repository) Service {
+// 	return &service{adminService, categoryService, repository}
+// }
+
+func NewService(repository Repository) Service {
+	return &service{repository}
 }
 
 func (s *service) GetAllProduct() (*[]Product, error) {
@@ -49,31 +51,52 @@ func (s *service) FindProductById(id string) (*Product, error) {
 	return s.repository.FindProductById(id)
 }
 
-func (s *service) InsertProduct(product *InsertProductSpec) error {
+func (s *service) FindProductByCode(code string) (*Product, error) {
+	return s.repository.FindProductByCode(code)
+}
+
+func (s *service) InsertProduct(product *InsertProductSpec, creator string) error {
 	err := validator.GetValidator().Struct(product)
 	if err != nil {
 		return business.ErrInvalidSpec
 	}
-	admin, err := s.adminService.FindAdminByID(product.AdminId)
-	if err != nil {
-		return business.ErrNotHavePermission
+	// admin, err := s.adminService.FindAdminByID(creator)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
+	dataproduct, _ := s.repository.FindProductByCode(product.Code)
+	if dataproduct != nil {
+		return business.ErrDataExists
 	}
-
+	// category, err := s.categoryService.FindCategoryById(product.ProductCategoryId)
+	// if err != nil {
+	// 	return business.ErrInvalidData
+	// }
 	data := NewProduct(
 		product.Code,
 		product.Name,
 		product.Price,
 		product.IsActive,
+		//category.ID,
 		product.ProductCategoryId,
 		product.UnitName,
 		product.Description,
-		admin.ID,
+		//admin.ID,
+		creator,
 		time.Now(),
 	)
 	return s.repository.InsertProduct(data)
 }
 
-func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) error {
+func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec, modifier string) error {
+	err := validator.GetValidator().Struct(updateProduct)
+	if err != nil {
+		return business.ErrInvalidSpec
+	}
+	// admin, err := s.adminService.FindAdminByID(modifier)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 	product, err := s.repository.FindProductById(id)
 	if err != nil {
 		return err
@@ -82,28 +105,30 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec) err
 	} else if product.DeletedBy != "" {
 		return business.ErrNotFound
 	}
-	err = validator.GetValidator().Struct(product)
-	if err != nil {
-		return business.ErrInvalidSpec
-	}
-	admin, err := s.adminService.FindAdminByID(updateProduct.AdminId)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
+	// category, err := s.categoryService.FindCategoryById(updateProduct.ProductCategoryId)
+	// if err != nil {
+	// 	return business.ErrInvalidData
+	// }
 	modifiedproduct := product.ModifyProduct(
 		updateProduct.Name,
 		updateProduct.Price,
 		updateProduct.IsActive,
-		updateProduct.ProductCategoryId,
+		//category.ID,
+		product.ProductCategoryId,
 		updateProduct.UnitName,
 		updateProduct.Description,
-		admin.ID,
+		//admin.ID,
+		modifier,
 		time.Now())
 
 	return s.repository.UpdateProduct(modifiedproduct)
 }
 
-func (s *service) DeleteProduct(id string, adminId string) error {
+func (s *service) DeleteProduct(id string, deleter string) error {
+	// admin, err := s.adminService.FindAdminByID(deleter)
+	// if err != nil {
+	// 	return business.ErrNotHavePermission
+	// }
 	product, err := s.repository.FindProductById(id)
 	if err != nil {
 		return err
@@ -112,13 +137,10 @@ func (s *service) DeleteProduct(id string, adminId string) error {
 	} else if product.DeletedBy != "" {
 		return business.ErrNotFound
 	}
-	admin, err := s.adminService.FindAdminByID(adminId)
-	if err != nil {
-		return business.ErrNotHavePermission
-	}
 	deleteProduct := product.DeleteProduct(
 		time.Now(),
-		admin.ID,
+		//admin.ID,
+		deleter,
 	)
 	return s.repository.DeleteProduct(deleteProduct)
 }

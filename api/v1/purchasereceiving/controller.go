@@ -2,6 +2,7 @@ package purchasereceiving
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/purchasereceiving/request"
 	"AltaStore/api/v1/purchasereceiving/response"
 	"AltaStore/business/purchasereceiving"
@@ -20,19 +21,25 @@ func NewController(service purchasereceiving.Service) *Controller {
 
 func (c *Controller) InsertPurchaseReceiving(ctx echo.Context) error {
 	var err error
-	adminid := ctx.QueryParam("adminid")
-
-	if _, err := uuid.Parse(adminid); err != nil {
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	insertData := new(request.InsertPurchaseReceivingRequest)
 
 	if err = ctx.Bind(insertData); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), adminid); err != nil {
+	if err = c.service.InsertPurchaseReceiving(insertData.ToPurchaseReceivingSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -47,18 +54,24 @@ func (c *Controller) UpdatePurchaseReceiving(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	adminid := ctx.QueryParam("adminid")
-
-	if _, err := uuid.Parse(adminid); err != nil {
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
 	updateData := new(request.UpdatePurchaseReceivingRequest)
 	if err = ctx.Bind(updateData); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), adminid); err != nil {
+	if err = c.service.UpdatePurchaseReceiving(id, updateData.ToPurchaseReceivingSpec(), adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -69,16 +82,22 @@ func (c *Controller) DeletePurchaseReceiving(ctx echo.Context) error {
 	var err error
 
 	id := ctx.Param("id")
-	adminid := ctx.QueryParam("adminid")
-
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	if _, err = uuid.Parse(id); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+		return ctx.JSON(common.BadRequestResponse())
 	}
-	if _, err = uuid.Parse(adminid); err != nil {
-		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	if _, err = uuid.Parse(adminId); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if err = c.service.DeletePurchaseReceiving(id, adminid); err != nil {
+	if err = c.service.DeletePurchaseReceiving(id, adminId); err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
@@ -92,15 +111,21 @@ func (c *Controller) GetAllPurchaseReceiving(ctx echo.Context) error {
 			return ctx.JSON(common.BadRequestResponse())
 		}
 	}
+	code := ctx.QueryParam("code")
 
-	adminid := ctx.QueryParam("adminid")
-
-	if _, err := uuid.Parse(adminid); err != nil {
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	code := ctx.QueryParam("code")
-	data, err := c.service.GetAllPurchaseReceivingByParameter(code, adminid)
+	data, err := c.service.GetAllPurchaseReceivingByParameter(code, adminId)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -118,12 +143,18 @@ func (c *Controller) FindPurchaseReceivingById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-	adminid := ctx.QueryParam("adminid")
-
-	if _, err := uuid.Parse(adminid); err != nil {
+	adminId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	isAdmin, err := middleware.ExtractTokenRule(ctx)
+	if err != nil || !isAdmin {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(adminId); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-	data, err := c.service.GetPurchaseReceivingById(id, adminid)
+	data, err := c.service.GetPurchaseReceivingById(id, adminId)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}

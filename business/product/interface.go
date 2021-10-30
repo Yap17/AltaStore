@@ -10,14 +10,16 @@ type Service interface {
 	//FindProductById If data not found will return nil without error
 	FindProductById(id string) (*Product, error)
 
+	FindProductByCode(code string) (*Product, error)
+
 	//InsertProduct Insert new Product into storage
-	InsertProduct(Product *InsertProductSpec) error
+	InsertProduct(Product *InsertProductSpec, creator string) error
 
 	//UpdateProduct if data not found will return error
-	UpdateProduct(id string, Product *UpdateProductSpec) error
+	UpdateProduct(id string, Product *UpdateProductSpec, modifier string) error
 
 	//DeleteProduct if data not found will return error
-	DeleteProduct(id string, adminId string) error
+	DeleteProduct(id string, deleter string) error
 }
 
 type Repository interface {
@@ -29,6 +31,8 @@ type Repository interface {
 
 	//FindProductById If data not found will return nil without error
 	FindProductById(id string) (*Product, error)
+
+	FindProductByCode(code string) (*Product, error)
 
 	//InsertProduct Insert new Product into storage
 	InsertProduct(Product Product) error

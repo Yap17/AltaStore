@@ -44,7 +44,6 @@ func NewUser(
 
 //ModifyUser update existing UserData
 func (oldData *User) ModifyUser(
-	newEmail,
 	newFirstName,
 	newLastName,
 	newHandPhone,
@@ -54,7 +53,7 @@ func (oldData *User) ModifyUser(
 
 	return User{
 		ID:        oldData.ID,
-		Email:     newEmail,
+		Email:     oldData.Email,
 		FirstName: newFirstName,
 		LastName:  newLastName,
 		Password:  oldData.Password,
@@ -91,6 +90,7 @@ func (oldData *User) ModifyUser(
 //ModifyUserPassword update existing UserData
 func (oldData *User) ModifyUserPassword(
 	newPassword string,
+	updater string,
 	updatedAt time.Time) User {
 
 	return User{
@@ -104,7 +104,7 @@ func (oldData *User) ModifyUserPassword(
 		CreatedAt: oldData.CreatedAt,
 		CreatedBy: oldData.CreatedBy,
 		UpdatedAt: updatedAt,
-		UpdatedBy: oldData.ID,
+		UpdatedBy: updater,
 	}
 }
 

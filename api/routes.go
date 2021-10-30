@@ -12,6 +12,7 @@ import (
 	"AltaStore/api/v1/shopping"
 	"AltaStore/api/v1/user"
 	"AltaStore/api/v1/userauth"
+	"net/http"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -42,6 +43,27 @@ func RegisterPath(e *echo.Echo,
 	// Add logger
 	e.Use(middleware.MiddlewareLogger)
 
+	// Custome response
+	e.HTTPErrorHandler = func(e error, c echo.Context) {
+		type Response struct {
+			Code    int    `json:"code"`
+			Message string `json:"message"`
+		}
+		var response Response
+		response.Code = http.StatusInternalServerError // defaul 500
+		response.Message = "Internal Server Error"
+
+		if he, ok := e.(*echo.HTTPError); ok {
+			response.Code = he.Code
+			response.Message = http.StatusText(he.Code)
+		}
+
+		c.Logger().Error(e)
+
+		_ = c.JSON(response.Code, response)
+	}
+
+	// Routing
 	regis := e.Group("v1/register")
 	regis.POST("", userController.InsertUser)
 	regis.POST("/admin", adminController.InsertAdmin)
@@ -76,7 +98,7 @@ func RegisterPath(e *echo.Echo,
 	// Routing shoping
 	//e.GET("/v1/users/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
-	shopCart := e.Group("/v1/shoppingcarts")
+	shopCart := e.Group("v1/shoppingcarts")
 	shopCart.Use(middleware.JWTMiddleware())
 	shopCart.POST("", shopping.NewShoppingCart)
 	shopCart.GET("/:id", shopping.GetShopCartDetailById)
@@ -93,12 +115,13 @@ func RegisterPath(e *echo.Echo,
 	user.GET("/:id/shoppingcart", shopping.GetShoppingCartByUserId)
 
 	// Checkout
-	c_out := e.Group("/v1/checkouts")
+	c_out := e.Group("v1/checkouts")
+	c_out.Use(middleware.JWTMiddleware())
 	c_out.POST("", checkout.NewCheckoutShoppingCart)
 	c_out.GET("", checkout.GetAllCheckout)
 	c_out.GET("/:id", checkout.GetCheckoutById)
 
-	purchRec := e.Group("/v1/purchasereceivings")
+	purchRec := e.Group("v1/purchases")
 	purchRec.Use(middleware.JWTMiddleware())
 	purchRec.POST("", purchaseController.InsertPurchaseReceiving)
 	purchRec.GET("", purchaseController.GetAllPurchaseReceiving)
@@ -106,11 +129,11 @@ func RegisterPath(e *echo.Echo,
 	purchRec.PUT("/:id", purchaseController.UpdatePurchaseReceiving)
 	purchRec.DELETE("/:id", purchaseController.DeletePurchaseReceiving)
 
-	payment := e.Group("/v1/payments")
-	purchRec.Use(middleware.JWTMiddleware())
+	payment := e.Group("v1/payments")
+	payment.Use(middleware.JWTMiddleware())
 	payment.POST("", paymentController.Call)
 
-	paymentCallback := e.Group("/v1/payments/notif")
+	paymentCallback := e.Group("v1/payments/notif")
 	paymentCallback.GET("", paymentController.InsertPayment)
 
 }

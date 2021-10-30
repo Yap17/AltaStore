@@ -2,6 +2,7 @@ package shopping
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/shopping/request"
 	"AltaStore/api/v1/shopping/response"
 	"AltaStore/business/shopping"
@@ -24,7 +25,13 @@ func (c *Controller) GetShoppingCartByUserId(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	shoppCart, err := c.service.GetShoppingCartByUserId(id)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
@@ -44,11 +51,19 @@ func (c *Controller) NewShoppingCart(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	if _, err = uuid.Parse(payload.UserId); err != nil {
-		return ctx.JSON(common.BadRequestResponse())
+	// if _, err = uuid.Parse(payload.UserId); err != nil {
+	// 	return ctx.JSON(common.BadRequestResponse())
+	// }
+
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 
-	result, err := c.service.NewShoppingCart(payload.UserId, payload.Description)
+	result, err := c.service.NewShoppingCart(userId, payload.Description)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -63,6 +78,13 @@ func (c *Controller) GetShopCartDetailById(ctx echo.Context) error {
 
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
+	}
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
 	}
 
 	itemDetail, err := c.service.GetShopCartDetailById(id)
@@ -81,12 +103,19 @@ func (c *Controller) NewItemInShopCart(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 
 	if err := ctx.Bind(item); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	err := c.service.NewItemInShopCart(id, item)
+	err = c.service.NewItemInShopCart(id, item)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -111,8 +140,16 @@ func (c *Controller) ModifyItemInShopCart(ctx echo.Context) error {
 	if err := ctx.Bind(item); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	item.UserId = userId
 
-	err := c.service.ModifyItemInShopCart(id, productid, item)
+	err = c.service.ModifyItemInShopCart(id, productid, item)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -133,8 +170,14 @@ func (c *Controller) DeleteItemInShopCart(ctx echo.Context) error {
 	if err1 != nil || err2 != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-
-	err := c.service.DeleteItemInShopCart(id, productId)
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	err = c.service.DeleteItemInShopCart(id, productId)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
