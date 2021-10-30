@@ -115,7 +115,7 @@ func setup() {
 		Description:  description,
 		Details:      updatePurchaseReceivingDetailSpecs,
 	}
-	purchaseReceivingService = purchasereceiving.NewService(&adminService, &purchaseReceivingRepository, &purchaseReceivingDetailRepository)
+	purchaseReceivingService = purchasereceiving.NewService(&purchaseReceivingRepository, &purchaseReceivingDetailRepository)
 }
 
 func TestInsertPurchaseReceiving(t *testing.T) {
