@@ -119,17 +119,17 @@ func setup() {
 }
 
 func TestInsertPurchaseReceiving(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := purchaseReceivingService.InsertPurchaseReceiving(insertPurchaseReceivingSpec, email)
+	// 	err := purchaseReceivingService.InsertPurchaseReceiving(insertPurchaseReceivingSpec, email)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Purchase Receiving Exist", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingByCode", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 
 		err := purchaseReceivingService.InsertPurchaseReceiving(insertPurchaseReceivingSpec, email)
@@ -139,7 +139,7 @@ func TestInsertPurchaseReceiving(t *testing.T) {
 		assert.Equal(t, err, business.ErrDataExists)
 	})
 	t.Run("Expect Insert Purchase Receiving Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
 		purchaseReceivingDetailRepository.On("InsertPurchaseReceivingDetail", mock.AnythingOfType("*purchasereceiving.PurchaseReceivingDetail")).Return(nil).Once()
 		purchaseReceivingRepository.On("InsertPurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(nil).Once()
@@ -149,7 +149,7 @@ func TestInsertPurchaseReceiving(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Insert Purchase Receiving Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingByCode", mock.AnythingOfType("string")).Return(nil, nil).Once()
 		purchaseReceivingDetailRepository.On("InsertPurchaseReceivingDetail", mock.AnythingOfType("*purchasereceiving.PurchaseReceivingDetail")).Return(business.ErrInternalServer).Once()
 		purchaseReceivingRepository.On("InsertPurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(business.ErrInternalServer).Once()
@@ -162,17 +162,17 @@ func TestInsertPurchaseReceiving(t *testing.T) {
 }
 
 func TestUpdatePurchaseReceiving(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := purchaseReceivingService.UpdatePurchaseReceiving(id, updatePurchaseReceivingSpec, email)
+	// 	err := purchaseReceivingService.UpdatePurchaseReceiving(id, updatePurchaseReceivingSpec, email)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Purchase Receiving Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 
 		err := purchaseReceivingService.UpdatePurchaseReceiving(id, updatePurchaseReceivingSpec, email)
@@ -182,7 +182,7 @@ func TestUpdatePurchaseReceiving(t *testing.T) {
 
 	})
 	t.Run("Expect Update Purchase Receiving Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 		purchaseReceivingDetailRepository.On("UpdatePurchaseReceivingDetail", mock.AnythingOfType("*purchasereceiving.PurchaseReceivingDetail")).Return(nil).Once()
 		purchaseReceivingRepository.On("UpdatePurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(nil).Once()
@@ -196,7 +196,7 @@ func TestUpdatePurchaseReceiving(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Update Purchase Receiving Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 		purchaseReceivingDetailRepository.On("UpdatePurchaseReceivingDetail", mock.AnythingOfType("*purchasereceiving.PurchaseReceivingDetail")).Return(business.ErrInternalServer).Once()
 		purchaseReceivingRepository.On("UpdatePurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(business.ErrInternalServer).Once()
@@ -213,17 +213,17 @@ func TestUpdatePurchaseReceiving(t *testing.T) {
 }
 
 func TestDeletePurchaseReceiving(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		err := purchaseReceivingService.DeletePurchaseReceiving(id, adminId)
+	// 	err := purchaseReceivingService.DeletePurchaseReceiving(id, adminId)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect Purchase Receiving Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 
 		err := purchaseReceivingService.DeletePurchaseReceiving(id, adminId)
@@ -233,7 +233,7 @@ func TestDeletePurchaseReceiving(t *testing.T) {
 
 	})
 	t.Run("Expect Delete Purchase Receiving Success", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 		purchaseReceivingRepository.On("DeletePurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(nil).Once()
 
@@ -242,7 +242,7 @@ func TestDeletePurchaseReceiving(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Expect Delete Purchase Receiving Fail", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 		purchaseReceivingRepository.On("DeletePurchaseReceiving", mock.AnythingOfType("*purchasereceiving.PurchaseReceiving")).Return(business.ErrInternalServer).Once()
 
@@ -254,17 +254,17 @@ func TestDeletePurchaseReceiving(t *testing.T) {
 }
 
 func TestGetAllPurchaseReceiving(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		_, err := purchaseReceivingService.GetAllPurchaseReceiving(email)
+	// 	_, err := purchaseReceivingService.GetAllPurchaseReceiving(email)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect found the data Purchase Receiving", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetAllPurchaseReceiving", mock.AnythingOfType("string")).Return(&purchaseReceivingGetDatas, nil).Once()
 
 		receivings, err := purchaseReceivingService.GetAllPurchaseReceiving(email)
@@ -280,7 +280,7 @@ func TestGetAllPurchaseReceiving(t *testing.T) {
 	})
 
 	t.Run("Expect data nil", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetAllPurchaseReceiving", mock.AnythingOfType("string")).Return(nil, nil).Once()
 		categories, err := purchaseReceivingService.GetAllPurchaseReceiving(email)
 
@@ -290,17 +290,17 @@ func TestGetAllPurchaseReceiving(t *testing.T) {
 }
 
 func TestGetAllPurchaseReceivingByParameter(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		_, err := purchaseReceivingService.GetAllPurchaseReceivingByParameter(code, email)
+	// 	_, err := purchaseReceivingService.GetAllPurchaseReceivingByParameter(code, email)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
 
-	})
+	// })
 	t.Run("Expect found the data Purchase Receiving", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetAllPurchaseReceivingByParameter", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&purchaseReceivingGetDatas, nil).Once()
 
 		receivings, err := purchaseReceivingService.GetAllPurchaseReceivingByParameter(code, email)
@@ -316,29 +316,52 @@ func TestGetAllPurchaseReceivingByParameter(t *testing.T) {
 	})
 
 	t.Run("Expect data nil", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetAllPurchaseReceivingByParameter", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(nil, nil).Once()
 		categories, err := purchaseReceivingService.GetAllPurchaseReceivingByParameter(code, email)
 
 		assert.Nil(t, err)
 		assert.Nil(t, categories)
+
 	})
 }
 
 func TestGetPurchaseReceivingById(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
+	// 	purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingById(id, email)
+
+	// 	assert.Nil(t, purchasereceiving)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
+
+	// })
+	t.Run("Expect Purchase Receiving not found", func(t *testing.T) {
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingById(id, email)
 
-		assert.Nil(t, purchasereceiving)
 		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
+		assert.Nil(t, purchasereceiving)
 
+		assert.Equal(t, err, business.ErrNotFound)
 	})
-	t.Run("Expect found the Purchase Receiving", func(t *testing.T) {
+	t.Run("Expect Purchase Receiving Detail Not Found", func(t *testing.T) {
 		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
+		purchaseReceivingDetailRepository.On("GetPurchaseReceivingDetailByPurchaseReceivingId", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
+
+		_, err := purchaseReceivingService.GetPurchaseReceivingById(id, email)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, err, business.ErrNotFound)
+
+	})
+	t.Run("Expect Purchase Receiving Detail Not Found", func(t *testing.T) {
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
+		purchaseReceivingDetailRepository.On("GetPurchaseReceivingDetailByPurchaseReceivingId", mock.AnythingOfType("string")).Return(&purchaseReceivingDetailDatas, nil).Once()
 
 		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingById(id, email)
 
@@ -350,37 +373,27 @@ func TestGetPurchaseReceivingById(t *testing.T) {
 		assert.Equal(t, datereceived, purchasereceiving.DateReceived)
 		assert.Equal(t, receivedby, purchasereceiving.ReceivedBy)
 		assert.Equal(t, description, purchasereceiving.Description)
-		assert.Equal(t, id, (purchasereceiving.Details)[0].ID)
-		assert.Equal(t, productid, (purchasereceiving.Details)[0].ProductId)
-		assert.Equal(t, qty, (purchasereceiving.Details)[0].Qty)
-		assert.Equal(t, price, (purchasereceiving.Details)[0].Price)
 
+		assert.Equal(t, id, purchasereceiving.Details[0].ID)
+		assert.Equal(t, price, purchasereceiving.Details[0].Price)
+		assert.Equal(t, productid, purchasereceiving.Details[0].ProductId)
+		assert.Equal(t, qty, purchasereceiving.Details[0].Qty)
 	})
 
-	t.Run("Expect Purchase Receiving not found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
-		purchaseReceivingRepository.On("GetPurchaseReceivingById", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
-		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingById(id, email)
-
-		assert.NotNil(t, err)
-		assert.Nil(t, purchasereceiving)
-
-		assert.Equal(t, err, business.ErrNotFound)
-	})
 }
 
 func TestGetPurchaseReceivingByCode(t *testing.T) {
-	t.Run("Expect Admin Not Found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
+	// t.Run("Expect Admin Not Found", func(t *testing.T) {
+	// 	adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(nil, business.ErrNotHavePermission).Once()
 
-		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingByCode(code, email)
+	// 	purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingByCode(code, email)
 
-		assert.Nil(t, purchasereceiving)
-		assert.NotNil(t, err)
-		assert.Equal(t, err, business.ErrNotHavePermission)
-	})
+	// 	assert.Nil(t, purchasereceiving)
+	// 	assert.NotNil(t, err)
+	// 	assert.Equal(t, err, business.ErrNotHavePermission)
+	// })
 	t.Run("Expect found the Purchase Receiving", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingByCode", mock.AnythingOfType("string")).Return(&purchaseReceivingData, nil).Once()
 
 		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingByCode(code, email)
@@ -400,7 +413,7 @@ func TestGetPurchaseReceivingByCode(t *testing.T) {
 	})
 
 	t.Run("Expect Purchase Receiving not found", func(t *testing.T) {
-		adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
+		//adminService.On("FindAdminByID", mock.AnythingOfType("string")).Return(&adminData, nil).Once()
 		purchaseReceivingRepository.On("GetPurchaseReceivingByCode", mock.AnythingOfType("string")).Return(nil, business.ErrNotFound).Once()
 		purchasereceiving, err := purchaseReceivingService.GetPurchaseReceivingByCode(code, email)
 
