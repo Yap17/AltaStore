@@ -2,8 +2,6 @@ package product
 
 import (
 	"AltaStore/business"
-	"AltaStore/business/admin"
-	"AltaStore/business/category"
 	"AltaStore/util/validator"
 	"time"
 )
@@ -28,13 +26,17 @@ type UpdateProductSpec struct {
 }
 
 type service struct {
-	adminService    admin.Service
-	categoryService category.Service
-	repository      Repository
+	//adminService    admin.Service
+	//categoryService category.Service
+	repository Repository
 }
 
-func NewService(adminService admin.Service, categoryService category.Service, repository Repository) Service {
-	return &service{adminService, categoryService, repository}
+// func NewService(adminService admin.Service, categoryService category.Service, repository Repository) Service {
+// 	return &service{adminService, categoryService, repository}
+// }
+
+func NewService(repository Repository) Service {
+	return &service{repository}
 }
 
 func (s *service) GetAllProduct() (*[]Product, error) {
@@ -66,16 +68,17 @@ func (s *service) InsertProduct(product *InsertProductSpec, creator string) erro
 	if dataproduct != nil {
 		return business.ErrDataExists
 	}
-	category, err := s.categoryService.FindCategoryById(product.ProductCategoryId)
-	if err != nil {
-		return business.ErrInvalidData
-	}
+	// category, err := s.categoryService.FindCategoryById(product.ProductCategoryId)
+	// if err != nil {
+	// 	return business.ErrInvalidData
+	// }
 	data := NewProduct(
 		product.Code,
 		product.Name,
 		product.Price,
 		product.IsActive,
-		category.ID,
+		//category.ID,
+		product.ProductCategoryId,
 		product.UnitName,
 		product.Description,
 		//admin.ID,
@@ -102,15 +105,16 @@ func (s *service) UpdateProduct(id string, updateProduct *UpdateProductSpec, mod
 	} else if product.DeletedBy != "" {
 		return business.ErrNotFound
 	}
-	category, err := s.categoryService.FindCategoryById(updateProduct.ProductCategoryId)
-	if err != nil {
-		return business.ErrInvalidData
-	}
+	// category, err := s.categoryService.FindCategoryById(updateProduct.ProductCategoryId)
+	// if err != nil {
+	// 	return business.ErrInvalidData
+	// }
 	modifiedproduct := product.ModifyProduct(
 		updateProduct.Name,
 		updateProduct.Price,
 		updateProduct.IsActive,
-		category.ID,
+		//category.ID,
+		product.ProductCategoryId,
 		updateProduct.UnitName,
 		updateProduct.Description,
 		//admin.ID,

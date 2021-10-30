@@ -2,7 +2,6 @@ package purchasereceiving
 
 import (
 	"AltaStore/business"
-	"AltaStore/business/admin"
 	"AltaStore/util/validator"
 	"time"
 )
@@ -36,18 +35,27 @@ type UpdatePurchaseReceivingDetailSpec struct {
 }
 
 type service struct {
-	adminService     admin.Service
+	//adminService     admin.Service
 	repository       Repository
 	repositoryDetail RepositoryDetail
 }
 
+// func NewService(
+// 	adminService admin.Service,
+// 	repository Repository,
+// 	repositoryDetail RepositoryDetail,
+// ) Service {
+// 	return &service{
+// 		adminService, repository, repositoryDetail,
+// 	}
+// }
+
 func NewService(
-	adminService admin.Service,
 	repository Repository,
 	repositoryDetail RepositoryDetail,
 ) Service {
 	return &service{
-		adminService, repository, repositoryDetail,
+		repository, repositoryDetail,
 	}
 }
 

@@ -45,6 +45,11 @@ func (controller *Controller) InsertAdmin(c echo.Context) error {
 func (controller *Controller) FindAdminByID(c echo.Context) error {
 	id, _ := uuid.Parse(c.Param("id"))
 
+	_, err := middleware.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
+
 	admin, err := controller.service.FindAdminByID(id.String())
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
