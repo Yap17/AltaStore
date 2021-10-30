@@ -176,7 +176,7 @@ func main() {
 	categoryRepo := cateRepository.NewRepository(dbConnection)
 
 	// Initiate Service Category
-	categoryService := cateService.NewService(adminService, categoryRepo)
+	categoryService := cateService.NewService(categoryRepo)
 
 	// Initiate Controller Category
 	controllerCategory := cateController.NewController(categoryService)
@@ -185,7 +185,7 @@ func main() {
 	product := productRepository.NewRepository(dbConnection)
 
 	// Initiate Service Product
-	ProductService := productService.NewService(adminService, categoryService, product)
+	ProductService := productService.NewService(product)
 
 	// Initiate Controller Product
 	productController := productController.NewController(ProductService)
@@ -205,7 +205,7 @@ func main() {
 	purchaseDetail := purchaseDetailRepository.NewRepository(dbConnection)
 
 	// initiate Purchase Receiving service
-	purchaseService := purchaseService.NewService(adminService, purchase, purchaseDetail)
+	purchaseService := purchaseService.NewService(purchase, purchaseDetail)
 
 	// initiate Purchase Receiving controller
 	purchaseController := purchaseController.NewController(purchaseService)

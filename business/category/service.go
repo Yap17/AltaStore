@@ -2,7 +2,6 @@ package category
 
 import (
 	"AltaStore/business"
-	"AltaStore/business/admin"
 	"time"
 )
 
@@ -13,12 +12,16 @@ type CategorySpec struct {
 }
 
 type service struct {
-	adminService admin.Service
-	repository   Repository
+	//adminService admin.Service
+	repository Repository
 }
 
-func NewService(adminService admin.Service, repository Repository) Service {
-	return &service{adminService, repository}
+// func NewService(adminService admin.Service, repository Repository) Service {
+// 	return &service{adminService, repository}
+// }
+
+func NewService(repository Repository) Service {
+	return &service{repository}
 }
 
 func (s *service) GetAllCategory() (*[]Category, error) {

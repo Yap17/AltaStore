@@ -26,7 +26,10 @@ func (c *Controller) GetAllProduct(ctx echo.Context) error {
 			return ctx.JSON(common.BadRequestResponse())
 		}
 	}
-
+	_, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	isActive := ctx.QueryParam("isactive")
 	categoryName := ctx.QueryParam("categoryname")
 	code := ctx.QueryParam("code")
@@ -49,7 +52,10 @@ func (c *Controller) FindProductById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-
+	_, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	product, err := c.service.FindProductById(id)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))

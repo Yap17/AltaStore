@@ -24,7 +24,10 @@ func (c *Controller) GetAllCategory(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
-
+	_, err = middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	return ctx.JSON(
 		common.SuccessResponseWithData(
 			response.GetAllCategory(categories).Categories,
@@ -38,7 +41,10 @@ func (c *Controller) FindCategoryById(ctx echo.Context) error {
 	if _, err := uuid.Parse(id); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
-
+	_, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
 	category, err := c.service.FindCategoryById(id)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))

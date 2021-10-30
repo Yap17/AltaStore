@@ -2,6 +2,7 @@ package checkout
 
 import (
 	"AltaStore/api/common"
+	"AltaStore/api/middleware"
 	"AltaStore/api/v1/checkout/request"
 	"AltaStore/api/v1/checkout/response"
 	"AltaStore/business/checkout"
@@ -27,7 +28,18 @@ func (c *Controller) NewCheckoutShoppingCart(ctx echo.Context) error {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	snap, err := c.service.NewCheckoutShoppingCart(checkoutShopCart.ToBusinessCheckout())
+	userId, err := middleware.ExtractTokenUser(ctx)
+	if err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+	if _, err := uuid.Parse(userId); err != nil {
+		return ctx.JSON(common.UnAuthorizedResponse())
+	}
+
+	data := checkoutShopCart
+	data.UserId = userId
+
+	snap, err := c.service.NewCheckoutShoppingCart(data.ToBusinessCheckout())
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}

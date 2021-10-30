@@ -61,7 +61,7 @@ func setup() {
 	}
 	categoryDatas = append(categoryDatas, categoryData)
 
-	categoryService = category.NewService(&adminService, &categoryRepository)
+	categoryService = category.NewService(&categoryRepository)
 }
 
 func TestInsertCategory(t *testing.T) {
