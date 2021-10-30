@@ -49,7 +49,10 @@ func (controller *Controller) FindUserByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(common.NewBusinessErrorResponse(err))
 	}
-
+	_, err = middleware.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(common.UnAuthorizedResponse())
+	}
 	response := response.NewGetUserResponse(*user)
 
 	return c.JSON(common.SuccessResponseWithData(response))
